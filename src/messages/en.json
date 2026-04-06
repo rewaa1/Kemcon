@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "title": "Kemcon — Premium Fabrics & Furnishings",
+    "description": "Discover Kemcon's premium collection of fabrics, cushions, pillows, and sofas — trusted by luxury hotels across the Middle East."
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "products": "Products",
+    "clients": "Our Clients",
+    "contact": "Contact"
+  },
+  "hero": {
+    "tagline": "Premium Fabrics & Furnishings",
+    "title": "Crafting Luxury,",
+    "titleHighlight": "Thread by Thread",
+    "description": "From the finest Egyptian cotton to bespoke upholstery, Kemcon delivers unmatched quality to hotels and homes across the Middle East.",
+    "cta": "Explore Our Collection",
+    "ctaSecondary": "Contact Us"
+  },
+  "about": {
+    "label": "About Kemcon",
+    "title": "A Legacy of Excellence",
+    "description": "For over 25 years, Kemcon has been the trusted partner for luxury hotels across Egypt, Saudi Arabia, Emirates, and Jordan. Our commitment to quality craftsmanship and premium materials has made us a leader in the hospitality furnishings industry.",
+    "descriptionSecondary": "Now, we're bringing that same hotel-grade luxury to your home. Every thread, every stitch, every detail — crafted to perfection.",
+    "cta": "Learn More About Us",
+    "stats": {
+      "hotels": "500+",
+      "hotelsLabel": "Hotels Served",
+      "countries": "4",
+      "countriesLabel": "Countries",
+      "years": "25+",
+      "yearsLabel": "Years of Excellence",
+      "products": "10,000+",
+      "productsLabel": "Products Delivered"
+    }
+  },
+  "products": {
+    "label": "Our Collection",
+    "title": "Crafted for Comfort",
+    "description": "Explore our premium range of fabrics and furnishings, designed with the same quality trusted by luxury hotels worldwide.",
+    "categories": {
+      "fabrics": {
+        "name": "Premium Fabrics",
+        "description": "Luxurious textiles sourced from the finest mills, available in a stunning range of textures, patterns, and colors."
+      },
+      "cushions": {
+        "name": "Designer Cushions",
+        "description": "Handcrafted cushions that combine elegance with comfort, perfect for adding a touch of luxury to any space."
+      },
+      "pillows": {
+        "name": "Luxury Pillows",
+        "description": "Hotel-grade pillows engineered for the perfect night's sleep, using premium fills and breathable fabrics."
+      },
+      "sofas": {
+        "name": "Bespoke Sofas",
+        "description": "Custom-designed sofas built with precision craftsmanship, featuring premium upholstery and timeless designs."
+      },
+      "custom": {
+        "name": "Custom Solutions",
+        "description": "Tailored furnishing solutions for hotels and homes, designed to match your unique vision and requirements."
+      }
+    },
+    "viewAll": "View All Products",
+    "learnMore": "Learn More"
+  },
+  "whyKemcon": {
+    "label": "Why Choose Us",
+    "title": "The Kemcon Difference",
+    "values": {
+      "quality": {
+        "title": "Uncompromising Quality",
+        "description": "Every product undergoes rigorous quality checks to meet the exacting standards of luxury hospitality."
+      },
+      "craftsmanship": {
+        "title": "Expert Craftsmanship",
+        "description": "Our skilled artisans bring decades of experience to every piece, ensuring flawless execution."
+      },
+      "materials": {
+        "title": "Premium Materials",
+        "description": "We source only the finest raw materials from trusted suppliers worldwide."
+      }
+    }
+  },
+  "clients": {
+    "label": "Our Partners",
+    "title": "Trusted by Leading Hotels",
+    "description": "Kemcon proudly serves prestigious hotels and resorts across Egypt, Saudi Arabia, Emirates, and Jordan.",
+    "cta": "See All Partners"
+  },
+  "cta": {
+    "title": "Experience Kemcon Quality",
+    "description": "Bring hotel-grade luxury into your home. Discover our premium collection of fabrics and furnishings.",
+    "button": "Get in Touch"
+  },
+  "contact": {
+    "label": "Get in Touch",
+    "title": "Let's Connect",
+    "description": "Whether you're a hotel looking for premium furnishings or a homeowner seeking luxury, we'd love to hear from you.",
+    "form": {
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "subject": "Subject",
+      "message": "Your Message",
+      "submit": "Send Message",
+      "success": "Your message has been sent successfully!",
+      "error": "Something went wrong. Please try again."
+    },
+    "info": {
+      "address": "Cairo, Egypt",
+      "phone": "+20 123 456 789",
+      "email": "info@kemcon.com",
+      "hours": "Sunday - Thursday: 9:00 AM - 6:00 PM"
+    }
+  },
+  "footer": {
+    "description": "Premium fabrics & furnishings trusted by luxury hotels across the Middle East. Now available for your home.",
+    "quickLinks": "Quick Links",
+    "getInTouch": "Get in Touch",
+    "followUs": "Follow Us",
+    "rights": "All Rights Reserved",
+    "tagline": "Serving luxury since 1999"
+  }
+}
