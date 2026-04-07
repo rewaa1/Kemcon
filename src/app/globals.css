@@ -72,6 +72,8 @@
   --color-light-accent: var(--color-light-accent);
   --color-error: var(--color-error);
 
+  --shadow-gold: 0 4px 24px rgba(198, 165, 123, 0.25);
+
   --font-heading-en: "Playfair Display", serif;
   --font-body-en: "Inter", sans-serif;
   --font-heading-ar: "Noto Kufi Arabic", sans-serif;
@@ -117,10 +119,12 @@
 
 /* ===== Base Styles ===== */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 }
 
 html {
@@ -255,7 +259,7 @@ html.lenis body {
 /* ===== Gold Divider ===== */
 
 .gold-divider {
-  width: 60px;
+  width: 70px;
   height: 2px;
   background: linear-gradient(90deg, var(--color-accent), var(--color-deep-accent));
   border-radius: 1px;

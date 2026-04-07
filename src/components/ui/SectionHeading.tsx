@@ -23,7 +23,7 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        "mb-12 md:mb-16",
+        "mb-16 md:mb-20",
         align === "center" && "text-center",
         className
       )}
@@ -32,7 +32,7 @@ export function SectionHeading({
         <FadeIn delay={0}>
           <span
             className={cn(
-              "inline-block text-sm font-medium tracking-[0.2em] uppercase mb-4",
+              "inline-block text-xs sm:text-sm font-medium tracking-[0.25em] uppercase mb-5",
               light ? "text-light-accent" : "text-accent"
             )}
           >
@@ -43,7 +43,7 @@ export function SectionHeading({
       <FadeIn delay={0.1}>
         <h2
           className={cn(
-            "text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4",
+            "text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-5",
             light ? "text-warm-white" : "text-foreground"
           )}
         >
@@ -53,7 +53,7 @@ export function SectionHeading({
       <FadeIn delay={0.2}>
         <div
           className={cn(
-            "gold-divider my-6",
+            "gold-divider my-7",
             align === "center" && "gold-divider-center"
           )}
         />
@@ -64,7 +64,7 @@ export function SectionHeading({
             className={cn(
               "text-base md:text-lg max-w-2xl leading-relaxed",
               align === "center" && "mx-auto",
-              light ? "text-warm-white/70" : "text-foreground/60"
+              light ? "text-warm-white/70" : "text-foreground/55"
             )}
           >
             {description}

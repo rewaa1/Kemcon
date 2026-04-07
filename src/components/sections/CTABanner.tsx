@@ -2,47 +2,46 @@
 
 import { useTranslations, useLocale } from "next-intl";
 import { FadeIn } from "@/components/motion/FadeIn";
-import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 
 export function CTABanner() {
   const t = useTranslations("cta");
   const locale = useLocale();
 
   return (
-    <section className="py-20 md:py-28 relative overflow-hidden">
+    <section className="py-28 md:py-36 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-gold" />
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-[0.07]">
         <div
           className="absolute inset-0"
           style={{
             backgroundImage:
               "radial-gradient(circle at 2px 2px, rgba(255,255,255,0.3) 1px, transparent 0)",
-            backgroundSize: "30px 30px",
+            backgroundSize: "36px 36px",
           }}
         />
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 text-center relative z-10">
         <FadeIn>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-warm-white mb-6 leading-tight">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-warm-white mb-7 leading-tight">
             {t("title")}
           </h2>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <p className="text-warm-white/80 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-warm-white/80 text-base md:text-lg max-w-2xl mx-auto mb-12 leading-relaxed">
             {t("description")}
           </p>
         </FadeIn>
         <FadeIn delay={0.2}>
-          <Button
-            variant="secondary"
-            size="lg"
-            className="bg-warm-white text-deep-accent hover:bg-background border-0 shadow-lg"
+          <Link
             href={`/${locale}/contact`}
+            className="group relative inline-flex items-center justify-center h-14 px-12 text-sm md:text-base font-medium tracking-[0.15em] uppercase bg-warm-white text-deep-accent hover:text-accent shadow-lg transition-all duration-500 rounded-sm overflow-hidden"
           >
-            {t("button")}
-          </Button>
+            <span className="relative z-10">{t("button")}</span>
+            <div className="absolute inset-0 bg-background opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          </Link>
         </FadeIn>
       </div>
     </section>

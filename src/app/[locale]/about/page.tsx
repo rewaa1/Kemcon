@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { PageHero } from "@/components/ui/PageHero";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { StaggerContainer, staggerItem } from "@/components/motion/StaggerContainer";
@@ -22,31 +23,13 @@ export default function AboutPage() {
   return (
     <>
       {/* Hero Banner */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2000&auto=format&fit=crop"
-            alt="About Kemcon"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-dark/70" />
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <FadeIn>
-            <span className="text-accent text-sm font-medium tracking-[0.2em] uppercase">
-              {t("label")}
-            </span>
-          </FadeIn>
-          <FadeIn delay={0.1}>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-warm-white mt-4 leading-tight">
-              {t("title")}
-            </h1>
-          </FadeIn>
-          <FadeIn delay={0.2}>
-            <div className="gold-divider mt-6" />
-          </FadeIn>
-        </div>
-      </section>
+      <PageHero
+        label={t("label")}
+        title={t("title")}
+        description={t("heroDescription")}
+        image="https://images.unsplash.com/photo-1611048267451-e6ed903d4a38?q=80&w=2000&auto=format&fit=crop"
+        alt="About Kemcon"
+      />
 
       {/* Story */}
       <section className="py-20 md:py-28 bg-background">

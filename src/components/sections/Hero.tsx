@@ -3,10 +3,12 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { useRef } from "react";
-import { Button } from "@/components/ui/Button";
+import Link from "next/link";
+import { useLocale } from "next-intl";
 
 export function Hero() {
   const t = useTranslations("hero");
+  const locale = useLocale();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -21,33 +23,39 @@ export function Hero() {
       {/* Background Image with Parallax */}
       <motion.div className="absolute inset-0 z-0" style={{ y }}>
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center scale-105"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop')",
+              "url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=2000&auto=format&fit=crop')",
           }}
         />
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-dark/80 via-dark/60 to-dark/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-dark/60 via-transparent to-transparent" />
+        {/* Gradient Overlay - richer for luxury feel */}
+        <div className="absolute inset-0 bg-gradient-to-r from-dark/90 via-dark/65 to-dark/35" />
+        <div className="absolute inset-0 bg-gradient-to-t from-dark/70 via-transparent to-dark/20" />
       </motion.div>
 
       {/* Decorative Elements */}
-      <div className="absolute top-20 right-10 w-40 h-40 border border-accent/20 rounded-full opacity-30 hidden lg:block" />
-      <div className="absolute bottom-20 left-10 w-60 h-60 border border-accent/10 rounded-full opacity-20 hidden lg:block" />
+      <div className="absolute top-32 right-16 w-48 h-48 border border-accent/15 rounded-full opacity-40 hidden lg:block" />
+      <div className="absolute top-36 right-20 w-36 h-36 border border-accent/10 rounded-full opacity-30 hidden lg:block" />
+      <div className="absolute bottom-32 left-12 w-64 h-64 border border-accent/8 rounded-full opacity-20 hidden lg:block" />
+      <motion.div
+        className="absolute top-1/4 right-1/4 w-2 h-2 bg-accent/30 rounded-full hidden lg:block"
+        animate={{ opacity: [0.3, 0.8, 0.3], scale: [1, 1.5, 1] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
 
       {/* Content */}
-      <motion.div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full" style={{ opacity }}>
+      <motion.div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 w-full" style={{ opacity }}>
         <div className="max-w-3xl">
           {/* Tagline */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex items-center gap-3 mb-6"
+            className="flex items-center gap-4 mb-8"
           >
-            <div className="w-8 h-px bg-accent" />
-            <span className="text-accent text-sm font-medium tracking-[0.2em] uppercase">
+            <div className="w-10 h-px bg-accent" />
+            <span className="text-accent text-xs sm:text-sm font-medium tracking-[0.25em] uppercase">
               {t("tagline")}
             </span>
           </motion.div>
@@ -57,7 +65,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-warm-white leading-[1.1] mb-6"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-warm-white leading-[1.08] mb-8"
           >
             {t("title")}
             <br />
@@ -69,39 +77,46 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="text-warm-white/70 text-base md:text-lg max-w-xl leading-relaxed mb-10"
+            className="text-warm-white/70 text-base md:text-lg max-w-xl leading-relaxed mb-12"
           >
             {t("description")}
           </motion.p>
 
-          {/* CTAs */}
+          {/* CTAs - refined button sizing */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.9 }}
-            className="flex flex-col sm:flex-row gap-4"
+            className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5"
           >
-            <Button variant="primary" size="lg">
-              {t("cta")}
-            </Button>
-            <Button variant="outline" size="lg" className="border-warm-white/30 text-warm-white hover:bg-warm-white/10 hover:text-warm-white">
+            <Link
+              href={`/${locale}/products`}
+              className="group relative inline-flex items-center justify-center h-13 px-10 text-sm font-medium tracking-[0.15em] uppercase bg-accent text-warm-white hover:bg-accent-hover shadow-gold hover:shadow-lg transition-all duration-500 overflow-hidden rounded-sm w-full sm:w-auto"
+            >
+              <span className="relative z-10">{t("cta")}</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-accent-hover to-deep-accent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            </Link>
+            <Link
+              href={`/${locale}/contact`}
+              className="group inline-flex items-center justify-center h-13 px-10 text-sm font-medium tracking-[0.15em] uppercase border border-warm-white/40 bg-transparent text-warm-white hover:bg-warm-white/10 hover:border-warm-white/70 transition-all duration-500 rounded-sm w-full sm:w-auto"
+            >
               {t("ctaSecondary")}
-            </Button>
+            </Link>
           </motion.div>
         </div>
       </motion.div>
 
       {/* Scroll Indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3"
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
       >
-        <div className="w-5 h-8 border-2 border-warm-white/30 rounded-full flex items-start justify-center p-1">
+        <div className="w-5 h-9 border border-warm-white/25 rounded-full flex items-start justify-center p-1.5">
           <motion.div
             className="w-1 h-2 bg-accent rounded-full"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            animate={{ y: [0, 12, 0] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           />
         </div>
       </motion.div>
