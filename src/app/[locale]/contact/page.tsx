@@ -109,7 +109,7 @@ export default function ContactPage() {
                   </motion.div>
                 )}
 
-                <Button type="submit" variant="primary" size="lg">
+                <Button type="submit" variant="default" size="lg">
                   {t("form.submit")}
                 </Button>
               </form>
