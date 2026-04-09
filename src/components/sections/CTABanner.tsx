@@ -9,9 +9,9 @@ export function CTABanner() {
   const locale = useLocale();
 
   return (
-    <section className="py-28 md:py-36 relative overflow-hidden">
+    <section className="py-28 md:py-36 relative overflow-hidden border-y border-accent/15">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-gold" />
+      <div className="absolute inset-0 bg-background-secondary" />
       <div className="absolute inset-0 opacity-[0.07]">
         <div
           className="absolute inset-0"
@@ -37,10 +37,10 @@ export function CTABanner() {
         <FadeIn delay={0.2}>
           <Link
             href={`/${locale}/contact`}
-            className="group relative inline-flex items-center justify-center h-14 px-12 text-sm md:text-base font-medium tracking-[0.15em] uppercase bg-warm-white text-deep-accent hover:text-accent shadow-lg transition-all duration-500 rounded-sm overflow-hidden"
+            className="group relative inline-flex items-center justify-center h-14 px-12 text-sm md:text-base font-medium tracking-[0.15em] uppercase bg-accent text-dark hover:bg-accent-hover shadow-gold transition-all duration-500 rounded-sm overflow-hidden"
           >
             <span className="relative z-10">{t("button")}</span>
-            <div className="absolute inset-0 bg-background opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-accent-hover opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </Link>
         </FadeIn>
       </div>

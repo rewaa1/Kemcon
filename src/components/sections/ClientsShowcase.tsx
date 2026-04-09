@@ -40,7 +40,7 @@ export function ClientsShowcase() {
                   key={`${hotel.name}-${index}`}
                   className="flex-shrink-0 mx-6 sm:mx-8 flex items-center justify-center"
                 >
-                  <div className="w-36 h-24 rounded-sm bg-warm-white border border-accent/10 flex items-center justify-center hover:border-accent/30 hover:shadow-md transition-all duration-300 group px-4">
+                  <div className="w-36 h-24 rounded-sm bg-surface border border-accent/10 flex items-center justify-center hover:border-accent/30 hover:shadow-md transition-all duration-300 group px-4">
                     <div className="text-center">
                       <span
                         className="text-2xl font-bold text-accent/40 group-hover:text-accent transition-colors duration-300 block"

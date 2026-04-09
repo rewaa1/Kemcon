@@ -48,7 +48,7 @@ export function WhyKemcon() {
             <motion.div
               key={value}
               variants={staggerItem}
-              className="group relative p-8 md:p-10 lg:p-12 rounded-sm bg-warm-white border border-accent/10 hover:border-accent/25 transition-all duration-500 hover:shadow-md"
+              className="group relative p-8 md:p-10 lg:p-12 rounded-sm bg-surface border border-accent/10 hover:border-accent/25 transition-all duration-500 hover:shadow-md"
             >
               {/* Icon */}
               <div className="w-14 h-14 rounded-sm bg-accent/10 flex items-center justify-center text-accent mb-7 group-hover:bg-accent group-hover:text-warm-white transition-all duration-500">

@@ -91,7 +91,7 @@ export function Hero() {
           >
             <Link
               href={`/${locale}/products`}
-              className="group relative inline-flex items-center justify-center h-13 px-10 text-sm font-medium tracking-[0.15em] uppercase bg-accent text-warm-white hover:bg-accent-hover shadow-gold hover:shadow-lg transition-all duration-500 overflow-hidden rounded-sm w-full sm:w-auto"
+              className="group relative inline-flex items-center justify-center h-13 px-10 text-sm font-medium tracking-[0.15em] uppercase bg-accent text-dark hover:bg-accent-hover shadow-gold hover:shadow-lg transition-all duration-500 overflow-hidden rounded-sm w-full sm:w-auto"
             >
               <span className="relative z-10">{t("cta")}</span>
               <div className="absolute inset-0 bg-gradient-to-r from-accent-hover to-deep-accent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
