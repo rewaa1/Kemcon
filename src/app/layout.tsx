@@ -47,7 +47,7 @@ export default async function RootLayout({
       dir={direction}
       className={`${playfair.variable} ${inter.variable} ${notoSansArabic.variable} ${notoKufiArabic.variable}`}
     >
-      <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
+      <body className="min-h-screen flex flex-col bg-background text-foreground antialiased" suppressHydrationWarning>
         {children}
       </body>
     </html>
