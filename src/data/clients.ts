@@ -701,7 +701,15 @@ export const featuredClients = [
   },
 ];
 
-export type FeaturedClient = (typeof featuredClients)[0];
+export interface FeaturedClient {
+  id: string;
+  name: string;
+  region: string;
+  stars?: number;
+  logo: string;
+  featured: string;
+  rooms: string[];
+}
 
 // ─── Partner Brands ───────────────────────────────────────────────────────────
 

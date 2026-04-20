@@ -148,7 +148,7 @@ function ClientCard({ client }: { client: FeaturedClient }) {
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="text-text-muted text-xs truncate">{client.region}</span>
               <span className="text-accent/30 text-[10px]">•</span>
-              <span className="text-accent text-[10px] tracking-wider flex-shrink-0">{"★".repeat(client.stars)}</span>
+              <span className="text-accent text-[10px] tracking-wider flex-shrink-0">{"★".repeat(client.stars ?? 5)}</span>
             </div>
           </div>
         </div>
