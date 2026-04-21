@@ -25,7 +25,7 @@ export const featuredClients = [
     region: "Cairo, Egypt",
     stars: 5,
     logo: "/clinets/meridienhelioplis/le_meridien_white_bg.png",
-    featured: "/clinets/meridienhelioplis/meridienwallpaper.webp",
+    featured: "/clinets/meridienhelioplis/wallpaper.webp",
     rooms: [
       "/clinets/meridienhelioplis/hotel-meridien-heliopolis-room1.jpg",
       "/clinets/meridienhelioplis/hotel-meridien-heliopolis-room2.jpg",
