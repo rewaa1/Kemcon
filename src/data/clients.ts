@@ -25,11 +25,11 @@ export const featuredClients = [
     region: "Cairo, Egypt",
     stars: 5,
     logo: "/clinets/meridienhelioplis/le_meridien_white_bg.png",
-    featured: "/clinets/meridienhelioplis/meridienwallpaper.jfif",
+    featured: "/clinets/meridienhelioplis/meridienwallpaper.webp",
     rooms: [
       "/clinets/meridienhelioplis/hotel-meridien-heliopolis-room1.jpg",
       "/clinets/meridienhelioplis/hotel-meridien-heliopolis-room2.jpg",
-      "/clinets/meridienhelioplis/cairo-le-meridien-heliopolis-room3.jfif",
+      "/clinets/meridienhelioplis/cairo-le-meridien-heliopolis-room3.webp",
       "/clinets/meridienhelioplis/hotel-meridien-heliopolis-general-1256d9f4.jpg",
     ],
   },
@@ -124,7 +124,7 @@ export const featuredClients = [
     region: "Giza, Egypt",
     stars: 5,
     logo: "/clinets/marriottmenahouse/marriott-logo.png",
-    featured: "/clinets/marriottmenahouse/wallpaper.jfif",
+    featured: "/clinets/marriottmenahouse/wallpaper.webp",
     rooms: [
       "/clinets/marriottmenahouse/marriott-mena-house-room-1.webp",
       "/clinets/marriottmenahouse/marriott-mena-house-room-2.webp",
@@ -159,7 +159,7 @@ export const featuredClients = [
     region: "Cairo, Egypt",
     stars: 5,
     logo: "/clinets/ramseshilton/Hilton-logo.png",
-    featured: "/clinets/conradcairo/wallpaper.jfif",
+    featured: "/clinets/conradcairo/wallpaper.webp",
     rooms: [
       "/clinets/conradcairo/conradcairo-room-1.webp",
       "/clinets/conradcairo/conradcairo-room-2.webp",
@@ -226,7 +226,7 @@ export const featuredClients = [
     name: "InterContinental Cairo Citystars",
     region: "Cairo, Egypt",
     stars: 5,
-    logo: "/clinets/intercontinental-city/logo.jfif",
+    logo: "/clinets/intercontinental-city/logo.webp",
     featured: "/clinets/intercontinental-city/wallpaper.jpg",
     rooms: [
       "/clinets/intercontinental-city/intercontinental-room-1.webp",
@@ -243,7 +243,7 @@ export const featuredClients = [
     name: "Staybridge Citystars ",
     region: "Cairo, Egypt",
     stars: 5,
-    logo: "/clinets/intercontinental-city/logo.jfif",
+    logo: "/clinets/intercontinental-city/logo.webp",
     featured: "/clinets/staybridge/wallpaper.jpg",
     rooms: [
       "/clinets/staybridge/staybridge-room-1.webp",
@@ -260,7 +260,7 @@ export const featuredClients = [
     name: "Intercontinental Cairo Semiramis",
     region: "Cairo, Egypt",
     stars: 5,
-    logo: "/clinets/intercontinental-city/logo.jfif",
+    logo: "/clinets/intercontinental-city/logo.webp",
     featured: "/clinets/semiramis-int/wallpaper.webp",
     rooms: [
       "/clinets/semiramis-int/semiramis-int-room-1.webp",
@@ -327,7 +327,8 @@ export const featuredClients = [
     id: "reef-oasis-sharm",
     name: "Reef Oasis Blue Bay Resort",
     region: "Sharm El Sheikh, Egypt",
-    logo: "/clinets/reef-oasis/logo.jfif",
+    stars: 5,
+    logo: "/clinets/reef-oasis/logo.webp",
     featured: "/clinets/reef-oasis/wallpaper.webp",
     rooms: [
       "/clinets/reef-oasis/reef-oasis-room-1.webp",
@@ -343,6 +344,7 @@ export const featuredClients = [
     id: "coral-beach-sharm",
     name: "Coral Beach Resort",
     region: "Sharm El Sheikh, Egypt",
+    stars: 5,
     logo: "/clinets/coral-sharm/logo.png",
     featured: "/clinets/coral-sharm/wallpaper.jpg",
     rooms: [
@@ -357,6 +359,7 @@ export const featuredClients = [
     id: "concord-sharm",
     name: "Concorde El Salam Hotel",
     region: "Sharm El Sheikh, Egypt",
+    stars: 5,
     logo: "/clinets/concordelsalam/logo.png",
     featured: "/clinets/concord-sharm/wallpaper.jpg",
     rooms: [
@@ -373,6 +376,7 @@ export const featuredClients = [
     id: "cleopatra-sharm",
     name: "Cleopatra Luxury Resort",
     region: "Sharm El Sheikh, Egypt",
+    stars: 5,
     logo: "/clinets/cleopatra-sharm/logo.png",
     featured: "/clinets/cleopatra-sharm/wallpaper.webp",
     rooms: [
@@ -389,6 +393,7 @@ export const featuredClients = [
     id: "charmillion-sharm",
     name: "Charmillion Gardens Aquapark",
     region: "Sharm El Sheikh, Egypt",
+    stars: 5,
     logo: "/clinets/charmillion/logo.png",
     featured: "/clinets/charmillion/wallpaper.webp",
     rooms: [
@@ -405,6 +410,7 @@ export const featuredClients = [
     id: "rixos-sharm",
     name: "Rixos Premium Seagate",
     region: "Sharm El Sheikh, Egypt",
+    stars: 5,
     logo: "/clinets/rixos-sharm/logo1.png",
     featured: "/clinets/rixos-sharm/wallpaper.jpg",
     rooms: [
@@ -421,6 +427,7 @@ export const featuredClients = [
     id: "rotana-sharm",
     name: "Grand Rotana Resort & Spa",
     region: "Sharm El Sheikh, Egypt",
+    stars: 5,
     logo: "/clinets/rotana-sharm/logo.png",
     featured: "/clinets/rotana-sharm/wallpaper.webp",
     rooms: [
@@ -437,6 +444,7 @@ export const featuredClients = [
     id: "hilton-hurghada",
     name: "Hilton Hurghada",
     region: "Hurghada, Egypt",
+    stars: 5,
     logo: "/clinets/ramseshilton/Hilton-logo.png",
     featured: "/clinets/hilton-hurghada/wallpaper.webp",
     rooms: [
@@ -453,6 +461,7 @@ export const featuredClients = [
     id: "sofitel-hurghada",
     name: "Sofitel Hurghada",
     region: "Hurghada, Egypt",
+    stars: 5,
     logo: "/clinets/sofitel-hurghada/logo.png",
     featured: "/clinets/sofitel-hurghada/wallpaper.webp",
     rooms: [
@@ -467,6 +476,7 @@ export const featuredClients = [
     id: "sheraton-soma-bay",
     name: "Sheraton Soma Bay",
     region: "Soma Bay, Egypt",
+    stars: 5,
     logo: "/clinets/cairosheraton/sheraton_logo_white_bg.png",
     featured: "/clinets/sheraton-soma-bay/wallpaper.webp",
     rooms: [
@@ -483,6 +493,7 @@ export const featuredClients = [
     id: "robinson-soma-bay",
     name: "Robinson Soma Bay",
     region: "Soma Bay, Egypt",
+    stars: 5,
     logo: "/clinets/robinson-soma-bay/logo.png",
     featured: "/clinets/robinson-soma-bay/wallpaper.webp",
     rooms: [
@@ -496,6 +507,7 @@ export const featuredClients = [
     id: "coral-hurghada",
     name: "Coral Hurghada",
     region: "Hurghada, Egypt",
+    stars: 5,
     logo: "/clinets/coral-sharm/logo.png",
     featured: "/clinets/coral-hurghada/wallpaper.webp",
     rooms: [
@@ -512,6 +524,7 @@ export const featuredClients = [
     id: "movenpick-gouna",
     name: "Movenpick Resort & Spa El Gouna",
     region: "El Gouna, Egypt",
+    stars: 5,
     logo: "/clinets/movenpick-gouna/logo.png",
     featured: "/clinets/movenpick-gouna/wallpaper.webp",
     rooms: [
@@ -528,6 +541,7 @@ export const featuredClients = [
     id: "sheraton-alex",
     name: "Sheraton Montazah Hotel",
     region: "Alexandria, Egypt",
+    stars: 5,
     logo: "/clinets/cairosheraton/sheraton_logo_white_bg.png",
     featured: "/clinets/sheraton-montazah/wallpaper.webp",
     rooms: [
@@ -544,6 +558,7 @@ export const featuredClients = [
     id: "hilton-green-plaza",
     name: "Hilton Alexandria Green Plaza",
     region: "Alexandria, Egypt",
+    stars: 5,
     logo: "/clinets/ramseshilton/Hilton-logo.png",
     featured: "/clinets/hilton-green-plaza/wallpaper.webp",
     rooms: [
@@ -560,6 +575,7 @@ export const featuredClients = [
     id: "steigenberger-cecil",
     name: "Steigenberger Cecil Hotel",
     region: "Alexandria, Egypt",
+    stars: 5,
     logo: "/clinets/steigenberger-aldau/Steigenberger-logo.webp",
     featured: "/clinets/steigenberger-cecil/wallpaper.webp",
     rooms: [
@@ -574,6 +590,7 @@ export const featuredClients = [
     id: "hilton-king",
     name: "Hilton Alexandria King's Ranch",
     region: "Alexandria, Egypt",
+    stars: 5,
     logo: "/clinets/ramseshilton/Hilton-logo.png",
     featured: "/clinets/hilton-king/wallpaper.webp",
     rooms: [
@@ -590,6 +607,7 @@ export const featuredClients = [
     id: "radisson-alex",
     name: "Radisson Blu Hotel & Convention Center",
     region: "Alexandria, Egypt",
+    stars: 5,
     logo: "/clinets/radisson-alex/logo.png",
     featured: "/clinets/radisson-alex/wallpaper.webp",
     rooms: [
@@ -608,6 +626,7 @@ export const featuredClients = [
     id: "four-seasons-san",
     name: "Four Seasons Hotel Alexandria At San Stefano",
     region: "Alexandria, Egypt",
+    stars: 5,
     logo: "/clinets/fourseasonscairo/fourseasons_logo.png",
     featured: "/clinets/four-seasons-san/wallpaper.webp",
     rooms: [
@@ -626,6 +645,7 @@ export const featuredClients = [
     id: "sofitel-aswan",
     name: "Sofitel Legend Cataract Aswan",
     region: "Aswan, Egypt",
+    stars: 5,
     logo: "/clinets/sofitel-hurghada/logo.png",
     featured: "/clinets/sofitel-aswan/wallpaper.webp",
     rooms: [
@@ -642,6 +662,7 @@ export const featuredClients = [
     id: "cleopatra-sidi",
     name: "Cleopatra Sidi Heneish",
     region: "North Coast, Egypt",
+    stars: 5,
     logo: "/clinets/cleopatra-sharm/logo.png",
     featured: "/clinets/cleopatra-sidi/wallpaper.webp",
     rooms: [
@@ -656,6 +677,7 @@ export const featuredClients = [
     id: "rixos-magawish",
     name: "Rixos Magawish",
     region: "Hurghada, Egypt",
+    stars: 5,
     logo: "/clinets/rixos-sharm/logo1.png",
     featured: "/clinets/rixos-magawish/wallpaper.webp",
     rooms: [
@@ -672,6 +694,7 @@ export const featuredClients = [
     id: "the-red",
     name: "The Red Residence",
     region: "North Coast, Egypt",
+    stars: 5,
     logo: "/clinets/the-red/logo.png",
     featured: "/clinets/the-red/room-1.webp",
     rooms: [
@@ -680,6 +703,23 @@ export const featuredClients = [
       "/clinets/the-red/room-4.webp",
       "/clinets/the-red/room-5.webp",
       "/clinets/the-red/room-6.webp",
+    ],
+  },
+  {
+    id: "alamein-marassi",
+    name: "Alamein Hotel",
+    region: "North Coast, Egypt",
+    stars: 5,
+    logo: "/clinets/alamein-marassi/logo.png",
+    featured: "/clinets/alamein-marassi/wallpaper.webp",
+    rooms: [
+      "/clinets/alamein-marassi/alamein-marassi-room-1.webp",
+      "/clinets/alamein-marassi/alamein-marassi-room-2.webp",
+      "/clinets/alamein-marassi/alamein-marassi-room-3.webp",
+      "/clinets/alamein-marassi/alamein-marassi-room-4.webp",
+      "/clinets/alamein-marassi/alamein-marassi-room-5.webp",
+      "/clinets/alamein-marassi/alamein-marassi-room-6.webp",
+      "/clinets/alamein-marassi/alamein-marassi-room-7.webp",
     ],
   },
   {
@@ -697,6 +737,142 @@ export const featuredClients = [
       "/clinets/steigenberger-aldau/steigenberger-aldau-room-6.webp",
       "/clinets/steigenberger-aldau/steigenberger-aldau-room-7.webp",
       "/clinets/steigenberger-aldau/steigenberger-aldau-room-3.webp",
+    ],
+  },
+  {
+    id: "movenpick-madinah",
+    name: "Anwar Al Madinah Movenpick Hotel",
+    region: "Al Madinah, KSA",
+    stars: 5,
+    logo: "/clinets/movenpick-gouna/logo.png",
+    featured: "/clinets/movenpick-medinah/wallpaper.webp",
+    rooms: [
+      "/clinets/movenpick-medinah/movenpick-medinah-room-1.webp",
+      "/clinets/movenpick-medinah/movenpick-medinah-room-2.webp",
+      "/clinets/movenpick-medinah/movenpick-medinah-room-4.webp",
+      "/clinets/movenpick-medinah/movenpick-medinah-room-5.webp",
+      "/clinets/movenpick-medinah/movenpick-medinah-room-6.webp",
+      "/clinets/movenpick-medinah/movenpick-medinah-room-7.webp",
+      "/clinets/movenpick-medinah/movenpick-medinah-room-3.webp",
+    ],
+  },
+  {
+    id: "el-haram-madinah",
+    name: "Dar Al Eiman Al Haram Hotel",
+    region: "Al Madinah, KSA",
+    stars: 5,
+    logo: "/clinets/al-haram/logo.png",
+    featured: "/clinets/al-haram/wallpaper.webp",
+    rooms: [
+      "/clinets/al-haram/al-haram-room-1.webp",
+      "/clinets/al-haram/al-haram-room-2.webp",
+      "/clinets/al-haram/al-haram-room-4.webp",
+      "/clinets/al-haram/al-haram-room-5.webp",
+      "/clinets/al-haram/al-haram-room-6.webp",
+      "/clinets/al-haram/al-haram-room-7.webp",
+      "/clinets/al-haram/al-haram-room-3.webp",
+    ],
+  },
+  {
+    id: "movenpick-makkah",
+    name: "Movenpick Hotel & Residences Hajar Tower Makkah",
+    region: "Makkah, KSA",
+    stars: 5,
+    logo: "/clinets/movenpick-gouna/logo.png",
+    featured: "/clinets/movenpick-makkah/wallpaper.webp",
+    rooms: [
+      "/clinets/movenpick-makkah/movenpick-makkah-room-6.webp",
+
+      "/clinets/movenpick-makkah/movenpick-makkah-room-3.webp",
+      "/clinets/movenpick-makkah/movenpick-makkah-room-1.webp",
+      "/clinets/movenpick-makkah/movenpick-makkah-room-2.webp",
+      "/clinets/movenpick-makkah/movenpick-makkah-room-4.webp",
+      "/clinets/movenpick-makkah/movenpick-makkah-room-5.webp",
+
+      "/clinets/movenpick-makkah/movenpick-makkah-room-7.webp",
+    ],
+  },
+  {
+    id: "fanar-oman",
+    name: "Fanar Hotel and Residences",
+    region: "Salalah, Oman",
+    stars: 5,
+    logo: "/clinets/fanar-oman/logo.png",
+    featured: "/clinets/fanar-oman/wallpaper.webp",
+    rooms: [
+      "/clinets/fanar-oman/fanar-room-2.webp",
+      "/clinets/fanar-oman/fanar-room-3.webp",
+      "/clinets/fanar-oman/fanar-room-4.webp",
+      "/clinets/fanar-oman/fanar-room-5.webp",
+      "/clinets/fanar-oman/fanar-room-1.webp",
+    ],
+  },
+  {
+    id: "rotana-oman",
+    name: "Salalah Rotana Resort",
+    region: "Salalah, Oman",
+    stars: 5,
+    logo: "/clinets/rotana-sharm/logo.png",
+    featured: "/clinets/rotana-oman/wallpaper.webp",
+    rooms: [
+      "/clinets/rotana-oman/rotana-room-1.webp",
+      "/clinets/rotana-oman/rotana-room-2.webp",
+      "/clinets/rotana-oman/rotana-room-3.webp",
+      "/clinets/rotana-oman/rotana-room-4.webp",
+      "/clinets/rotana-oman/rotana-room-5.webp",
+      "/clinets/rotana-oman/rotana-room-6.webp",
+      "/clinets/rotana-oman/rotana-room-7.webp",
+    ],
+  },
+  {
+    id: "cove-oman",
+    name: "The Cove Rotana Resort",
+    region: "Ras Al Khaimah, UAE",
+    stars: 5,
+    logo: "/clinets/rotana-sharm/logo.png",
+    featured: "/clinets/cove-oman/wallpaper.webp",
+    rooms: [
+      "/clinets/cove-oman/cove-oman-room-1.webp",
+      "/clinets/cove-oman/cove-oman-room-2.webp",
+      "/clinets/cove-oman/cove-oman-room-3.webp",
+      "/clinets/cove-oman/cove-oman-room-4.webp",
+      "/clinets/cove-oman/cove-oman-room-5.webp",
+      "/clinets/cove-oman/cove-oman-room-6.webp",
+      "/clinets/cove-oman/cove-oman-room-7.webp",
+    ],
+  },
+  {
+    id: "kempinski-ksa",
+    name: "Kempinski Hotel & Resort Sariya Yanbu",
+    region: "Yanbu, KSA",
+    stars: 5,
+    logo: "/clinets/kempinski-yanbu/logo.png",
+    featured: "/clinets/kempinski-yanbu/wallpaper.webp",
+    rooms: [
+      "/clinets/kempinski-yanbu/kempinski-yanbu-room-1.webp",
+      "/clinets/kempinski-yanbu/kempinski-yanbu-room-2.webp",
+      "/clinets/kempinski-yanbu/kempinski-yanbu-room-3.webp",
+      "/clinets/kempinski-yanbu/kempinski-yanbu-room-4.webp",
+      "/clinets/kempinski-yanbu/kempinski-yanbu-room-5.webp",
+      "/clinets/kempinski-yanbu/kempinski-yanbu-room-6.webp",
+      "/clinets/kempinski-yanbu/kempinski-yanbu-room-7.webp",
+    ],
+  },
+  {
+    id: "fairmont-makkah",
+    name: "Makkah Clock Royal Tower, Fairmont Hotel",
+    region: "Makkah, KSA",
+    stars: 5,
+    logo: "/clinets/fairmont-makkah/logo.png",
+    featured: "/clinets/fairmont-makkah/wallpaper.webp",
+    rooms: [
+      "/clinets/fairmont-makkah/fairmont-makkah-room-1.webp",
+      "/clinets/fairmont-makkah/fairmont-makkah-room-2.webp",
+      "/clinets/fairmont-makkah/fairmont-makkah-room-3.webp",
+      "/clinets/fairmont-makkah/fairmont-makkah-room-4.webp",
+      "/clinets/fairmont-makkah/fairmont-makkah-room-5.webp",
+      "/clinets/fairmont-makkah/fairmont-makkah-room-6.webp",
+      "/clinets/fairmont-makkah/fairmont-makkah-room-7.webp",
     ],
   },
 ];
