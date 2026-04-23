@@ -40,7 +40,32 @@
     "label": "Our Collection",
     "title": "Crafted for Comfort",
     "description": "Explore our premium range of fabrics and furnishings, designed with the same quality trusted by luxury hotels worldwide.",
+    "heroTitle": "Design Your Perfect Piece",
+    "heroDescription": "Choose a category, configure every detail — fabric, colour, pattern, and more — then send us your vision. No two pieces are alike.",
+    "categoriesLabel": "Product Categories",
+    "categoriesTitle": "What Would You Like?",
+    "categoriesDescription": "Select a category to begin your bespoke configuration. Each piece is made to order.",
     "categories": {
+      "curtains": {
+        "name": "Curtains",
+        "description": "Bespoke curtains in hundreds of fabrics — sheer, blackout, velvet, linen, and more. Manual or remote-controlled."
+      },
+      "chairs": {
+        "name": "Chairs",
+        "description": "Fully custom chairs — choose your frame material, finish, filling firmness, and upholstery fabric."
+      },
+      "sofas": {
+        "name": "Sofas",
+        "description": "Bespoke sofas built from scratch. Select every element from the frame wood to the final fabric and pattern."
+      },
+      "bedSheets": {
+        "name": "Bed Sheets",
+        "description": "Premium bed linen in Egyptian cotton, silk, satin, and more — in any colour and pattern from our catalog."
+      },
+      "custom": {
+        "name": "Custom Solution",
+        "description": "Have something unique in mind? Describe your vision and our team will craft it exactly to your specification."
+      },
       "fabrics": {
         "name": "Premium Fabrics",
         "description": "Luxurious textiles sourced from the finest mills, available in a stunning range of textures, patterns, and colors."
@@ -52,14 +77,6 @@
       "pillows": {
         "name": "Luxury Pillows",
         "description": "Hotel-grade pillows engineered for the perfect night's sleep, using premium fills and breathable fabrics."
-      },
-      "sofas": {
-        "name": "Bespoke Sofas",
-        "description": "Custom-designed sofas built with precision craftsmanship, featuring premium upholstery and timeless designs."
-      },
-      "custom": {
-        "name": "Custom Solutions",
-        "description": "Tailored furnishing solutions for hotels and homes, designed to match your unique vision and requirements."
       }
     },
     "viewAll": "View All Products",
@@ -110,7 +127,7 @@
     },
     "info": {
       "address": "Cairo, Egypt",
-      "phone": "+20 123 456 789",
+      "phone": "+201100135925",
       "email": "info@kemcon.com",
       "hours": "Sunday - Thursday: 9:00 AM - 6:00 PM"
     }

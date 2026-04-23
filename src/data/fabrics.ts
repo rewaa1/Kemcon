@@ -1,0 +1,515 @@
+export interface FabricFamily {
+  id: string;
+  name: string;
+  nameAr: string;
+  gradient: string;
+}
+
+export interface Fabric {
+  id: string;
+  name: string;
+  nameAr: string;
+  familyId: string;
+  gradient: string;
+  image?: string;
+  description: string;
+  descriptionAr: string;
+}
+
+export const fabricFamilies: FabricFamily[] = [
+  {
+    id: "velvet",
+    name: "Velvet",
+    nameAr: "مخمل",
+    gradient: "linear-gradient(135deg, #3d1f3d 0%, #6b3a6b 40%, #4a2a4a 100%)",
+  },
+  {
+    id: "linen",
+    name: "Linen",
+    nameAr: "كتان",
+    gradient: "linear-gradient(135deg, #c8b99a 0%, #d9c9a8 50%, #c0a882 100%)",
+  },
+  {
+    id: "silk",
+    name: "Silk",
+    nameAr: "حرير",
+    gradient:
+      "linear-gradient(135deg, #e8ddd0 0%, #f5ede4 40%, #ddd0c0 70%, #f0e8dc 100%)",
+  },
+  {
+    id: "cotton",
+    name: "Cotton",
+    nameAr: "قطن",
+    gradient: "linear-gradient(135deg, #e8e4dc 0%, #f0ece4 50%, #dcd8d0 100%)",
+  },
+  {
+    id: "jacquard",
+    name: "Jacquard",
+    nameAr: "جاكار",
+    gradient:
+      "linear-gradient(135deg, #2c2c3e 0%, #3e3e58 30%, #2a2a40 60%, #4a4a68 100%)",
+  },
+  {
+    id: "chenille",
+    name: "Chenille",
+    nameAr: "شنيل",
+    gradient: "linear-gradient(135deg, #5c4a3a 0%, #7a6050 40%, #4e3e2e 100%)",
+  },
+  {
+    id: "brocade",
+    name: "Brocade",
+    nameAr: "بروكير",
+    gradient:
+      "linear-gradient(135deg, #3a2a1a 0%, #6a5030 30%, #8a7040 50%, #5a4020 80%, #3a2a1a 100%)",
+  },
+  {
+    id: "sheer",
+    name: "Sheer",
+    nameAr: "شفاف",
+    gradient:
+      "linear-gradient(135deg, rgba(240,238,234,0.6) 0%, rgba(255,253,250,0.8) 50%, rgba(235,232,228,0.5) 100%)",
+  },
+  {
+    id: "blackout",
+    name: "Blackout",
+    nameAr: "معتم",
+    gradient: "linear-gradient(135deg, #1a1a1a 0%, #2e2e2e 50%, #141414 100%)",
+  },
+  {
+    id: "wool",
+    name: "Wool",
+    nameAr: "صوف",
+    gradient: "linear-gradient(135deg, #8a7a6a 0%, #a09080 50%, #786858 100%)",
+  },
+  {
+    id: "suede",
+    name: "Suede",
+    nameAr: "سويدي",
+    gradient: "linear-gradient(135deg, #7a5a40 0%, #9a7a5a 50%, #6a4a30 100%)",
+  },
+  {
+    id: "synthetic",
+    name: "Synthetic Blend",
+    nameAr: "خليط صناعي",
+    gradient: "linear-gradient(135deg, #404858 0%, #586070 50%, #383f50 100%)",
+  },
+];
+
+export const fabrics: Fabric[] = [
+  // Velvet
+  {
+    id: "velvet-royal",
+    name: "Royal Velvet",
+    nameAr: "مخمل ملكي",
+    familyId: "velvet",
+    gradient: "linear-gradient(135deg, #3d1f3d 0%, #6b3a6b 50%, #3d1f3d 100%)",
+    image: "/fabrics/royal-velvet.png",
+    description: "Deep pile velvet with lustrous sheen",
+    descriptionAr: "مخمل بحبكة عميقة ولمعة فاخرة",
+  },
+  {
+    id: "velvet-crushed",
+    name: "Crushed Velvet",
+    nameAr: "مخمل مكسر",
+    familyId: "velvet",
+    gradient:
+      "linear-gradient(135deg, #4a2060 0%, #7a4090 30%, #5a2870 60%, #8a50a0 100%)",
+    image: "/fabrics/velvet-crushed.jpg",
+    description: "Textured crushed finish for dimension",
+    descriptionAr: "نسيج مكسر لإضافة عمق وبُعد",
+  },
+  {
+    id: "velvet-silk",
+    name: "Silk Velvet",
+    nameAr: "مخمل حريري",
+    familyId: "velvet",
+    gradient:
+      "linear-gradient(135deg, #2a1830 0%, #50305a 40%, #2a1830 70%, #3a2040 100%)",
+    image: "/fabrics/velvet-silk.jpg",
+    description: "Ultra-soft silk-velvet blend",
+    descriptionAr: "خليط مخمل حريري ناعم للغاية",
+  },
+  {
+    id: "velvet-cut",
+    name: "Cut Velvet",
+    nameAr: "مخمل مقطوع",
+    familyId: "velvet",
+    gradient:
+      "linear-gradient(135deg, #4a3050 0%, #6a4870 40%, #3a2040 70%, #5a3860 100%)",
+    image: "/fabrics/velvet-cut.jpg",
+    description: "Patterned cut pile for subtle motifs",
+    descriptionAr: "نسيج مقطوع بأنماط دقيقة رائعة",
+  },
+  {
+    id: "velvet-embossed",
+    name: "Embossed Velvet",
+    nameAr: "مخمل منقوش",
+    familyId: "velvet",
+    gradient: "linear-gradient(135deg, #5a2840 0%, #8a4868 40%, #4a1830 100%)",
+    image: "/fabrics/velvet-embossed.jpg",
+    description: "Heat-embossed geometric surface",
+    descriptionAr: "سطح هندسي منقوش بالحرارة",
+  },
+  // Linen
+  {
+    id: "linen-natural",
+    name: "Natural Linen",
+    nameAr: "كتان طبيعي",
+    familyId: "linen",
+    gradient: "linear-gradient(135deg, #c8b99a 0%, #d9c9a8 50%, #bfaa8a 100%)",
+    image: "/fabrics/linen-natural.jpg",
+    description: "Pure unbleached linen with natural texture",
+    descriptionAr: "كتان نقي طبيعي بنسيج أصيل",
+  },
+  {
+    id: "linen-washed",
+    name: "Stone-Washed Linen",
+    nameAr: "كتان مغسول",
+    familyId: "linen",
+    gradient: "linear-gradient(135deg, #b8a888 0%, #cbb898 50%, #a89878 100%)",
+    image: "/fabrics/linen-washed.jpg",
+    description: "Softened linen with relaxed, lived-in feel",
+    descriptionAr: "كتان مُلطَّف بإحساس مريح وعصري",
+  },
+  {
+    id: "linen-blend",
+    name: "Linen-Cotton Blend",
+    nameAr: "كتان قطن",
+    familyId: "linen",
+    gradient: "linear-gradient(135deg, #d0c0a0 0%, #e0d0b0 50%, #c8b890 100%)",
+    image: "/fabrics/linen-blend.jpg",
+    description: "Breathable linen-cotton for year-round use",
+    descriptionAr: "كتان قطن قابل للتنفس لجميع الفصول",
+  },
+  {
+    id: "linen-heavy",
+    name: "Heavy Linen",
+    nameAr: "كتان ثقيل",
+    familyId: "linen",
+    gradient: "linear-gradient(135deg, #b8a07a 0%, #c8b08a 50%, #a89070 100%)",
+    image: "/fabrics/linen-heavy.jpg",
+    description: "Dense heavyweight linen for drape curtains",
+    descriptionAr: "كتان ثقيل كثيف للستائر المتدلية",
+  },
+  // Silk
+  {
+    id: "silk-dupioni",
+    name: "Dupioni Silk",
+    nameAr: "حرير دوبيوني",
+    familyId: "silk",
+    gradient:
+      "linear-gradient(135deg, #f0e8d8 0%, #f8f0e8 30%, #e8d8c8 60%, #f4ece0 100%)",
+    image: "/fabrics/silk-dupioni.jpg",
+    description: "Crisp silk with distinctive texture",
+    descriptionAr: "حرير مقرمش بنسيج مميز وفريد",
+  },
+  {
+    id: "silk-satin",
+    name: "Silk Satin",
+    nameAr: "ساتان حريري",
+    familyId: "silk",
+    gradient:
+      "linear-gradient(135deg, #e8e0d0 0%, #f8f4ec 40%, #e0d8c8 80%, #f0eae0 100%)",
+    image: "/fabrics/silk-satin.jpg",
+    description: "Luminous satin weave for formal interiors",
+    descriptionAr: "نسيج ساتان لامع للديكورات الراقية",
+  },
+  {
+    id: "silk-taffeta",
+    name: "Silk Taffeta",
+    nameAr: "تافتا حريري",
+    familyId: "silk",
+    gradient: "linear-gradient(135deg, #dcd4c4 0%, #ece4d4 50%, #d0c8b8 100%)",
+    image: "/fabrics/silk-taffeta.jpg",
+    description: "Stiff, rustling silk for structured drapes",
+    descriptionAr: "حرير صلب مقرقع للستائر المنظمة",
+  },
+  {
+    id: "silk-charmeuse",
+    name: "Charmeuse Silk",
+    nameAr: "حرير شارمز",
+    familyId: "silk",
+    gradient: "linear-gradient(135deg, #f0e8dc 0%, #faf4ec 40%, #e8dfd0 100%)",
+    image: "/fabrics/silk-charmeuse.jpg",
+    description: "Fluid silk with back-satin finish",
+    descriptionAr: "حرير سائل بتشطيب ساتان من الخلف",
+  },
+  // Cotton
+  {
+    id: "cotton-egyptian",
+    name: "Egyptian Cotton",
+    nameAr: "قطن مصري",
+    familyId: "cotton",
+    gradient: "linear-gradient(135deg, #e8e4dc 0%, #f4f0e8 50%, #dcdcd8 100%)",
+    image: "/fabrics/cotton-egyptian.jpg",
+    description: "Premium long-staple Egyptian cotton",
+    descriptionAr: "قطن مصري فاخر طويل الألياف",
+  },
+  {
+    id: "cotton-percale",
+    name: "Percale Cotton",
+    nameAr: "قطن بيركال",
+    familyId: "cotton",
+    gradient: "linear-gradient(135deg, #ece8e0 0%, #f8f4ec 50%, #e0dcd4 100%)",
+    image: "/fabrics/cotton-percale.jpg",
+    description: "Crisp 200-thread count percale weave",
+    descriptionAr: "نسيج بيركال بـ 200 خيط للبوصة",
+  },
+  {
+    id: "cotton-sateen",
+    name: "Cotton Sateen",
+    nameAr: "قطن ساتان",
+    familyId: "cotton",
+    gradient: "linear-gradient(135deg, #e4e0d8 0%, #f0ece4 50%, #d8d4cc 100%)",
+    image: "/fabrics/cotton-sateen.jpg",
+    description: "Silky smooth sateen-woven cotton",
+    descriptionAr: "قطن ناعم منسوج بطريقة الساتان",
+  },
+  {
+    id: "cotton-twill",
+    name: "Cotton Twill",
+    nameAr: "قطن تويل",
+    familyId: "cotton",
+    gradient: "linear-gradient(135deg, #dcd8d0 0%, #e8e4dc 50%, #d0ccc4 100%)",
+    image: "/fabrics/cotton-twill.jpg",
+    description: "Durable diagonal-weave cotton twill",
+    descriptionAr: "قطن تويل متين بنسيج قطري",
+  },
+  // Jacquard
+  {
+    id: "jacquard-damask",
+    name: "Jacquard Damask",
+    nameAr: "جاكار دمشقي",
+    familyId: "jacquard",
+    gradient:
+      "linear-gradient(135deg, #2c2c3e 0%, #3e3e58 30%, #2a2a40 60%, #4a4a68 100%)",
+    image: "/fabrics/jacquard-damask.jpg",
+    description: "Reversible woven damask motifs",
+    descriptionAr: "نقوش دمشقية منسوجة قابلة للعكس",
+  },
+  {
+    id: "jacquard-floral",
+    name: "Floral Jacquard",
+    nameAr: "جاكار زهري",
+    familyId: "jacquard",
+    gradient:
+      "linear-gradient(135deg, #2a3040 0%, #404858 40%, #303848 70%, #4a5268 100%)",
+    image: "/fabrics/jacquard-floral.jpg",
+    description: "Intricate floral patterns woven in",
+    descriptionAr: "أنماط زهرية معقدة منسوجة بدقة",
+  },
+  {
+    id: "jacquard-geometric",
+    name: "Geometric Jacquard",
+    nameAr: "جاكار هندسي",
+    familyId: "jacquard",
+    gradient:
+      "linear-gradient(135deg, #383848 0%, #505068 40%, #303040 70%, #484860 100%)",
+    image: "/fabrics/jacquard-geometric.jpg",
+    description: "Bold geometric repeat patterns",
+    descriptionAr: "أنماط هندسية جريئة متكررة",
+  },
+  {
+    id: "jacquard-paisley",
+    name: "Paisley Jacquard",
+    nameAr: "جاكار بيزلي",
+    familyId: "jacquard",
+    gradient:
+      "linear-gradient(135deg, #30283a 0%, #484058 40%, #382848 70%, #504068 100%)",
+    image: "/fabrics/jacquard-paisley.jpg",
+    description: "Traditional paisley in luxury weave",
+    descriptionAr: "تقليدي بيزلي بنسيج فاخر",
+  },
+  // Chenille
+  {
+    id: "chenille-classic",
+    name: "Classic Chenille",
+    nameAr: "شنيل كلاسيكي",
+    familyId: "chenille",
+    gradient: "linear-gradient(135deg, #5c4a3a 0%, #7a6050 50%, #4e3e2e 100%)",
+    image: "/fabrics/chenille-classic.jpg",
+    description: "Soft, caterpillar-yarn chenille",
+    descriptionAr: "شنيل ناعم بخيط اليرقة التقليدي",
+  },
+  {
+    id: "chenille-striped",
+    name: "Striped Chenille",
+    nameAr: "شنيل مخطط",
+    familyId: "chenille",
+    gradient:
+      "linear-gradient(90deg, #5c4a3a 0%, #8a7060 16%, #5c4a3a 33%, #8a7060 50%, #5c4a3a 66%, #8a7060 83%, #5c4a3a 100%)",
+    image: "/fabrics/chenille-striped.jpg",
+    description: "Tonal chenille stripes for textured upholstery",
+    descriptionAr: "خطوط شنيل لتنجيد بتدرج لوني",
+  },
+  {
+    id: "chenille-microfiber",
+    name: "Microfiber Chenille",
+    nameAr: "شنيل مايكروفايبر",
+    familyId: "chenille",
+    gradient: "linear-gradient(135deg, #6a5848 0%, #8a7868 50%, #5a4838 100%)",
+    image: "/fabrics/chenille-microfiber.jpg",
+    description: "Ultra-soft microfiber chenille weave",
+    descriptionAr: "نسيج شنيل مايكروفايبر ناعم للغاية",
+  },
+  // Brocade
+  {
+    id: "brocade-gold",
+    name: "Gold Brocade",
+    nameAr: "بروكير ذهبي",
+    familyId: "brocade",
+    gradient:
+      "linear-gradient(135deg, #5a4010 0%, #9a7830 30%, #c8a840 50%, #8a6020 80%, #3a2a08 100%)",
+    image: "/fabrics/brocade-gold.jpg",
+    description: "Metallic gold thread woven brocade",
+    descriptionAr: "بروكير بخيوط ذهبية معدنية منسوجة",
+  },
+  {
+    id: "brocade-silver",
+    name: "Silver Brocade",
+    nameAr: "بروكير فضي",
+    familyId: "brocade",
+    gradient:
+      "linear-gradient(135deg, #505060 0%, #8890a0 30%, #a8b0c0 50%, #686878 80%, #404050 100%)",
+    image: "/fabrics/brocade-silver.jpg",
+    description: "Lustrous silver thread brocade",
+    descriptionAr: "بروكير فضي لامع بخيوط فضية",
+  },
+  {
+    id: "brocade-floral",
+    name: "Floral Brocade",
+    nameAr: "بروكير زهري",
+    familyId: "brocade",
+    gradient:
+      "linear-gradient(135deg, #4a3020 0%, #7a5830 30%, #9a7840 50%, #6a4828 80%, #3a2818 100%)",
+    image: "/fabrics/brocade-floral.jpg",
+    description: "Rich floral raised brocade patterns",
+    descriptionAr: "أنماط بروكير زهرية بارزة وغنية",
+  },
+  // Sheer
+  {
+    id: "sheer-voile",
+    name: "Voile Sheer",
+    nameAr: "فوال شفاف",
+    familyId: "sheer",
+    gradient:
+      "linear-gradient(135deg, rgba(248,244,238,0.7) 0%, rgba(255,252,248,0.9) 50%, rgba(240,236,230,0.6) 100%)",
+    description: "Delicate lightweight voile for soft light",
+    descriptionAr: "فوال خفيف رقيق لضوء ناعم وهادئ",
+  },
+  {
+    id: "sheer-organza",
+    name: "Organza Sheer",
+    nameAr: "أورغانزا شفاف",
+    familyId: "sheer",
+    gradient:
+      "linear-gradient(135deg, rgba(245,240,235,0.6) 0%, rgba(255,252,248,0.85) 50%, rgba(238,232,226,0.55) 100%)",
+    description: "Crisp organza with gentle shimmer",
+    descriptionAr: "أورغانزا مقرمشة ببريق خفيف",
+  },
+  {
+    id: "sheer-lace",
+    name: "Lace Sheer",
+    nameAr: "دانتيل شفاف",
+    familyId: "sheer",
+    gradient:
+      "linear-gradient(135deg, rgba(252,248,244,0.75) 0%, rgba(255,253,250,0.9) 50%, rgba(245,240,235,0.65) 100%)",
+    description: "Intricate lace pattern sheer panels",
+    descriptionAr: "لوحات شفافة بنمط دانتيل معقد",
+  },
+  // Blackout
+  {
+    id: "blackout-standard",
+    name: "Standard Blackout",
+    nameAr: "معتم قياسي",
+    familyId: "blackout",
+    gradient: "linear-gradient(135deg, #1a1a1a 0%, #2e2e2e 50%, #141414 100%)",
+    description: "100% light-blocking triple-weave fabric",
+    descriptionAr: "قماش ثلاثي النسيج يحجب الضوء 100%",
+  },
+  {
+    id: "blackout-thermal",
+    name: "Thermal Blackout",
+    nameAr: "معتم حراري",
+    familyId: "blackout",
+    gradient: "linear-gradient(135deg, #242424 0%, #383838 50%, #1c1c1c 100%)",
+    description: "Blackout with energy-saving thermal layer",
+    descriptionAr: "معتم بطبقة حرارية لتوفير الطاقة",
+  },
+  {
+    id: "blackout-lined",
+    name: "Lined Blackout",
+    nameAr: "معتم مبطن",
+    familyId: "blackout",
+    gradient: "linear-gradient(135deg, #202020 0%, #303030 50%, #181818 100%)",
+    description: "Fabric-faced blackout with lining",
+    descriptionAr: "معتم مبطن بوجه قماشي فاخر",
+  },
+  // Wool
+  {
+    id: "wool-bouclé",
+    name: "Bouclé Wool",
+    nameAr: "صوف بوكليه",
+    familyId: "wool",
+    gradient: "linear-gradient(135deg, #8a7a6a 0%, #a09080 50%, #786858 100%)",
+    description: "Looped textured bouclé for cozy upholstery",
+    descriptionAr: "نسيج صوف بوكليه للتنجيد المريح",
+  },
+  {
+    id: "wool-herringbone",
+    name: "Herringbone Wool",
+    nameAr: "صوف هيرينغبون",
+    familyId: "wool",
+    gradient:
+      "linear-gradient(135deg, #706050 0%, #90807a 30%, #604838 60%, #807060 100%)",
+    description: "Classic herringbone twill wool weave",
+    descriptionAr: "نسيج صوف هيرينغبون كلاسيكي",
+  },
+  {
+    id: "wool-felt",
+    name: "Felted Wool",
+    nameAr: "صوف مضغوط",
+    familyId: "wool",
+    gradient: "linear-gradient(135deg, #7a6858 0%, #988070 50%, #6a5848 100%)",
+    description: "Dense felted wool for insulating panels",
+    descriptionAr: "صوف مضغوط كثيف للألواح العازلة",
+  },
+  // Suede
+  {
+    id: "suede-microsuede",
+    name: "Microsuede",
+    nameAr: "مايكروسويدي",
+    familyId: "suede",
+    gradient: "linear-gradient(135deg, #7a5a40 0%, #9a7a5a 50%, #6a4a30 100%)",
+    description: "Ultra-fine microsuede for smooth finish",
+    descriptionAr: "مايكروسويدي ناعم بتشطيب لامع",
+  },
+  {
+    id: "suede-brushed",
+    name: "Brushed Suede",
+    nameAr: "سويدي مفروش",
+    familyId: "suede",
+    gradient: "linear-gradient(135deg, #8a6a50 0%, #aa8a6a 50%, #7a5a40 100%)",
+    description: "Brushed nap suede with tactile warmth",
+    descriptionAr: "سويدي مفروش بدفء ملمسي مميز",
+  },
+  // Synthetic
+  {
+    id: "synthetic-polyester",
+    name: "Performance Polyester",
+    nameAr: "بوليستر عالي الأداء",
+    familyId: "synthetic",
+    gradient: "linear-gradient(135deg, #404858 0%, #586070 50%, #383f50 100%)",
+    description: "Durable, stain-resistant polyester blend",
+    descriptionAr: "بوليستر متين مقاوم للبقع",
+  },
+  {
+    id: "synthetic-acrylic",
+    name: "Acrylic Velour",
+    nameAr: "مخمل أكريليك",
+    familyId: "synthetic",
+    gradient: "linear-gradient(135deg, #485060 0%, #606878 50%, #404858 100%)",
+    description: "Soft acrylic velour with wool-like feel",
+    descriptionAr: "مخمل أكريليك ناعم يشبه الصوف",
+  },
+];
