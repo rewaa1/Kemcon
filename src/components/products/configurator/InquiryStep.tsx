@@ -51,7 +51,11 @@ export function InquiryStep({
       if (filling) lines.push(`Filling: ${filling.name}`);
     }
     if (state.inquiryNotes) lines.push(`Notes: ${state.inquiryNotes}`);
-    if (state.aiImageUrl) lines.push(`AI Preview: ${state.aiImageUrl}`);
+    if (state.aiImageUrl) lines.push(`AI Room View: ${state.aiImageUrl}`);
+    if (state.aiDetailImageUrl) lines.push(`AI Fabric Detail: ${state.aiDetailImageUrl}`);
+    if (state.inspirationImages.length) {
+      lines.push(`Inspiration References: ${state.inspirationImages.map((src) => `https://kemcon.vercel.app${src}`).join(", ")}`);
+    }
     return lines.join("\n");
   };
 
@@ -200,6 +204,28 @@ export function InquiryStep({
               </div>
             </div>
           )}
+
+          {/* Inspiration gallery thumbnails */}
+          {state.inspirationImages.length > 0 && (
+            <div className="pt-3 border-t border-[var(--color-deep-accent)]/15 space-y-2">
+              <p className="text-xs font-medium text-[var(--color-text)]">
+                {isAr ? "صور الإلهام المختارة" : "Selected Inspiration"}
+                <span className="ml-1.5 text-[10px] text-[var(--color-text-muted)]">
+                  ({isAr ? `${state.inspirationImages.length} صور` : `${state.inspirationImages.length} images`})
+                </span>
+              </p>
+              <div className="flex gap-2 flex-wrap">
+                {state.inspirationImages.map((src) => (
+                  <div key={src} className="w-12 h-12 rounded-sm overflow-hidden border border-[var(--color-deep-accent)]/20 flex-shrink-0">
+                    <img src={src} alt="Inspiration" className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+              <p className="text-[10px] text-[var(--color-text-muted)]">
+                {isAr ? "ستُرسل مراجع هذه الصور مع استفسارك" : "References included with your inquiry"}
+              </p>
+            </div>
+          )}
         </div>
       )}
 
@@ -280,7 +306,7 @@ export function InquiryStep({
 
         {/* WhatsApp */}
         <motion.a
-          href={isFormValid ? `https://wa.me/201100135925?text=${buildWhatsAppMessage()}` : undefined}
+          href={isFormValid ? `https://wa.me/201223122276?text=${buildWhatsAppMessage()}` : undefined}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => isFormValid && setWhatsappSent(true)}

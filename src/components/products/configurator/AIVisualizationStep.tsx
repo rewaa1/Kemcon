@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, RefreshCw, ArrowRight, ArrowLeft } from "lucide-react";
+import { Sparkles, RefreshCw, ArrowRight, ArrowLeft, Images } from "lucide-react";
 import { fabrics, fabricFamilies } from "@/data/fabrics";
 import { colors } from "@/data/colors";
 import { patterns } from "@/data/patterns";
 import type { ConfiguratorState } from "@/types/configurator";
+import { InspirationGallery } from "@/components/shared/InspirationGallery";
 
 const FABRIC_VISUALS: Record<string, string> = {
   velvet: "rich pile velvet with deep light absorption and lustrous sheen",
@@ -45,6 +46,7 @@ interface AIVisualizationStepProps {
 
 type TabGenState = "idle" | "loading" | "done" | "error";
 type Tab = "room" | "detail";
+type Mode = "ai" | "gallery";
 
 export function AIVisualizationStep({
   state,
@@ -53,6 +55,7 @@ export function AIVisualizationStep({
   onNext,
 }: AIVisualizationStepProps) {
   const isAr = locale === "ar";
+  const [mode, setMode] = useState<Mode | null>(null);
 
   const [activeTab, setActiveTab] = useState<Tab>("room");
   const [roomState, setRoomState] = useState<TabGenState>("idle");
@@ -128,9 +131,9 @@ export function AIVisualizationStep({
     try {
       const { blobUrl, pollinationsUrl } = await fetchImage(buildDetailPrompt(), Math.floor(Math.random() * 9999999));
       setDetailUrl(blobUrl);
-      // Room view takes priority as the shared URL; detail only becomes primary if room was never generated
-      if (!roomUrl) onChange({ aiImageUrl: pollinationsUrl, aiDisplayUrl: blobUrl });
-      else onChange({ aiDisplayUrl: blobUrl });
+      // Always store detail URL; room view takes priority for the display thumbnail
+      if (!roomUrl) onChange({ aiDetailImageUrl: pollinationsUrl, aiDisplayUrl: blobUrl });
+      else onChange({ aiDetailImageUrl: pollinationsUrl });
       setDetailState("done");
     } catch {
       setDetailState("error");
@@ -138,6 +141,13 @@ export function AIVisualizationStep({
   };
 
   const anyDone = roomState === "done" || detailState === "done";
+
+  const toggleInspirationImage = (src: string) => {
+    const next = state.inspirationImages.includes(src)
+      ? state.inspirationImages.filter((s) => s !== src)
+      : [...state.inspirationImages, src];
+    onChange({ inspirationImages: next });
+  };
 
   const tabs: { id: Tab; label: string; labelAr: string }[] = [
     { id: "room", label: "Room View", labelAr: "منظر الغرفة" },
@@ -149,17 +159,147 @@ export function AIVisualizationStep({
   const tabRegen = activeTab === "room" ? roomRegen : detailRegen;
   const onGenerate = activeTab === "room" ? generateRoom : generateDetail;
 
+  if (!mode) {
+    return (
+      <div className="space-y-8 max-w-2xl mx-auto">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-heading)]">
+            {isAr ? "تصوّر تصميمك" : "Visualize Your Design"}
+          </h2>
+          <p className="text-[var(--color-text-muted)] text-sm">
+            {isAr
+              ? "اختر طريقة لاستلهام تصميمك"
+              : "Choose how you'd like to explore your design"}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <motion.button
+            onClick={() => setMode("ai")}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex flex-col items-center gap-4 p-8 rounded-sm border border-[var(--color-deep-accent)]/30 hover:border-[var(--color-accent)]/60 bg-[var(--color-surface)] transition-all duration-200 text-center group"
+          >
+            <div className="w-12 h-12 rounded-full bg-[var(--color-accent)]/10 flex items-center justify-center group-hover:bg-[var(--color-accent)]/20 transition-colors">
+              <Sparkles size={22} className="text-[var(--color-accent)]" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-[var(--color-heading)]">
+                {isAr ? "توليد بالذكاء الاصطناعي" : "AI Generation"}
+              </p>
+              <p className="text-xs text-[var(--color-text-muted)]">
+                {isAr
+                  ? "شاهد ستائرك في غرفة فاخرة مُولَّدة بالذكاء الاصطناعي"
+                  : "See your curtains in an AI-generated luxury room"}
+              </p>
+            </div>
+          </motion.button>
+
+          <motion.button
+            onClick={() => setMode("gallery")}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex flex-col items-center gap-4 p-8 rounded-sm border border-[var(--color-deep-accent)]/30 hover:border-[var(--color-accent)]/60 bg-[var(--color-surface)] transition-all duration-200 text-center group"
+          >
+            <div className="w-12 h-12 rounded-full bg-[var(--color-accent)]/10 flex items-center justify-center group-hover:bg-[var(--color-accent)]/20 transition-colors">
+              <Images size={22} className="text-[var(--color-accent)]" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-[var(--color-heading)]">
+                {isAr ? "استلهم من مشاريعنا" : "Browse Our Portfolio"}
+              </p>
+              <p className="text-xs text-[var(--color-text-muted)]">
+                {isAr
+                  ? "اختر صورًا من فنادق نفّذناها كمرجع لتصميمك"
+                  : "Pick photos from hotels we've furnished as design inspiration"}
+              </p>
+            </div>
+          </motion.button>
+        </div>
+
+        <div className="text-center">
+          <button
+            onClick={onNext}
+            className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
+          >
+            {isAr ? "تخطي ←" : "Skip this step →"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (mode === "gallery") {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-heading)]">
+              {isAr ? "استلهم من مشاريعنا" : "Browse Our Portfolio"}
+            </h2>
+            <p className="text-[var(--color-text-muted)] text-sm">
+              {isAr
+                ? "اختر حتى 5 صور كمرجع لتصميمك — ستُضاف إلى استفسارك"
+                : "Select up to 5 images as design references — they'll be included in your inquiry"}
+            </p>
+          </div>
+          <button
+            onClick={() => setMode(null)}
+            className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2 shrink-0 ml-4"
+          >
+            {isAr ? "← رجوع" : "← Back"}
+          </button>
+        </div>
+
+        <InspirationGallery
+          selected={state.inspirationImages}
+          onSelect={toggleInspirationImage}
+          maxSelect={5}
+          isAr={isAr}
+        />
+
+        <div className={`flex items-center ${state.inspirationImages.length > 0 ? "justify-between" : "justify-center"} pt-2`}>
+          <button
+            onClick={onNext}
+            className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
+          >
+            {isAr ? "تخطي ←" : "Skip →"}
+          </button>
+          {state.inspirationImages.length > 0 && (
+            <motion.button
+              onClick={onNext}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-sm font-semibold hover:bg-[var(--color-accent-hover)] transition-colors ${isAr ? "flex-row-reverse" : ""}`}
+            >
+              {isAr ? `التالي (${state.inspirationImages.length} صور)` : `Continue (${state.inspirationImages.length} selected)`}
+              {isAr ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
+            </motion.button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-heading)]">
-          {isAr ? "شاهد ستائرك" : "See Your Curtains"}
-        </h2>
-        <p className="text-[var(--color-text-muted)] text-sm">
-          {isAr
-            ? "اختر المشهد الذي تريد توليده"
-            : "Choose a view to generate — each takes about 15 seconds"}
-        </p>
+      <div className="flex items-start justify-between">
+        <div className="text-center flex-1 space-y-2">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-heading)]">
+            {isAr ? "شاهد ستائرك" : "See Your Curtains"}
+          </h2>
+          <p className="text-[var(--color-text-muted)] text-sm">
+            {isAr
+              ? "اختر المشهد الذي تريد توليده"
+              : "Choose a view to generate — each takes about 15 seconds"}
+          </p>
+        </div>
+        <button
+          onClick={() => setMode(null)}
+          className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2 shrink-0 mt-1"
+        >
+          {isAr ? "← رجوع" : "← Back"}
+        </button>
       </div>
 
       {/* Specs recap */}

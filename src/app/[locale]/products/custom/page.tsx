@@ -1,10 +1,8 @@
-"use client";
-
-import { useLocale } from "next-intl";
+import { getLocale } from "next-intl/server";
 import { ConfiguratorShell } from "@/components/products/configurator/ConfiguratorShell";
 
-export default function CustomPage() {
-  const locale = useLocale();
+export default async function CustomPage() {
+  const locale = await getLocale();
   const isAr = locale === "ar";
 
   return (

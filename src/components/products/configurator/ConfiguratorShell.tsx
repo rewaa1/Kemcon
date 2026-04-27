@@ -26,6 +26,8 @@ interface ConfiguratorShellProps {
   category: CategoryType;
   categoryLabel: string;
   locale: string;
+  initialFabricId?: string;
+  initialFabricFamilyId?: string;
 }
 
 function canProceed(
@@ -59,11 +61,19 @@ export function ConfiguratorShell({
   category,
   categoryLabel,
   locale,
+  initialFabricId,
+  initialFabricFamilyId,
 }: ConfiguratorShellProps) {
   const isAr = locale === "ar";
   const steps = CATEGORY_STEPS[category];
   const [currentStep, setCurrentStep] = useState(0);
-  const [state, setState] = useState<ConfiguratorState>(initialConfiguratorState);
+  const [state, setState] = useState<ConfiguratorState>({
+    ...initialConfiguratorState,
+    ...(initialFabricId && {
+      fabricId: initialFabricId,
+      fabricFamilyId: initialFabricFamilyId ?? null,
+    }),
+  });
   const [direction, setDirection] = useState<1 | -1>(1);
 
   const currentStepId = steps[currentStep];
@@ -91,7 +101,7 @@ export function ConfiguratorShell({
     // Clear the AI image if jumping back before the preview step
     const previewIndex = steps.indexOf("aiVisualization");
     if (previewIndex !== -1 && index < previewIndex) {
-      setState((prev) => ({ ...prev, aiImageUrl: null, aiDisplayUrl: null }));
+      setState((prev) => ({ ...prev, aiImageUrl: null, aiDetailImageUrl: null, aiDisplayUrl: null }));
     }
     setDirection(-1);
     setCurrentStep(index);

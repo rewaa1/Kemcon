@@ -1,17 +1,22 @@
-"use client";
-
-import { useLocale } from "next-intl";
+import { getLocale } from "next-intl/server";
 import { ConfiguratorShell } from "@/components/products/configurator/ConfiguratorShell";
 
-export default function ChairsPage() {
-  const locale = useLocale();
+interface PageProps {
+  searchParams: Promise<{ fabric?: string; fabricFamily?: string }>;
+}
+
+export default async function ChairsPage({ searchParams }: PageProps) {
+  const locale = await getLocale();
   const isAr = locale === "ar";
+  const { fabric, fabricFamily } = await searchParams;
 
   return (
     <ConfiguratorShell
       category="chairs"
       categoryLabel={isAr ? "كراسي" : "Chairs"}
       locale={locale}
+      initialFabricId={fabric}
+      initialFabricFamilyId={fabricFamily}
     />
   );
 }

@@ -36,8 +36,11 @@ export interface ConfiguratorState {
   // Custom
   customDescription: string;
   // AI Visualization
-  aiImageUrl: string | null;    // real Pollinations URL — included in inquiry messages
-  aiDisplayUrl: string | null;  // blob URL — used only for in-browser thumbnail display
+  aiImageUrl: string | null;       // room view Pollinations URL — included in inquiry messages
+  aiDetailImageUrl: string | null; // fabric detail Pollinations URL — included in inquiry messages
+  aiDisplayUrl: string | null;     // blob URL — used only for in-browser thumbnail display
+  // Portfolio inspiration
+  inspirationImages: string[];
   // Inquiry
   inquiryName: string;
   inquiryPhone: string;
@@ -60,7 +63,9 @@ export const initialConfiguratorState: ConfiguratorState = {
   fillingId: null,
   customDescription: "",
   aiImageUrl: null,
+  aiDetailImageUrl: null,
   aiDisplayUrl: null,
+  inspirationImages: [],
   inquiryName: "",
   inquiryPhone: "",
   inquiryEmail: "",
