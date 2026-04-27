@@ -51,6 +51,7 @@ export function InquiryStep({
       if (filling) lines.push(`Filling: ${filling.name}`);
     }
     if (state.inquiryNotes) lines.push(`Notes: ${state.inquiryNotes}`);
+    if (state.aiImageUrl) lines.push(`AI Preview: ${state.aiImageUrl}`);
     return lines.join("\n");
   };
 
@@ -178,6 +179,27 @@ export function InquiryStep({
               </div>
             ))}
           </div>
+
+          {/* AI visualization thumbnail */}
+          {state.aiDisplayUrl && (
+            <div className="pt-3 border-t border-[var(--color-deep-accent)]/15 flex items-center gap-4">
+              <div className="w-14 h-20 rounded-sm overflow-hidden border border-[var(--color-deep-accent)]/20 flex-shrink-0">
+                <img
+                  src={state.aiDisplayUrl}
+                  alt="AI curtain preview"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-[var(--color-text)]">
+                  {isAr ? "المعاينة التوليدية" : "AI Preview"}
+                </p>
+                <p className="text-[10px] text-[var(--color-text-muted)] mt-0.5">
+                  {isAr ? "سيتم إرفاق الصورة مع استفسارك" : "Included with your inquiry"}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

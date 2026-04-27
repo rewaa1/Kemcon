@@ -19,6 +19,7 @@ import { CurtainOptionsStep } from "./CurtainOptionsStep";
 import { ChairOptionsStep } from "./ChairOptionsStep";
 import { CustomDescriptionStep } from "./CustomDescriptionStep";
 import { InquiryStep } from "./InquiryStep";
+import { AIVisualizationStep } from "./AIVisualizationStep";
 import { SelectionBar } from "../SelectionBar";
 
 interface ConfiguratorShellProps {
@@ -45,6 +46,8 @@ function canProceed(
       return !!(state.frameMaterialId && state.frameFinishId && state.fillingId);
     case "customDescription":
       return state.customDescription.trim().length > 10;
+    case "aiVisualization":
+      return true;
     case "inquiry":
       return true;
     default:
@@ -83,6 +86,17 @@ export function ConfiguratorShell({
     setCurrentStep((s) => Math.max(s - 1, 0));
   };
 
+  const goToStep = (index: number) => {
+    if (index >= currentStep) return;
+    // Clear the AI image if jumping back before the preview step
+    const previewIndex = steps.indexOf("aiVisualization");
+    if (previewIndex !== -1 && index < previewIndex) {
+      setState((prev) => ({ ...prev, aiImageUrl: null, aiDisplayUrl: null }));
+    }
+    setDirection(-1);
+    setCurrentStep(index);
+  };
+
   const renderStep = () => {
     switch (currentStepId) {
       case "fabric":
@@ -104,6 +118,15 @@ export function ConfiguratorShell({
         );
       case "customDescription":
         return <CustomDescriptionStep state={state} onChange={handleChange} locale={locale} />;
+      case "aiVisualization":
+        return (
+          <AIVisualizationStep
+            state={state}
+            onChange={handleChange}
+            locale={locale}
+            onNext={goNext}
+          />
+        );
       case "inquiry":
         return (
           <InquiryStep
@@ -146,7 +169,7 @@ export function ConfiguratorShell({
           <span className="text-sm font-semibold text-[var(--color-heading)]">{categoryLabel}</span>
           <div className="w-24" />
         </div>
-        <StepIndicator steps={steps} currentStep={currentStep} locale={locale} />
+        <StepIndicator steps={steps} currentStep={currentStep} locale={locale} onStepClick={goToStep} />
       </div>
 
       {/* Step content */}
@@ -167,7 +190,7 @@ export function ConfiguratorShell({
       </div>
 
       {/* Navigation */}
-      {currentStepId !== "inquiry" && (
+      {currentStepId !== "inquiry" && currentStepId !== "aiVisualization" && (
         <div className="fixed bottom-24 inset-x-0 z-30 pointer-events-none">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className={`flex ${isAr ? "flex-row-reverse" : "flex-row"} items-center justify-between pointer-events-auto`}>

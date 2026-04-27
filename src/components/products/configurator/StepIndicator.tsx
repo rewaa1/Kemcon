@@ -10,6 +10,7 @@ const STEP_LABELS: Record<StepType, { en: string; ar: string }> = {
   pattern: { en: "Pattern", ar: "النمط" },
   curtainOptions: { en: "Options", ar: "الخيارات" },
   chairOptions: { en: "Frame & Fill", ar: "الإطار والحشو" },
+  aiVisualization: { en: "Preview", ar: "معاينة" },
   inquiry: { en: "Inquiry", ar: "الاستفسار" },
   customDescription: { en: "Describe", ar: "الوصف" },
 };
@@ -18,9 +19,10 @@ interface StepIndicatorProps {
   steps: StepType[];
   currentStep: number;
   locale: string;
+  onStepClick?: (index: number) => void;
 }
 
-export function StepIndicator({ steps, currentStep, locale }: StepIndicatorProps) {
+export function StepIndicator({ steps, currentStep, locale, onStepClick }: StepIndicatorProps) {
   const isAr = locale === "ar";
 
   return (
@@ -29,18 +31,22 @@ export function StepIndicator({ steps, currentStep, locale }: StepIndicatorProps
         {steps.map((step, index) => {
           const isCompleted = index < currentStep;
           const isActive = index === currentStep;
+          const isClickable = isCompleted && onStepClick;
           const label = STEP_LABELS[step][isAr ? "ar" : "en"];
 
           return (
             <div key={step} className="flex items-center">
               {/* Step circle + label */}
-              <div className="flex flex-col items-center gap-2">
+              <div
+                className={`flex flex-col items-center gap-2 ${isClickable ? "cursor-pointer group" : ""}`}
+                onClick={() => isClickable && onStepClick(index)}
+              >
                 <motion.div
                   className={`
                     relative w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold
                     transition-colors duration-300 border
                     ${isCompleted
-                      ? "bg-[var(--color-accent)] border-[var(--color-accent)] text-[var(--color-dark)]"
+                      ? "bg-[var(--color-accent)] border-[var(--color-accent)] text-[var(--color-dark)] group-hover:opacity-80"
                       : isActive
                       ? "bg-transparent border-[var(--color-accent)] text-[var(--color-accent)]"
                       : "bg-transparent border-[var(--color-deep-accent)]/40 text-[var(--color-text-muted)]"
@@ -61,7 +67,7 @@ export function StepIndicator({ steps, currentStep, locale }: StepIndicatorProps
                     isActive
                       ? "text-[var(--color-accent)]"
                       : isCompleted
-                      ? "text-[var(--color-text)]"
+                      ? "text-[var(--color-text)] group-hover:text-[var(--color-accent)]"
                       : "text-[var(--color-text-muted)]"
                   }`}
                 >

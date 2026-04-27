@@ -6,11 +6,12 @@ export type StepType =
   | "pattern"
   | "curtainOptions"
   | "chairOptions"
+  | "aiVisualization"
   | "inquiry"
   | "customDescription";
 
 export const CATEGORY_STEPS: Record<CategoryType, StepType[]> = {
-  curtains: ["fabric", "color", "pattern", "curtainOptions", "inquiry"],
+  curtains: ["fabric", "color", "pattern", "curtainOptions", "aiVisualization", "inquiry"],
   chairs: ["fabric", "color", "pattern", "chairOptions", "inquiry"],
   sofas: ["fabric", "color", "pattern", "chairOptions", "inquiry"],
   "bed-sheets": ["fabric", "color", "pattern", "inquiry"],
@@ -34,6 +35,9 @@ export interface ConfiguratorState {
   fillingId: string | null;
   // Custom
   customDescription: string;
+  // AI Visualization
+  aiImageUrl: string | null;    // real Pollinations URL — included in inquiry messages
+  aiDisplayUrl: string | null;  // blob URL — used only for in-browser thumbnail display
   // Inquiry
   inquiryName: string;
   inquiryPhone: string;
@@ -55,6 +59,8 @@ export const initialConfiguratorState: ConfiguratorState = {
   frameFinishId: null,
   fillingId: null,
   customDescription: "",
+  aiImageUrl: null,
+  aiDisplayUrl: null,
   inquiryName: "",
   inquiryPhone: "",
   inquiryEmail: "",
