@@ -12,7 +12,7 @@ export default function HomePage() {
       <AboutPreview />
       <ProductHighlights />
       <WhyKemcon />
-      <ClientsShowcase />
+      {/* <ClientsShowcase /> */}
       <CTABanner />
     </div>
   );

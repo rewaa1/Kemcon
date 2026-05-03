@@ -6,7 +6,7 @@ import { Sparkles, RefreshCw, ArrowRight, ArrowLeft, Images } from "lucide-react
 import { fabrics, fabricFamilies } from "@/data/fabrics";
 import { colors } from "@/data/colors";
 import { patterns } from "@/data/patterns";
-import type { ConfiguratorState } from "@/types/configurator";
+import type { CategoryType, ConfiguratorState } from "@/types/configurator";
 import { InspirationGallery } from "@/components/shared/InspirationGallery";
 
 const FABRIC_VISUALS: Record<string, string> = {
@@ -42,6 +42,7 @@ interface AIVisualizationStepProps {
   onChange: (updates: Partial<ConfiguratorState>) => void;
   locale: string;
   onNext: () => void;
+  category: CategoryType;
 }
 
 type TabGenState = "idle" | "loading" | "done" | "error";
@@ -53,6 +54,7 @@ export function AIVisualizationStep({
   onChange,
   locale,
   onNext,
+  category,
 }: AIVisualizationStepProps) {
   const isAr = locale === "ar";
   const [mode, setMode] = useState<Mode | null>(null);
@@ -76,26 +78,40 @@ export function AIVisualizationStep({
 
   const NEGATIVE = "blurry, low quality, cartoon, illustration, watermark, ugly, distorted, oversaturated, deformed, text, logo";
 
-  const buildRoomPrompt = () =>
-    [
-      "editorial interior design photograph",
-      `luxury penthouse living room with floor-to-ceiling ${fabricVisual} curtains`,
-      `${patternVisual} in ${colorName}`,
-      "tall ceilings with crown molding, marble floors",
-      "warm golden afternoon light streaming through windows",
-      "sophisticated furniture, high-end interior styling",
-      "shot on Canon EOS R5, 35mm lens, f/2.8",
-      "no people, 8K ultra-detailed",
+  const buildRoomPrompt = () => {
+    const base = "photorealistic interior design photograph";
+    const outro = "no people, ultra-detailed, hyperrealistic";
+    if (category === "chairs") {
+      return [
+        base,
+        `luxury hotel suite featuring an armchair upholstered in ${colorName} ${fabricVisual} ${patternVisual}`,
+        "armchair is the clear focal point, warm golden afternoon light, refined hotel setting",
+        outro,
+      ].join(", ");
+    }
+    if (category === "sofas") {
+      return [
+        base,
+        `luxury hotel lounge featuring a sofa upholstered in ${colorName} ${fabricVisual} ${patternVisual}`,
+        "sofa is the clear focal point filling the frame, warm golden afternoon light, grand hotel interior",
+        outro,
+      ].join(", ");
+    }
+    return [
+      base,
+      `luxury hotel suite with floor-to-ceiling ${colorName} ${fabricVisual} curtains ${patternVisual}`,
+      "curtains are the clear focal point filling the frame, beautifully gathered with natural flowing drape",
+      "tall arched windows, warm golden afternoon light, understated elegant interior",
+      outro,
     ].join(", ");
+  };
 
   const buildDetailPrompt = () =>
     [
-      "luxury textile macro photography",
-      `close-up of ${fabricVisual} ${patternVisual} in ${colorName}`,
-      "soft directional studio lighting highlighting fabric texture and natural drape",
-      "shot on Canon EOS R5, 100mm macro lens, f/4",
-      "crisp fabric detail, professional product photography",
-      "no people, 8K ultra-detailed",
+      "professional textile product photography",
+      `extreme close-up of ${colorName} ${fabricVisual} ${patternVisual}`,
+      "sharp crisp fabric texture, soft even studio lighting, gentle natural drape folds",
+      "neutral background, no people, ultra-detailed, hyperrealistic",
     ].join(", ");
 
   const fetchImage = async (prompt: string, seed: number) => {
@@ -189,7 +205,15 @@ export function AIVisualizationStep({
               </p>
               <p className="text-xs text-[var(--color-text-muted)]">
                 {isAr
-                  ? "شاهد ستائرك في غرفة فاخرة مُولَّدة بالذكاء الاصطناعي"
+                  ? category === "chairs"
+                    ? "شاهد كرسيك في غرفة فاخرة مُولَّدة بالذكاء الاصطناعي"
+                    : category === "sofas"
+                    ? "شاهد أريكتك في غرفة فاخرة مُولَّدة بالذكاء الاصطناعي"
+                    : "شاهد ستائرك في غرفة فاخرة مُولَّدة بالذكاء الاصطناعي"
+                  : category === "chairs"
+                  ? "See your chair in an AI-generated luxury room"
+                  : category === "sofas"
+                  ? "See your sofa in an AI-generated luxury room"
                   : "See your curtains in an AI-generated luxury room"}
               </p>
             </div>
@@ -286,7 +310,17 @@ export function AIVisualizationStep({
       <div className="flex items-start justify-between">
         <div className="text-center flex-1 space-y-2">
           <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-heading)]">
-            {isAr ? "شاهد ستائرك" : "See Your Curtains"}
+            {isAr
+              ? category === "chairs"
+                ? "شاهد كرسيك"
+                : category === "sofas"
+                ? "شاهد أريكتك"
+                : "شاهد ستائرك"
+              : category === "chairs"
+              ? "See Your Chair"
+              : category === "sofas"
+              ? "See Your Sofa"
+              : "See Your Curtains"}
           </h2>
           <p className="text-[var(--color-text-muted)] text-sm">
             {isAr

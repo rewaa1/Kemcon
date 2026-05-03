@@ -4,6 +4,7 @@ import { getMessages, getTranslations } from "next-intl/server";
 import { LenisProvider } from "@/components/providers/LenisProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { SITE_URL, pageAlternates } from "@/lib/metadata";
 
 export async function generateMetadata({
   params,
@@ -14,14 +15,13 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "meta" });
 
   return {
-    title: t("title"),
-    description: t("description"),
-    alternates: {
-      languages: {
-        en: "/en",
-        ar: "/ar",
-      },
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: t("title"),
+      template: `%s | ${t("brand")}`,
     },
+    description: t("description"),
+    alternates: pageAlternates(locale, ""),
   };
 }
 

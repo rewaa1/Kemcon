@@ -8,23 +8,27 @@ import { StaggerContainer, staggerItem } from "@/components/motion/StaggerContai
 const productImages = [
   {
     key: "fabrics",
-    image: "https://images.unsplash.com/photo-1622372738946-62e02505feb3?q=80&w=800&auto=format&fit=crop",
+    image: "/cards/fabrics.jpg",
   },
   {
     key: "cushions",
-    image: "https://images.unsplash.com/photo-1621293954908-907159247fc8?q=80&w=800&auto=format&fit=crop",
+    image: "/cards/cushions.jpg",
   },
   {
     key: "pillows",
-    image: "https://images.unsplash.com/photo-1630587148265-761cbd139043?q=80&w=800&auto=format&fit=crop",
+    image: "/cards/bed.jpg",
   },
   {
     key: "sofas",
-    image: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=800&auto=format&fit=crop",
+    image: "/cards/sofa.jpg",
+  },
+  {
+    key: "chairs",
+    image: "/cards/chair.jpg",
   },
   {
     key: "custom",
-    image: "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?q=80&w=800&auto=format&fit=crop",
+    image: "/cards/custom.jpg",
   },
 ];
 

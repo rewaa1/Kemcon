@@ -1,7 +1,62 @@
 {
   "meta": {
+    "brand": "Kemcon",
     "title": "Kemcon — Premium Fabrics & Furnishings",
-    "description": "Discover Kemcon's premium collection of fabrics, cushions, pillows, and sofas — trusted by luxury hotels across the Middle East."
+    "description": "Discover Kemcon's premium collection of fabrics, cushions, pillows, and sofas — trusted by luxury hotels across the Middle East.",
+    "pages": {
+      "about": {
+        "title": "About Us",
+        "description": "Established in 1985, Kemcon crafts premium fabrics and furnishings for elite hotels and homes across the Middle East — backed by 40 years of artisanal expertise."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "description": "Reach Kemcon's team in Cairo for premium fabrics, custom upholstery, mockups, and bulk hospitality orders. Showroom and factory locations available."
+      },
+      "clients": {
+        "title": "Our Clients & Partners",
+        "description": "Discover the luxury hotels and resorts across Egypt, KSA, UAE, and Jordan that trust Kemcon for premium fabrics, upholstery, and custom furnishings."
+      },
+      "products": {
+        "title": "Our Products",
+        "description": "From bespoke configuration to mass production — explore Kemcon's full range of curtains, chairs, sofas, bed linen, and custom hospitality furnishings."
+      },
+      "configure": {
+        "title": "Configure Your Product",
+        "description": "Design every detail of your fabric or furnishing — choose materials, colours, patterns, and dimensions, then send your brief to Kemcon's team."
+      },
+      "showroom": {
+        "title": "Fabric Showroom",
+        "description": "Browse Kemcon's full fabric library — sheers, blackouts, velvets, linens, and silks across hundreds of colours and patterns from leading mills worldwide."
+      },
+      "designPlan": {
+        "title": "Design & Plan",
+        "description": "Share your project — hotel, resort, or residence — and Kemcon's design team will plan the fabrics, finishes, and furnishings tailored to your space."
+      },
+      "massProduction": {
+        "title": "Mass Production",
+        "description": "Bulk orders for hospitality and developers — Kemcon manufactures curtains, upholstery, and bed linen at scale with consistent luxury-grade quality."
+      },
+      "curtains": {
+        "title": "Bespoke Curtains",
+        "description": "Bespoke curtains in hundreds of fabrics — sheer, blackout, velvet, linen, and more. Manual or remote-controlled, made to your measurements."
+      },
+      "chairs": {
+        "title": "Custom Chairs",
+        "description": "Fully custom chairs from Kemcon — choose your frame material, finish, filling firmness, and upholstery fabric for hospitality or residential projects."
+      },
+      "sofas": {
+        "title": "Bespoke Sofas",
+        "description": "Bespoke sofas built from scratch by Kemcon — select every element from the frame wood to the final fabric and pattern, made for any space."
+      },
+      "bedSheets": {
+        "title": "Premium Bed Sheets",
+        "description": "Premium bed linen in Egyptian cotton, silk, satin, and more — in any colour and pattern from Kemcon's curated catalog. Hotel-grade comfort."
+      },
+      "custom": {
+        "title": "Custom Solutions",
+        "description": "Have something unique in mind? Describe your vision and Kemcon's team will craft fabrics, upholstery, or furnishings exactly to your specification."
+      }
+    }
   },
   "nav": {
     "home": "Home",
@@ -21,16 +76,24 @@
   "about": {
     "label": "About Kemcon",
     "title": "A Legacy of Excellence",
-    "heroDescription": "Discover the story behind the Middle East's premier provider of luxury hospitality fabrics and furnishings.",
-    "description": "For over 25 years, Kemcon has been the trusted partner for luxury hotels across Egypt, Saudi Arabia, Emirates, and Jordan. Our commitment to quality craftsmanship and premium materials has made us a leader in the hospitality furnishings industry.",
-    "descriptionSecondary": "Now, we're bringing that same hotel-grade luxury to your home. Every thread, every stitch, every detail — crafted to perfection.",
+    "heroDescription": "Originally established in 1985, Kemcon has evolved into one of the leading manufacturing groups in the region — trusted by elite hotel chains across the Middle East.",
+    "description": "Kemcon has grown to become one of the leading manufacturing groups in the region. Through our diversified facilities, we have secured a strong market share across both corporate and business sectors. Egytex, the fabrics manufacturing arm of the Group, is the foundation of our craftsmanship.",
+    "descriptionSecondary": "Our corporate business serves elite hotel chains with exclusive designs and high-quality fabrics, alongside a full spectrum of services: Cover, Tailoring, Installation, Mockup, Upholstery, and Furniture. Upon request, we provide samples and color swatches. We also offer special finishing and treatments complying with international standards — including Stain Protection, Fire Proof, and Anti-Fungus treatments.",
     "cta": "Learn More About Us",
+    "vision": {
+      "title": "Our Vision",
+      "body": "To be the definitive standard of luxury in fabrics and furnishings across the Middle East — setting the benchmark for quality that hotels and homes aspire to."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "body": "To craft exceptional fabrics and furnishings that transform spaces into havens of comfort and elegance, while maintaining the artisanal quality that has defined us for over four decades."
+    },
     "stats": {
       "hotels": "500+",
       "hotelsLabel": "Hotels Served",
       "countries": "4",
       "countriesLabel": "Countries",
-      "years": "25+",
+      "years": "40+",
       "yearsLabel": "Years of Excellence",
       "products": "10,000+",
       "productsLabel": "Products Delivered"
@@ -104,7 +167,22 @@
     "label": "Our Partners",
     "title": "Trusted by Leading Hotels",
     "description": "Kemcon proudly serves prestigious hotels and resorts across Egypt, Saudi Arabia, Emirates, and Jordan.",
-    "cta": "See All Partners"
+    "cta": "See All Partners",
+    "allDestinations": "All Destinations",
+    "all": "All",
+    "showing": "Showing",
+    "property": "property",
+    "properties": "properties",
+    "in": "in",
+    "hotelsServed": "Hotels Served",
+    "gridLabel": "Our Partners",
+    "gridTitle": "Our Clients",
+    "viewGallery": "View Gallery",
+    "photos": "photos",
+    "loadMore": "Load More",
+    "remaining": "remaining",
+    "partnersTitle": "Our Valued Partners",
+    "testimonialsTitle": "What They Say"
   },
   "cta": {
     "title": "Experience Kemcon Quality",
@@ -127,17 +205,17 @@
     },
     "info": {
       "address": "Cairo, Egypt",
-      "phone": "+201100135925",
-      "email": "info@kemcon.com",
+      "phone": "+20 12 23122276",
+      "email": "kemcon@yahoo.com",
       "hours": "Sunday - Thursday: 9:00 AM - 6:00 PM"
     }
   },
   "footer": {
-    "description": "Premium fabrics & furnishings trusted by luxury hotels across the Middle East. Now available for your home.",
+    "description": "Established in 1985, Kemcon is a leading manufacturing group specialising in premium fabrics and furnishings for elite hotels and homes across the Middle East.",
     "quickLinks": "Quick Links",
     "getInTouch": "Get in Touch",
     "followUs": "Follow Us",
     "rights": "All Rights Reserved",
-    "tagline": "Serving luxury since 1999"
+    "tagline": "Serving luxury since 1985"
   }
 }

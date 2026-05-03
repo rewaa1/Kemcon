@@ -26,7 +26,8 @@ export function Hero() {
           className="absolute inset-0 bg-cover bg-center scale-105"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=2000&auto=format&fit=crop')",
+            "url('/cards/hero-homepage.jpg')",
+              // "url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=2000&auto=format&fit=crop')",
           }}
         />
         {/* Gradient Overlay - richer for luxury feel */}

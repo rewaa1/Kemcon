@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, ChevronLeft } from "lucide-react";
+import { Check, X, ChevronLeft, ChevronDown, ChevronUp } from "lucide-react";
 import { GALLERY_CLIENTS } from "@/lib/galleryData";
 
 interface InspirationGalleryProps {
@@ -21,6 +21,10 @@ export function InspirationGallery({
 }: InspirationGalleryProps) {
   const [activeClient, setActiveClient] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(9);
+
+  const visibleClients = GALLERY_CLIENTS.slice(0, visibleCount);
+  const remaining = GALLERY_CLIENTS.length - visibleCount;
 
   const toggleImage = (src: string) => {
     if (selected.includes(src) || selected.length < maxSelect) {
@@ -163,47 +167,72 @@ export function InspirationGallery({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.2 }}
-            className="grid grid-cols-2 sm:grid-cols-3 gap-3"
+            className="space-y-3"
           >
-            {GALLERY_CLIENTS.map((c) => {
-              const selectedCount = c.images.filter((img) => selected.includes(img)).length;
-              return (
-                <motion.button
-                  key={c.slug}
-                  onClick={() => setActiveClient(c.slug)}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="relative aspect-video rounded-sm overflow-hidden group cursor-pointer"
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <AnimatePresence initial={false}>
+                {visibleClients.map((c) => {
+                  const selectedCount = c.images.filter((img) => selected.includes(img)).length;
+                  return (
+                    <motion.button
+                      key={c.slug}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      onClick={() => setActiveClient(c.slug)}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="relative aspect-video rounded-sm overflow-hidden group cursor-pointer"
+                    >
+                      <Image
+                        src={c.images[0]}
+                        alt={c.name}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 640px) 50vw, 33vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                      <div className="absolute bottom-0 inset-x-0 p-2.5">
+                        <p className="text-white text-xs font-semibold leading-tight line-clamp-2">
+                          {c.name}
+                        </p>
+                        <p className="text-white/60 text-[10px] mt-0.5">
+                          {isAr ? `${c.images.length} صور` : `${c.images.length} photos`}
+                        </p>
+                      </div>
+                      {selectedCount > 0 && (
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[var(--color-accent)] flex items-center justify-center shadow">
+                          <span className="text-[10px] font-bold text-[var(--color-dark)]">{selectedCount}</span>
+                        </div>
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+
+            {/* Show more / show less */}
+            <div className={`flex items-center gap-3 ${isAr ? "flex-row-reverse" : ""}`}>
+              {remaining > 0 && (
+                <button
+                  onClick={() => setVisibleCount((n) => n + 6)}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-sm border border-dashed border-[var(--color-deep-accent)]/30 text-xs text-[var(--color-text-muted)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-text)] transition-all duration-200 ${isAr ? "flex-row-reverse" : ""}`}
                 >
-                  <Image
-                    src={c.images[0]}
-                    alt={c.name}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 640px) 50vw, 33vw"
-                  />
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-                  {/* Hotel name */}
-                  <div className="absolute bottom-0 inset-x-0 p-2.5">
-                    <p className="text-white text-xs font-semibold leading-tight line-clamp-2">
-                      {c.name}
-                    </p>
-                    <p className="text-white/60 text-[10px] mt-0.5">
-                      {isAr ? `${c.images.length} صور` : `${c.images.length} photos`}
-                    </p>
-                  </div>
-
-                  {/* Selected badge */}
-                  {selectedCount > 0 && (
-                    <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[var(--color-accent)] flex items-center justify-center shadow">
-                      <span className="text-[10px] font-bold text-[var(--color-dark)]">{selectedCount}</span>
-                    </div>
-                  )}
-                </motion.button>
-              );
-            })}
+                  <ChevronDown size={13} strokeWidth={1.75} />
+                  {isAr ? `عرض ${Math.min(remaining, 6)} فنادق أخرى` : `Show ${Math.min(remaining, 6)} more hotels`}
+                </button>
+              )}
+              {visibleCount > 9 && (
+                <button
+                  onClick={() => setVisibleCount(9)}
+                  className="flex items-center gap-1.5 py-2.5 px-3 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+                >
+                  <ChevronUp size={13} strokeWidth={1.75} />
+                  {isAr ? "عرض أقل" : "Show less"}
+                </button>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

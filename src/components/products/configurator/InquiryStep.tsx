@@ -26,6 +26,20 @@ export function InquiryStep({
 }: InquiryStepProps) {
   const isAr = locale === "ar";
   const [whatsappSent, setWhatsappSent] = useState(false);
+  const [touched, setTouched] = useState({ name: false, phone: false, email: false });
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const nameError = !state.inquiryName.trim()
+    ? (isAr ? "الاسم مطلوب" : "Name is required")
+    : null;
+  const phoneError = state.inquiryPhone.replace(/\D/g, "").length < 7
+    ? (isAr ? "أدخل رقم هاتف صالح (٧ أرقام على الأقل)" : "Enter a valid phone number (min 7 digits)")
+    : null;
+  const emailError = !EMAIL_RE.test(state.inquiryEmail.trim())
+    ? (isAr ? "أدخل بريداً إلكترونياً صالحاً" : "Enter a valid email address")
+    : null;
+
+  const touchAll = () => setTouched({ name: true, phone: true, email: true });
 
   const fabric = fabrics.find((f) => f.id === state.fabricId);
   const color = colors.find((c) => c.id === state.colorId);
@@ -74,8 +88,7 @@ export function InquiryStep({
     return `mailto:info@kemcon.com?subject=${subject}&body=${body}`;
   };
 
-  const isFormValid =
-    state.inquiryName.trim() && state.inquiryPhone.trim() && state.inquiryEmail.trim();
+  const isFormValid = !nameError && !phoneError && !emailError;
 
   const summaryItems = [
     fabric && { label: isAr ? "القماش" : "Fabric", value: isAr ? fabric.nameAr : fabric.name, color: undefined },
@@ -239,9 +252,17 @@ export function InquiryStep({
             type="text"
             value={state.inquiryName}
             onChange={(e) => onChange({ inquiryName: e.target.value })}
-            className="w-full px-3 py-2.5 rounded-sm bg-[var(--color-surface)] border border-[var(--color-deep-accent)]/30 text-[var(--color-text)] text-sm placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:border-[var(--color-accent)] transition-colors"
+            onBlur={() => setTouched((t) => ({ ...t, name: true }))}
+            className={`w-full px-3 py-2.5 rounded-sm bg-[var(--color-surface)] border text-[var(--color-text)] text-sm placeholder:text-[var(--color-text-muted)]/50 focus:outline-none transition-colors ${
+              touched.name && nameError
+                ? "border-red-500/60 focus:border-red-500/80"
+                : "border-[var(--color-deep-accent)]/30 focus:border-[var(--color-accent)]"
+            }`}
             placeholder={isAr ? "الاسم" : "Your name"}
           />
+          {touched.name && nameError && (
+            <p className="text-[11px] text-red-400">{nameError}</p>
+          )}
         </div>
         <div className="space-y-1.5">
           <label className="text-xs text-[var(--color-text-muted)] font-medium">
@@ -251,9 +272,17 @@ export function InquiryStep({
             type="tel"
             value={state.inquiryPhone}
             onChange={(e) => onChange({ inquiryPhone: e.target.value })}
-            className="w-full px-3 py-2.5 rounded-sm bg-[var(--color-surface)] border border-[var(--color-deep-accent)]/30 text-[var(--color-text)] text-sm placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:border-[var(--color-accent)] transition-colors"
+            onBlur={() => setTouched((t) => ({ ...t, phone: true }))}
+            className={`w-full px-3 py-2.5 rounded-sm bg-[var(--color-surface)] border text-[var(--color-text)] text-sm placeholder:text-[var(--color-text-muted)]/50 focus:outline-none transition-colors ${
+              touched.phone && phoneError
+                ? "border-red-500/60 focus:border-red-500/80"
+                : "border-[var(--color-deep-accent)]/30 focus:border-[var(--color-accent)]"
+            }`}
             placeholder={isAr ? "رقم هاتفك" : "+20 xxx xxx xxx"}
           />
+          {touched.phone && phoneError && (
+            <p className="text-[11px] text-red-400">{phoneError}</p>
+          )}
         </div>
         <div className="sm:col-span-2 space-y-1.5">
           <label className="text-xs text-[var(--color-text-muted)] font-medium">
@@ -263,9 +292,17 @@ export function InquiryStep({
             type="email"
             value={state.inquiryEmail}
             onChange={(e) => onChange({ inquiryEmail: e.target.value })}
-            className="w-full px-3 py-2.5 rounded-sm bg-[var(--color-surface)] border border-[var(--color-deep-accent)]/30 text-[var(--color-text)] text-sm placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:border-[var(--color-accent)] transition-colors"
+            onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+            className={`w-full px-3 py-2.5 rounded-sm bg-[var(--color-surface)] border text-[var(--color-text)] text-sm placeholder:text-[var(--color-text-muted)]/50 focus:outline-none transition-colors ${
+              touched.email && emailError
+                ? "border-red-500/60 focus:border-red-500/80"
+                : "border-[var(--color-deep-accent)]/30 focus:border-[var(--color-accent)]"
+            }`}
             placeholder={isAr ? "بريدك الإلكتروني" : "your@email.com"}
           />
+          {touched.email && emailError && (
+            <p className="text-[11px] text-red-400">{emailError}</p>
+          )}
         </div>
         <div className="sm:col-span-2 space-y-1.5">
           <label className="text-xs text-[var(--color-text-muted)] font-medium">
@@ -286,6 +323,7 @@ export function InquiryStep({
         {/* Email */}
         <motion.a
           href={isFormValid ? buildMailtoLink() : undefined}
+          onClick={!isFormValid ? (e) => { e.preventDefault(); touchAll(); } : undefined}
           whileHover={isFormValid ? { scale: 1.02 } : {}}
           whileTap={isFormValid ? { scale: 0.98 } : {}}
           className={`
@@ -300,7 +338,7 @@ export function InquiryStep({
           <Mail size={22} strokeWidth={1.5} />
           <div>
             <p className="text-sm font-semibold">{isAr ? "إرسال بالبريد" : "Send by Email"}</p>
-            <p className="text-[10px] opacity-70 mt-0.5">info@kemcon.com</p>
+            <p className="text-[10px] opacity-70 mt-0.5">kemcon@yahoo.com</p>
           </div>
         </motion.a>
 
@@ -309,7 +347,7 @@ export function InquiryStep({
           href={isFormValid ? `https://wa.me/201223122276?text=${buildWhatsAppMessage()}` : undefined}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => isFormValid && setWhatsappSent(true)}
+          onClick={isFormValid ? () => setWhatsappSent(true) : (e) => { e.preventDefault(); touchAll(); }}
           whileHover={isFormValid ? { scale: 1.02 } : {}}
           whileTap={isFormValid ? { scale: 0.98 } : {}}
           className={`
@@ -333,7 +371,7 @@ export function InquiryStep({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => {
-            window.open("https://maps.google.com/?q=Cairo+Egypt", "_blank");
+            window.open("https://maps.app.goo.gl/P258pkoaV3g7dLHP7", "_blank");
           }}
           className="flex flex-col items-center gap-2 p-5 rounded-sm border border-[var(--color-deep-accent)]/30 text-[var(--color-text-muted)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-text)] transition-all duration-200 text-center"
         >

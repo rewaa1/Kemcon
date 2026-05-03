@@ -2,28 +2,24 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import type { CategoryType } from "@/types/configurator";
 
-const CATEGORY_GRADIENTS: Record<CategoryType, string> = {
-  curtains:
-    "linear-gradient(135deg, #1a1520 0%, #2e1f3a 40%, #1a1520 100%)",
-  chairs:
-    "linear-gradient(135deg, #1a1815 0%, #3a2a1a 40%, #1a1815 100%)",
-  sofas:
-    "linear-gradient(135deg, #151a1a 0%, #1a3030 40%, #151a1a 100%)",
-  "bed-sheets":
-    "linear-gradient(135deg, #1a1820 0%, #1f2038 40%, #1a1820 100%)",
-  custom:
-    "linear-gradient(135deg, #1a1515 0%, #38181a 40%, #1a1515 100%)",
+const CATEGORY_IMAGE: Record<CategoryType, string> = {
+  curtains: "/cards/curtains.jpg",
+  chairs: "/cards/chairs.jpg",
+  sofas: "/cards/sofas.jpg",
+  "bed-sheets": "/cards/bedsheets.jpg",
+  custom: "/cards/customsolution.jpg",
 };
 
 const CATEGORY_ACCENT: Record<CategoryType, string> = {
-  curtains: "#7a5a9a",
-  chairs: "#9a7a4a",
-  sofas: "#4a8a7a",
-  "bed-sheets": "#4a5a9a",
-  custom: "#9a4a5a",
+  curtains: "#b0a4c8",
+  chairs: "#c8aa7a",
+  sofas: "#7ac8b4",
+  "bed-sheets": "#8a9ece",
+  custom: "#ce8a9a",
 };
 
 interface CategoryCardProps {
@@ -33,6 +29,7 @@ interface CategoryCardProps {
   href: string;
   locale: string;
   index: number;
+  fullWidth?: boolean;
 }
 
 export function CategoryCard({
@@ -42,59 +39,108 @@ export function CategoryCard({
   href,
   locale,
   index,
+  fullWidth = false,
 }: CategoryCardProps) {
   const isAr = locale === "ar";
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
   const accent = CATEGORY_ACCENT[category];
-  const gradient = CATEGORY_GRADIENTS[category];
+  const image = CATEGORY_IMAGE[category];
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      transition={{ duration: 0.45, delay: index * 0.07 }}
+      className="h-full"
     >
       <Link href={href} className="group block h-full">
         <div
-          className="relative h-full rounded-sm overflow-hidden border border-[var(--color-deep-accent)]/15 transition-all duration-500 group-hover:border-[var(--color-accent)]/30"
-          style={{ background: gradient }}
+          className={`relative overflow-hidden border border-white/[0.06] transition-colors duration-500 group-hover:border-white/[0.12] ${
+            fullWidth ? "min-h-[150px]" : "min-h-[290px]"
+          }`}
         >
-          {/* Accent corner glow */}
-          <div
-            className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-20 blur-2xl transition-opacity duration-500 group-hover:opacity-35 pointer-events-none"
-            style={{ background: accent }}
+          {/* Background image */}
+          <Image
+            src={image}
+            alt={name}
+            fill
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+            sizes={fullWidth ? "100vw" : "(max-width: 640px) 100vw, 50vw"}
           />
 
-          <div className="relative p-7 flex flex-col h-full min-h-[220px]">
-            {/* Category accent line */}
-            <div
-              className="w-8 h-0.5 mb-5 rounded-full transition-all duration-300 group-hover:w-14"
-              style={{ background: accent }}
-            />
+          {/* Overlay */}
+          <div
+            className={`absolute inset-0 transition-opacity duration-500 ${
+              fullWidth
+                ? "bg-gradient-to-r from-[#111318]/92 via-[#111318]/65 to-[#111318]/25"
+                : "bg-gradient-to-t from-[#111318]/96 via-[#111318]/55 to-[#111318]/10"
+            }`}
+          />
 
-            <h3 className="text-xl font-bold text-[var(--color-heading)] mb-3 leading-tight">
-              {name}
-            </h3>
-
-            <p className="text-sm text-[var(--color-text-muted)] leading-relaxed flex-1">
-              {description}
-            </p>
-
-            {/* CTA */}
-            <div className="flex items-center gap-2 mt-6 pt-4 border-t border-[var(--color-deep-accent)]/15">
-              <span
-                className="text-xs font-semibold uppercase tracking-widest transition-colors duration-200"
-                style={{ color: accent }}
-              >
-                {isAr ? "ابدأ التصميم" : "Start Designing"}
-              </span>
-              <ArrowIcon
-                size={14}
-                className={`transition-all duration-300 ${isAr ? "group-hover:-translate-x-1" : "group-hover:translate-x-1"}`}
-                style={{ color: accent }}
-              />
-            </div>
+          {/* Content */}
+          <div
+            className={`relative h-full p-7 flex ${
+              fullWidth
+                ? `items-center justify-between gap-8 ${isAr ? "flex-row-reverse" : ""}`
+                : "flex-col justify-end"
+            }`}
+          >
+            {fullWidth ? (
+              <>
+                <div className={isAr ? "text-right" : ""}>
+                  <p
+                    className="text-[10px] font-semibold uppercase tracking-[0.3em] mb-2 opacity-80"
+                    style={{ color: accent }}
+                  >
+                    {isAr ? "طلب مخصص" : "Custom Order"}
+                  </p>
+                  <h3 className="text-2xl font-bold text-[var(--color-heading)] mb-2 leading-tight">
+                    {name}
+                  </h3>
+                  <p className="text-sm text-[var(--color-text-muted)] leading-relaxed max-w-md">
+                    {description}
+                  </p>
+                </div>
+                <div
+                  className={`flex items-center gap-2 shrink-0 ${isAr ? "flex-row-reverse" : ""}`}
+                  style={{ color: accent }}
+                >
+                  <span className="text-xs font-semibold uppercase tracking-widest whitespace-nowrap">
+                    {isAr ? "ابدأ التصميم" : "Start Designing"}
+                  </span>
+                  <ArrowIcon
+                    size={14}
+                    className={`transition-transform duration-300 ${isAr ? "group-hover:-translate-x-1" : "group-hover:translate-x-1"}`}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div
+                  className="w-7 h-0.5 mb-4 transition-all duration-300 group-hover:w-12"
+                  style={{ background: accent }}
+                />
+                <h3 className="text-xl font-bold text-[var(--color-heading)] mb-2 leading-tight">
+                  {name}
+                </h3>
+                <p className="text-xs text-[var(--color-text-muted)] leading-relaxed mb-5">
+                  {description}
+                </p>
+                <div
+                  className={`flex items-center gap-2 ${isAr ? "flex-row-reverse" : ""}`}
+                  style={{ color: accent }}
+                >
+                  <span className="text-[10px] font-semibold uppercase tracking-widest">
+                    {isAr ? "ابدأ التصميم" : "Start Designing"}
+                  </span>
+                  <ArrowIcon
+                    size={13}
+                    className={`transition-transform duration-300 ${isAr ? "group-hover:-translate-x-1" : "group-hover:translate-x-1"}`}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </Link>

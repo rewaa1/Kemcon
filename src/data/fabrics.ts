@@ -14,6 +14,7 @@ export interface Fabric {
   image?: string;
   description: string;
   descriptionAr: string;
+  compatibleWith: string[];
 }
 
 export const fabricFamilies: FabricFamily[] = [
@@ -112,6 +113,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/velvet/royal-velvet.png",
     description: "Deep pile velvet with lustrous sheen",
     descriptionAr: "مخمل بحبكة عميقة ولمعة فاخرة",
+    compatibleWith: ["curtains", "sofas", "chairs"],
   },
   {
     id: "velvet-crushed",
@@ -123,6 +125,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/velvet/velvet-crushed.jpg",
     description: "Textured crushed finish for dimension",
     descriptionAr: "نسيج مكسر لإضافة عمق وبُعد",
+    compatibleWith: ["curtains", "sofas", "chairs"],
   },
   {
     id: "velvet-silk",
@@ -134,6 +137,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/velvet/velvet-silk.jpg",
     description: "Ultra-soft silk-velvet blend",
     descriptionAr: "خليط مخمل حريري ناعم للغاية",
+    compatibleWith: ["curtains", "sofas"],
   },
   {
     id: "velvet-cut",
@@ -145,6 +149,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/velvet/velvet-cut.jpg",
     description: "Patterned cut pile for subtle motifs",
     descriptionAr: "نسيج مقطوع بأنماط دقيقة رائعة",
+    compatibleWith: ["curtains", "sofas", "chairs"],
   },
   {
     id: "velvet-embossed",
@@ -155,6 +160,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/velvet/velvet-embossed.jpg",
     description: "Heat-embossed geometric surface",
     descriptionAr: "سطح هندسي منقوش بالحرارة",
+    compatibleWith: ["curtains", "sofas"],
   },
   // Linen
   {
@@ -166,6 +172,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/linen/linen-natural.jpg",
     description: "Pure unbleached linen with natural texture",
     descriptionAr: "كتان نقي طبيعي بنسيج أصيل",
+    compatibleWith: ["curtains", "sofas", "chairs"],
   },
   {
     id: "linen-washed",
@@ -176,6 +183,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/linen/linen-washed.jpg",
     description: "Softened linen with relaxed, lived-in feel",
     descriptionAr: "كتان مُلطَّف بإحساس مريح وعصري",
+    compatibleWith: ["curtains", "sofas", "chairs", "bed-sheets"],
   },
   {
     id: "linen-blend",
@@ -186,6 +194,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/linen/linen-blend.jpg",
     description: "Breathable linen-cotton for year-round use",
     descriptionAr: "كتان قطن قابل للتنفس لجميع الفصول",
+    compatibleWith: ["curtains", "chairs", "bed-sheets"],
   },
   {
     id: "linen-heavy",
@@ -196,6 +205,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/linen/linen-heavy.jpg",
     description: "Dense heavyweight linen for drape curtains",
     descriptionAr: "كتان ثقيل كثيف للستائر المتدلية",
+    compatibleWith: ["curtains"],
   },
   // Silk
   {
@@ -208,6 +218,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/silk/silk-dupioni.jpg",
     description: "Crisp silk with distinctive texture",
     descriptionAr: "حرير مقرمش بنسيج مميز وفريد",
+    compatibleWith: ["curtains"],
   },
   {
     id: "silk-satin",
@@ -219,6 +230,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/silk/silk-satin.jpg",
     description: "Luminous satin weave for formal interiors",
     descriptionAr: "نسيج ساتان لامع للديكورات الراقية",
+    compatibleWith: ["curtains", "bed-sheets"],
   },
   {
     id: "silk-taffeta",
@@ -229,6 +241,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/silk/silk-taffeta.jpg",
     description: "Stiff, rustling silk for structured drapes",
     descriptionAr: "حرير صلب مقرقع للستائر المنظمة",
+    compatibleWith: ["curtains"],
   },
   {
     id: "silk-charmeuse",
@@ -239,6 +252,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/silk/silk-charmeuse.jpg",
     description: "Fluid silk with back-satin finish",
     descriptionAr: "حرير سائل بتشطيب ساتان من الخلف",
+    compatibleWith: ["curtains", "bed-sheets"],
   },
   // Cotton
   {
@@ -250,6 +264,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/cotton/cotton-egyptian.jpg",
     description: "Premium long-staple Egyptian cotton",
     descriptionAr: "قطن مصري فاخر طويل الألياف",
+    compatibleWith: ["curtains", "bed-sheets"],
   },
   {
     id: "cotton-percale",
@@ -260,6 +275,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/cotton/cotton-percale.jpg",
     description: "Crisp 200-thread count percale weave",
     descriptionAr: "نسيج بيركال بـ 200 خيط للبوصة",
+    compatibleWith: ["bed-sheets"],
   },
   {
     id: "cotton-sateen",
@@ -270,6 +286,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/cotton/cotton-sateen.jpg",
     description: "Silky smooth sateen-woven cotton",
     descriptionAr: "قطن ناعم منسوج بطريقة الساتان",
+    compatibleWith: ["bed-sheets", "curtains"],
   },
   {
     id: "cotton-twill",
@@ -280,6 +297,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/cotton/cotton-twill.jpg",
     description: "Durable diagonal-weave cotton twill",
     descriptionAr: "قطن تويل متين بنسيج قطري",
+    compatibleWith: ["chairs", "sofas"],
   },
   // Jacquard
   {
@@ -292,6 +310,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/jacquard/jacquard-damask.jpg",
     description: "Reversible woven damask motifs",
     descriptionAr: "نقوش دمشقية منسوجة قابلة للعكس",
+    compatibleWith: ["curtains", "sofas"],
   },
   {
     id: "jacquard-floral",
@@ -303,6 +322,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/jacquard/jacquard-floral.jpg",
     description: "Intricate floral patterns woven in",
     descriptionAr: "أنماط زهرية معقدة منسوجة بدقة",
+    compatibleWith: ["curtains", "sofas"],
   },
   {
     id: "jacquard-geometric",
@@ -314,6 +334,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/jacquard/jacquard-geometric.jpg",
     description: "Bold geometric repeat patterns",
     descriptionAr: "أنماط هندسية جريئة متكررة",
+    compatibleWith: ["curtains", "chairs", "sofas"],
   },
   {
     id: "jacquard-paisley",
@@ -325,6 +346,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/jacquard/jacquard-paisley.jpg",
     description: "Traditional paisley in luxury weave",
     descriptionAr: "تقليدي بيزلي بنسيج فاخر",
+    compatibleWith: ["curtains", "sofas"],
   },
   // Chenille
   {
@@ -336,6 +358,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/chenille/chenille-classic.jpg",
     description: "Soft, caterpillar-yarn chenille",
     descriptionAr: "شنيل ناعم بخيط اليرقة التقليدي",
+    compatibleWith: ["sofas", "chairs"],
   },
   {
     id: "chenille-striped",
@@ -347,6 +370,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/chenille/chenille-striped.jpg",
     description: "Tonal chenille stripes for textured upholstery",
     descriptionAr: "خطوط شنيل لتنجيد بتدرج لوني",
+    compatibleWith: ["sofas", "chairs"],
   },
   {
     id: "chenille-microfiber",
@@ -357,6 +381,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/chenille/chenille-microfiber.jpg",
     description: "Ultra-soft microfiber chenille weave",
     descriptionAr: "نسيج شنيل مايكروفايبر ناعم للغاية",
+    compatibleWith: ["sofas", "chairs"],
   },
   // Brocade
   {
@@ -369,6 +394,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/brocade/brocade-gold.jpg",
     description: "Metallic gold thread woven brocade",
     descriptionAr: "بروكير بخيوط ذهبية معدنية منسوجة",
+    compatibleWith: ["curtains", "sofas"],
   },
   {
     id: "brocade-silver",
@@ -380,6 +406,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/brocade/brocade-silver.jpg",
     description: "Lustrous silver thread brocade",
     descriptionAr: "بروكير فضي لامع بخيوط فضية",
+    compatibleWith: ["curtains", "sofas"],
   },
   {
     id: "brocade-floral",
@@ -391,6 +418,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/brocade/brocade-floral.jpg",
     description: "Rich floral raised brocade patterns",
     descriptionAr: "أنماط بروكير زهرية بارزة وغنية",
+    compatibleWith: ["curtains", "sofas"],
   },
   // Sheer
   {
@@ -403,6 +431,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/sheer/sheer-voile.jpg",
     description: "Delicate lightweight voile for soft light",
     descriptionAr: "فوال خفيف رقيق لضوء ناعم وهادئ",
+    compatibleWith: ["curtains"],
   },
   {
     id: "sheer-organza",
@@ -414,6 +443,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/sheer/sheer-organza.jpg",
     description: "Crisp organza with gentle shimmer",
     descriptionAr: "أورغانزا مقرمشة ببريق خفيف",
+    compatibleWith: ["curtains"],
   },
   {
     id: "sheer-lace",
@@ -425,6 +455,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/sheer/sheer-lace.jpg",
     description: "Intricate lace pattern sheer panels",
     descriptionAr: "لوحات شفافة بنمط دانتيل معقد",
+    compatibleWith: ["curtains"],
   },
   {
     id: "sheer-embroidered",
@@ -436,6 +467,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/sheer/sheer-embroidered.jpg",
     description: "Sheer panel with tone-on-tone embroidery",
     descriptionAr: "شفاف بتطريز بلون متناسق فاخر",
+    compatibleWith: ["curtains"],
   },
   // Blackout
   {
@@ -447,6 +479,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/blackout/blackout-standard.jpg",
     description: "100% light-blocking triple-weave fabric",
     descriptionAr: "قماش ثلاثي النسيج يحجب الضوء 100%",
+    compatibleWith: ["curtains"],
   },
   {
     id: "blackout-thermal",
@@ -457,6 +490,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/blackout/blackout-thermal.jpg",
     description: "Blackout with energy-saving thermal layer",
     descriptionAr: "معتم بطبقة حرارية لتوفير الطاقة",
+    compatibleWith: ["curtains"],
   },
   {
     id: "blackout-lined",
@@ -467,6 +501,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/blackout/blackout-lined.jpg",
     description: "Fabric-faced blackout with lining",
     descriptionAr: "معتم مبطن بوجه قماشي فاخر",
+    compatibleWith: ["curtains"],
   },
   // Wool
   {
@@ -478,6 +513,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/wool/wool-boucle.jpg",
     description: "Looped textured bouclé for cozy upholstery",
     descriptionAr: "نسيج صوف بوكليه للتنجيد المريح",
+    compatibleWith: ["sofas", "chairs"],
   },
   {
     id: "wool-herringbone",
@@ -489,6 +525,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/wool/wool-herringbone.jpg",
     description: "Classic herringbone twill wool weave",
     descriptionAr: "نسيج صوف هيرينغبون كلاسيكي",
+    compatibleWith: ["sofas", "chairs"],
   },
   {
     id: "wool-felt",
@@ -499,6 +536,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/wool/wool-felt.jpg",
     description: "Dense felted wool for insulating panels",
     descriptionAr: "صوف مضغوط كثيف للألواح العازلة",
+    compatibleWith: ["curtains", "chairs"],
   },
   // Suede
   {
@@ -510,6 +548,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/suede/suede-microsuede.jpg",
     description: "Ultra-fine microsuede for smooth finish",
     descriptionAr: "مايكروسويدي ناعم بتشطيب لامع",
+    compatibleWith: ["sofas", "chairs"],
   },
   {
     id: "suede-brushed",
@@ -520,6 +559,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/suede/suede-brushed.jpg",
     description: "Brushed nap suede with tactile warmth",
     descriptionAr: "سويدي مفروش بدفء ملمسي مميز",
+    compatibleWith: ["sofas", "chairs"],
   },
   // Synthetic
   {
@@ -531,6 +571,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/synthetic/synthetic-polyester.jpg",
     description: "Durable, stain-resistant polyester blend",
     descriptionAr: "بوليستر متين مقاوم للبقع",
+    compatibleWith: ["curtains", "sofas", "chairs"],
   },
   {
     id: "synthetic-acrylic",
@@ -541,6 +582,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/synthetic/synthetic-acrylic.jpg",
     description: "Soft acrylic velour with wool-like feel",
     descriptionAr: "مخمل أكريليك ناعم يشبه الصوف",
+    compatibleWith: ["sofas", "chairs"],
   },
   {
     id: "synthetic-faux-leather",
@@ -551,6 +593,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/synthetic/synthetic-faux-leather.jpg",
     description: "Premium faux leather for bold upholstery",
     descriptionAr: "جلد صناعي فاخر للتنجيد الجريء",
+    compatibleWith: ["sofas", "chairs"],
   },
   // Outdoor
   {
@@ -562,6 +605,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/outdoor/outdoor-sunbrella.jpg",
     description: "UV and fade-resistant outdoor acrylic",
     descriptionAr: "أكريليك خارجي مقاوم للأشعة فوق البنفسجية",
+    compatibleWith: ["chairs", "sofas"],
   },
   {
     id: "outdoor-mesh",
@@ -572,6 +616,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/outdoor/outdoor-mesh.jpg",
     description: "Open-weave mesh for glare and heat control",
     descriptionAr: "شبك مفتوح للتحكم في الوهج والحرارة",
+    compatibleWith: ["curtains"],
   },
   {
     id: "outdoor-canvas",
@@ -582,5 +627,6 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/outdoor/outdoor-canvas.jpg",
     description: "Heavy-duty waterproof canvas for pergolas",
     descriptionAr: "قماش ثقيل مقاوم للماء للبرجولات",
+    compatibleWith: ["chairs", "sofas"],
   },
 ];

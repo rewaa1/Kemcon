@@ -59,10 +59,18 @@ export function ChairOptionsStep({
                   }
                 `}
               >
-                <div
-                  className="w-10 h-10 rounded-sm border border-white/10"
-                  style={{ backgroundColor: material.hex }}
-                />
+                {material.image ? (
+                  <img
+                    src={material.image}
+                    alt={material.name}
+                    className="w-14 h-14 rounded-sm object-cover border border-white/10"
+                  />
+                ) : (
+                  <div
+                    className="w-14 h-14 rounded-sm border border-white/10"
+                    style={{ backgroundColor: material.hex }}
+                  />
+                )}
                 <div className="text-center">
                   <p className={`text-xs font-semibold ${isSelected ? "text-[var(--color-accent)]" : "text-[var(--color-text)]"}`}>
                     {isAr ? material.nameAr : material.name}

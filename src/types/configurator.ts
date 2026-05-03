@@ -12,8 +12,8 @@ export type StepType =
 
 export const CATEGORY_STEPS: Record<CategoryType, StepType[]> = {
   curtains: ["fabric", "color", "pattern", "curtainOptions", "aiVisualization", "inquiry"],
-  chairs: ["fabric", "color", "pattern", "chairOptions", "inquiry"],
-  sofas: ["fabric", "color", "pattern", "chairOptions", "inquiry"],
+  chairs: ["fabric", "color", "pattern", "chairOptions", "aiVisualization", "inquiry"],
+  sofas: ["fabric", "color", "pattern", "chairOptions", "aiVisualization", "inquiry"],
   "bed-sheets": ["fabric", "color", "pattern", "inquiry"],
   custom: ["customDescription", "inquiry"],
 };

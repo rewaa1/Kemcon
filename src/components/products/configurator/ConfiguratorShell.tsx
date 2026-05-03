@@ -21,6 +21,9 @@ import { CustomDescriptionStep } from "./CustomDescriptionStep";
 import { InquiryStep } from "./InquiryStep";
 import { AIVisualizationStep } from "./AIVisualizationStep";
 import { SelectionBar } from "../SelectionBar";
+import { fabrics } from "@/data/fabrics";
+import { colors } from "@/data/colors";
+import { patterns } from "@/data/patterns";
 
 interface ConfiguratorShellProps {
   category: CategoryType;
@@ -135,6 +138,7 @@ export function ConfiguratorShell({
             onChange={handleChange}
             locale={locale}
             onNext={goNext}
+            category={category}
           />
         );
       case "inquiry":
@@ -164,10 +168,26 @@ export function ConfiguratorShell({
     }),
   };
 
+  const fabric = fabrics.find((f) => f.id === state.fabricId);
+  const color = colors.find((c) => c.id === state.colorId);
+  const pattern = patterns.find((p) => p.id === state.patternId);
+  const chips = [
+    fabric && { label: isAr ? fabric.nameAr : fabric.name, bg: fabric.gradient, isGradient: true },
+    color && { label: isAr ? color.nameAr : color.name, bg: color.hex, isGradient: false },
+    pattern && pattern.id !== "solid" && { label: isAr ? pattern.nameAr : pattern.name, bg: null, isGradient: false },
+    category === "curtains" && state.curtainControl && {
+      label: state.curtainControl === "manual" ? (isAr ? "يدوي" : "Manual") : isAr ? "ريموت" : "Remote",
+      bg: null,
+      isGradient: false,
+    },
+  ].filter(Boolean) as { label: string; bg: string | null; isGradient: boolean }[];
+
+  const showNav = currentStepId !== "inquiry" && currentStepId !== "aiVisualization";
+
   return (
-    <div className="relative min-h-screen pt-20 pb-48">
+    <div className="relative min-h-screen pt-20 pb-48 bg-[var(--color-bg-secondary)]">
       {/* Category header + back link */}
-      <div className="sticky top-20 z-30 bg-[var(--color-bg)]/95 backdrop-blur-md border-b border-[var(--color-deep-accent)]/10">
+      <div className="sticky top-20 z-30 bg-[var(--color-bg-secondary)]/95 backdrop-blur-md border-b border-[var(--color-deep-accent)]/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-3">
           <Link
             href={`/${locale}/products`}
@@ -199,17 +219,17 @@ export function ConfiguratorShell({
         </AnimatePresence>
       </div>
 
-      {/* Navigation */}
-      {currentStepId !== "inquiry" && currentStepId !== "aiVisualization" && (
-        <div className="fixed bottom-24 inset-x-0 z-30 pointer-events-none">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className={`flex ${isAr ? "flex-row-reverse" : "flex-row"} items-center justify-between pointer-events-auto`}>
+      {/* Unified bottom panel — nav + selection chips in one bar */}
+      {showNav ? (
+        <div className="fixed bottom-0 inset-x-0 z-50 pointer-events-none">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+            <div className={`glass-card rounded-sm px-4 py-3 flex items-center gap-3 pointer-events-auto ${isAr ? "flex-row-reverse" : ""}`}>
               {/* Back */}
               <button
                 onClick={goPrev}
                 disabled={isFirstStep}
                 className={`
-                  flex items-center gap-2 px-5 py-2.5 rounded-sm text-sm font-medium
+                  flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-medium flex-shrink-0
                   border transition-all duration-200
                   ${isFirstStep
                     ? "opacity-0 pointer-events-none"
@@ -221,6 +241,34 @@ export function ConfiguratorShell({
                 {isAr ? "السابق" : "Back"}
               </button>
 
+              {/* Selection chips */}
+              {chips.length > 0 && (
+                <div className={`flex-1 flex items-center gap-2 overflow-x-auto min-w-0 ${isAr ? "flex-row-reverse" : ""}`}>
+                  <span className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-widest flex-shrink-0">
+                    {isAr ? "اختياراتك:" : "Your picks:"}
+                  </span>
+                  <div className="flex items-center gap-2 flex-nowrap">
+                    {chips.map((chip, index) => (
+                      <motion.div
+                        key={`${chip.label}-${index}`}
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: index * 0.06 }}
+                        className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-deep-accent)]/20 flex-shrink-0"
+                      >
+                        {chip.bg && (
+                          <div
+                            className="w-3 h-3 rounded-full border border-white/15 flex-shrink-0"
+                            style={chip.isGradient ? { background: chip.bg } : { backgroundColor: chip.bg }}
+                          />
+                        )}
+                        <span className="text-xs text-[var(--color-text)]">{chip.label}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Next */}
               <motion.button
                 onClick={goNext}
@@ -228,8 +276,8 @@ export function ConfiguratorShell({
                 whileHover={canGoNext ? { scale: 1.02 } : {}}
                 whileTap={canGoNext ? { scale: 0.98 } : {}}
                 className={`
-                  flex items-center gap-2 px-6 py-2.5 rounded-sm text-sm font-semibold
-                  transition-all duration-200
+                  flex items-center gap-2 px-6 py-2 rounded-sm text-sm font-semibold flex-shrink-0
+                  transition-all duration-200 ms-auto
                   ${canGoNext
                     ? "bg-[var(--color-accent)] text-[var(--color-dark)] hover:bg-[var(--color-accent-hover)]"
                     : "bg-[var(--color-deep-accent)]/20 text-[var(--color-text-muted)] cursor-not-allowed"
@@ -242,10 +290,9 @@ export function ConfiguratorShell({
             </div>
           </div>
         </div>
+      ) : (
+        <SelectionBar state={state} category={category} locale={locale} />
       )}
-
-      {/* Selection bar */}
-      <SelectionBar state={state} category={category} locale={locale} />
     </div>
   );
 }
