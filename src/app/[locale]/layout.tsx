@@ -14,14 +14,29 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "meta" });
 
+  const title = t("title");
+  const description = t("description");
+
   return {
     metadataBase: new URL(SITE_URL),
     title: {
-      default: t("title"),
+      default: title,
       template: `%s | ${t("brand")}`,
     },
-    description: t("description"),
+    description,
     alternates: pageAlternates(locale, ""),
+    openGraph: {
+      type: "website",
+      siteName: "Kemcon",
+      locale: locale === "ar" ? "ar_EG" : "en_US",
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 

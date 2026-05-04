@@ -110,7 +110,7 @@ export const fabrics: Fabric[] = [
     nameAr: "مخمل ملكي",
     familyId: "velvet",
     gradient: "linear-gradient(135deg, #3d1f3d 0%, #6b3a6b 50%, #3d1f3d 100%)",
-    image: "/fabrics/velvet/royal-velvet.png",
+    image: "/fabrics/velvet/royal-velvet.jpg",
     description: "Deep pile velvet with lustrous sheen",
     descriptionAr: "مخمل بحبكة عميقة ولمعة فاخرة",
     compatibleWith: ["curtains", "sofas", "chairs"],

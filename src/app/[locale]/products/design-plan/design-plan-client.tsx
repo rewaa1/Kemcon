@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
@@ -65,7 +65,9 @@ export default function DesignPlanClient() {
   const locale = useLocale();
   const isAr = locale === "ar";
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragCounter = useRef(0);
   const [expanded, setExpanded] = useState<Set<OptionalKey>>(new Set());
+  const [isDragging, setIsDragging] = useState(false);
 
   const [form, setForm] = useState<FormState>({
     propertyType: "",
@@ -80,6 +82,14 @@ export default function DesignPlanClient() {
     phone: "",
     email: "",
   });
+
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+  useEffect(() => {
+    const urls = form.images.map((f) => URL.createObjectURL(f));
+    setPreviewUrls(urls);
+    return () => urls.forEach((url) => URL.revokeObjectURL(url));
+  }, [form.images]);
 
   const toggleSection = (key: OptionalKey) => {
     setExpanded((prev) => {
@@ -99,9 +109,38 @@ export default function DesignPlanClient() {
     }));
   };
 
+  const processFiles = useCallback((incoming: File[]) => {
+    const imageFiles = incoming.filter((f) => f.type.startsWith("image/"));
+    setForm((prev) => {
+      const merged = [...prev.images, ...imageFiles];
+      const deduplicated = merged.filter(
+        (f, i) => merged.findIndex((m) => m.name === f.name && m.size === f.size) === i
+      );
+      return { ...prev, images: deduplicated.slice(0, 8) };
+    });
+  }, []);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []).slice(0, 8);
-    setForm((prev) => ({ ...prev, images: files }));
+    processFiles(Array.from(e.target.files ?? []));
+    e.target.value = "";
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounter.current++;
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    dragCounter.current--;
+    if (dragCounter.current === 0) setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounter.current = 0;
+    setIsDragging(false);
+    processFiles(Array.from(e.dataTransfer.files));
   };
 
   const removeImage = (index: number) => {
@@ -111,7 +150,7 @@ export default function DesignPlanClient() {
     }));
   };
 
-  const buildSummary = () => {
+  const buildSummary = (photoUrls?: string[]) => {
     const lines: string[] = ["Design Plan Request"];
     if (form.propertyType) {
       const pt = PROPERTY_TYPES.find((p) => p.value === form.propertyType);
@@ -132,16 +171,20 @@ export default function DesignPlanClient() {
     }
     if (form.dimensions) lines.push(`Dimensions / Room Details: ${form.dimensions}`);
     if (form.notes) lines.push(`Additional Notes: ${form.notes}`);
-    if (form.images.length) lines.push(`Photos: ${form.images.length} file(s) attached`);
+    if (photoUrls && photoUrls.length > 0) {
+      lines.push(`Reference Photos:\n${photoUrls.map((url, i) => `  ${i + 1}. ${url}`).join("\n")}`);
+    } else if (form.images.length) {
+      lines.push(`Photos: ${form.images.length} file(s) attached`);
+    }
     if (form.inspirationImages.length) {
       lines.push(`Portfolio Inspiration: ${form.inspirationImages.map((src) => `https://kemcon.vercel.app${src}`).join(", ")}`);
     }
     return lines.join("\n");
   };
 
-  const buildWhatsAppMessage = () => {
+  const buildWhatsAppMessage = (photoUrls?: string[]) => {
     return encodeURIComponent(
-      `Hello Kemcon,\n\nI'd like to request a design plan.\n\n${buildSummary()}\n\nName: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email}`
+      `Hello Kemcon,\n\nI'd like to request a design plan.\n\n${buildSummary(photoUrls)}\n\nName: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email}`
     );
   };
 
@@ -203,7 +246,7 @@ export default function DesignPlanClient() {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)]">
+    <div className="min-h-screen bg-[#1A1D24]">
       {/* Header */}
       <section className="relative py-20 md:py-24 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
@@ -407,8 +450,8 @@ export default function DesignPlanClient() {
                           <>
                             <p className={`text-xs text-[var(--color-text-muted)] ${isAr ? "text-right" : ""}`}>
                               {isAr
-                                ? "حتى 8 صور. ستحتاج لإرفاقها يدويًا في البريد أو واتساب."
-                                : "Up to 8 images. You'll need to attach them manually in email or WhatsApp."}
+                                ? "حتى 8 صور. تُرفق تلقائيًا عند الإرسال بالبريد أو واتساب."
+                                : "Up to 8 images. Attached automatically when you submit via email or WhatsApp."}
                             </p>
                             <input
                               ref={fileInputRef}
@@ -421,17 +464,37 @@ export default function DesignPlanClient() {
                             {form.images.length === 0 ? (
                               <button
                                 onClick={() => fileInputRef.current?.click()}
-                                className="w-full flex flex-col items-center gap-2 py-8 border-2 border-dashed border-[var(--color-deep-accent)]/30 rounded-sm text-[var(--color-text-muted)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-text)] transition-all duration-200"
+                                onDragEnter={handleDragEnter}
+                                onDragOver={(e) => e.preventDefault()}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                                className={`w-full flex flex-col items-center gap-2 py-8 border-2 border-dashed rounded-sm transition-all duration-200 ${
+                                  isDragging
+                                    ? "border-[var(--color-accent)]/60 bg-[var(--color-accent)]/5 text-[var(--color-text)]"
+                                    : "border-[var(--color-deep-accent)]/30 text-[var(--color-text-muted)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-text)]"
+                                }`}
                               >
                                 <Upload size={22} strokeWidth={1.5} />
-                                <span className="text-sm">{isAr ? "اضغط لرفع الصور" : "Click to upload images"}</span>
+                                <span className="text-sm">
+                                  {isDragging
+                                    ? (isAr ? "أفلت الصور هنا" : "Drop images here")
+                                    : (isAr ? "اضغط أو اسحب للرفع" : "Click or drag images here")}
+                                </span>
                               </button>
                             ) : (
-                              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                              <div
+                                onDragEnter={handleDragEnter}
+                                onDragOver={(e) => e.preventDefault()}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                                className={`grid grid-cols-3 sm:grid-cols-4 gap-2 rounded-sm p-1 transition-all duration-200 ${
+                                  isDragging ? "ring-2 ring-[var(--color-accent)]/40 bg-[var(--color-accent)]/[0.03]" : ""
+                                }`}
+                              >
                                 {form.images.map((file, i) => (
                                   <div key={i} className="relative group aspect-square rounded-sm overflow-hidden border border-[var(--color-deep-accent)]/20">
                                     <img
-                                      src={URL.createObjectURL(file)}
+                                      src={previewUrls[i]}
                                       alt={file.name}
                                       className="w-full h-full object-cover"
                                     />

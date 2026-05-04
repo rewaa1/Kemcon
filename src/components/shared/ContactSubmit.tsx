@@ -17,8 +17,8 @@ interface ContactSubmitProps {
   phone: string;
   email: string;
   onChange: (field: "name" | "phone" | "email", value: string) => void;
-  buildSummary: () => string;
-  buildWhatsAppMessage: () => string;
+  buildSummary: (photoUrls?: string[]) => string;
+  buildWhatsAppMessage: (photoUrls?: string[]) => string;
   photos?: File[];
   submitLabelEn?: string;
   submitLabelAr?: string;
@@ -29,6 +29,25 @@ interface ContactSubmitProps {
 }
 
 type Status = "idle" | "submitting" | "sent" | "error";
+
+const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? "";
+const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? "";
+
+async function uploadPhotos(files: File[]): Promise<string[]> {
+  return Promise.all(
+    files.map(async (file) => {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("upload_preset", UPLOAD_PRESET);
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        { method: "POST", body: fd }
+      );
+      const json = (await res.json()) as { secure_url: string };
+      return json.secure_url;
+    })
+  );
+}
 
 export function ContactSubmit({
   isAr,
@@ -48,22 +67,41 @@ export function ContactSubmit({
   successDescAr = "وصل موجزك إلى فريقنا على kemcon@yahoo.com. سيتواصل معك فريقنا خلال 3–5 أيام عمل.",
 }: ContactSubmitProps) {
   const [status, setStatus] = useState<Status>("idle");
+  const [submitStep, setSubmitStep] = useState<"uploading" | "sending" | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [whatsappUploading, setWhatsappUploading] = useState(false);
 
   const isValid = !!(name.trim() && phone.trim() && email.trim());
 
   const handleSubmit = async () => {
     if (!isValid || status === "submitting") return;
     setStatus("submitting");
+    setSubmitStep(null);
     setErrorMsg("");
 
+    let photoUrls: string[] = [];
+    if (photos.length > 0) {
+      setSubmitStep("uploading");
+      try {
+        photoUrls = await uploadPhotos(photos);
+      } catch {
+        setErrorMsg(
+          isAr
+            ? "فشل رفع الصور. حاول مرة أخرى."
+            : "Failed to upload photos. Please try again."
+        );
+        setStatus("error");
+        return;
+      }
+    }
+
+    setSubmitStep("sending");
     const fd = new FormData();
     fd.append("name", name);
     fd.append("phone", phone);
     fd.append("email", email);
-    fd.append("message", buildSummary());
+    fd.append("message", buildSummary(photoUrls));
     fd.append("locale", locale);
-    photos.forEach((file) => fd.append("photos", file));
 
     try {
       const res = await fetch("/api/contact", { method: "POST", body: fd });
@@ -86,6 +124,8 @@ export function ContactSubmit({
           : "Could not reach the server. Check your connection."
       );
       setStatus("error");
+    } finally {
+      setSubmitStep(null);
     }
   };
 
@@ -198,7 +238,9 @@ export function ContactSubmit({
         {status === "submitting" ? (
           <>
             <Loader2 size={16} className="animate-spin" />
-            {isAr ? "جارٍ الإرسال…" : "Sending…"}
+            {submitStep === "uploading"
+              ? (isAr ? "جارٍ رفع الصور…" : "Uploading photos…")
+              : (isAr ? "جارٍ الإرسال…" : "Sending…")}
           </>
         ) : (
           <>
@@ -233,15 +275,32 @@ export function ContactSubmit({
 
       {/* Secondary options */}
       <div className={`flex items-center justify-center gap-4 pt-1 flex-wrap ${isAr ? "flex-row-reverse" : ""}`}>
-        <a
-          href={`https://wa.me/201223122276?text=${buildWhatsAppMessage()}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs text-[#25D366]/80 hover:text-[#25D366] transition-colors"
+        <button
+          disabled={whatsappUploading}
+          onClick={async () => {
+            if (photos.length > 0) {
+              setWhatsappUploading(true);
+              try {
+                const urls = await uploadPhotos(photos);
+                window.open(`https://wa.me/201223122276?text=${buildWhatsAppMessage(urls)}`, "_blank");
+              } catch {
+                window.open(`https://wa.me/201223122276?text=${buildWhatsAppMessage()}`, "_blank");
+              } finally {
+                setWhatsappUploading(false);
+              }
+            } else {
+              window.open(`https://wa.me/201223122276?text=${buildWhatsAppMessage()}`, "_blank");
+            }
+          }}
+          className="inline-flex items-center gap-1.5 text-xs text-[#25D366]/80 hover:text-[#25D366] transition-colors disabled:opacity-60 disabled:cursor-wait"
         >
-          <MessageCircle size={13} strokeWidth={1.5} />
-          {isAr ? "تفضل واتساب؟" : "Prefer WhatsApp?"}
-        </a>
+          {whatsappUploading
+            ? <Loader2 size={13} className="animate-spin text-[#25D366]" />
+            : <MessageCircle size={13} strokeWidth={1.5} />}
+          {whatsappUploading
+            ? (isAr ? "جارٍ رفع الصور…" : "Uploading photos…")
+            : (isAr ? "تفضل واتساب؟" : "Prefer WhatsApp?")}
+        </button>
         <span className="text-[var(--color-deep-accent)]/30 text-xs">·</span>
         <button
           onClick={() => window.open("https://maps.app.goo.gl/P258pkoaV3g7dLHP7", "_blank")}

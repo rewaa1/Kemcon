@@ -117,7 +117,7 @@ export default function MassProductionClient() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)]">
+    <div className="min-h-screen bg-[#1A1D24]">
       {/* Header */}
       <section className="relative py-20 md:py-24 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">

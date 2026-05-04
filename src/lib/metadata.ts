@@ -21,6 +21,10 @@ export function pageAlternates(locale: string, path: string) {
   };
 }
 
+function ogLocale(locale: string) {
+  return locale === "ar" ? "ar_EG" : "en_US";
+}
+
 export async function buildPageMetadata({
   locale,
   path,
@@ -33,9 +37,24 @@ export async function buildPageMetadata({
   descriptionKey: string;
 }): Promise<Metadata> {
   const t = await getTranslations({ locale });
+  const title = t(titleKey);
+  const description = t(descriptionKey);
+
   return {
-    title: t(titleKey),
-    description: t(descriptionKey),
+    title,
+    description,
     alternates: pageAlternates(locale, path),
+    openGraph: {
+      type: "website",
+      siteName: "Kemcon",
+      locale: ogLocale(locale),
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }

@@ -298,17 +298,18 @@ export default function ShowroomClient() {
               onClick={() => setDrawerFabric(null)}
             />
 
-            {/* Drawer panel */}
+            {/* Drawer panel — single scrollable container */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
-              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-sm bg-[var(--color-bg)] border-l border-[var(--color-deep-accent)]/20 flex flex-col overflow-hidden shadow-[var(--shadow-lg)]"
+              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-sm bg-[var(--color-bg)] border-l border-[var(--color-deep-accent)]/20 overflow-y-auto overscroll-contain shadow-[var(--shadow-lg)]"
+              data-lenis-prevent
             >
               {/* Large fabric image */}
               <div
-                className="w-full aspect-[4/3] flex-shrink-0 relative"
+                className="w-full aspect-[4/3] relative"
                 style={drawerFabric.image ? {} : { background: drawerFabric.gradient }}
               >
                 {drawerFabric.image && (
@@ -328,10 +329,7 @@ export default function ShowroomClient() {
               </div>
 
               {/* Drawer content */}
-              <div
-                className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-6 flex flex-col gap-6"
-                data-lenis-prevent
-              >
+              <div className="p-6 flex flex-col gap-6">
 
                 {/* Name & family */}
                 <div>
