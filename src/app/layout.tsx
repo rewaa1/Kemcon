@@ -38,9 +38,12 @@ export const metadata: Metadata = {
   title: "Kemcon",
   description: "Premium Fabrics & Furnishings",
   icons: {
-    icon: "/favicon.png",
+    icon: [
+      { url: "/favicon.png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
     shortcut: "/favicon.png",
-    apple: "/favicon.png",
+    apple: [{ url: "/icons/icon-180.png", sizes: "180x180", type: "image/png" }],
   },
 };
 
@@ -69,6 +72,13 @@ export default async function RootLayout({
               name: "Kemcon",
               url: SITE_URL,
               foundingDate: "1985",
+              logo: {
+                "@type": "ImageObject",
+                url: `${SITE_URL}/favicon.png`,
+              },
+              sameAs: [
+                "https://web.facebook.com/profile.php?id=100076584950929",
+              ],
               address: {
                 "@type": "PostalAddress",
                 addressLocality: "Cairo",

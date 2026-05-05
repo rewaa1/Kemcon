@@ -21,7 +21,8 @@ const routes = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
+  const deployDate = process.env.NEXT_PUBLIC_DEPLOY_DATE;
+  const lastModified = deployDate ? new Date(deployDate) : new Date();
 
   return locales.flatMap((locale) =>
     routes.map(({ path, priority, changeFrequency }) => {

@@ -1,9 +1,38 @@
 import { ImageResponse } from "next/og";
 import { getTranslations } from "next-intl/server";
+import { readFile } from "fs/promises";
+import path from "path";
 
-export const runtime = "edge";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+async function loadLocalFont(filename: string): Promise<ArrayBuffer | null> {
+  try {
+    const buffer = await readFile(path.join(process.cwd(), "public/fonts", filename));
+    return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchGoogleFont(family: string, weight: number): Promise<ArrayBuffer | null> {
+  try {
+    // Old IE UA forces Google Fonts to return woff (supported by ImageResponse)
+    const css = await fetch(
+      `https://fonts.googleapis.com/css2?family=${family}:wght@${weight}&display=swap`,
+      { headers: { "User-Agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)" } }
+    ).then((r) => r.text());
+    const fontUrl = css.match(/url\(([^)]+\.woff[^)]*)\)/)?.[1];
+    if (!fontUrl) return null;
+    return fetch(fontUrl).then((r) => r.arrayBuffer());
+  } catch {
+    return null;
+  }
+}
+
+async function loadFont(filename: string, family: string, weight: number): Promise<ArrayBuffer | null> {
+  return (await loadLocalFont(filename)) ?? (await fetchGoogleFont(family, weight));
+}
 
 export default async function OGImage({
   params,
@@ -13,11 +42,12 @@ export default async function OGImage({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "meta" });
 
-  const playfair = await fetch(
-    "https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvXDXbtY.woff"
-  ).then((res) => res.arrayBuffer());
-
   const isAr = locale === "ar";
+
+  const [playfairData, notoArabicData] = await Promise.all([
+    loadFont("playfair-display-bold.woff", "Playfair+Display", 700),
+    isAr ? loadFont("noto-sans-arabic.woff", "Noto+Sans+Arabic", 400) : Promise.resolve(null),
+  ]);
 
   return new ImageResponse(
     (
@@ -31,7 +61,7 @@ export default async function OGImage({
           alignItems: isAr ? "flex-end" : "flex-start",
           justifyContent: "space-between",
           padding: "72px 96px",
-          fontFamily: '"Playfair"',
+          fontFamily: isAr ? '"NotoArabic"' : '"Playfair"',
           position: "relative",
         }}
       >
@@ -150,12 +180,13 @@ export default async function OGImage({
     {
       ...size,
       fonts: [
-        {
-          name: "Playfair",
-          data: playfair,
-          style: "normal",
-          weight: 700,
-        },
+        ...(playfairData ? [{ name: "Playfair", data: playfairData, style: "normal" as const, weight: 700 }] : []),
+        ...(notoArabicData
+          ? [
+              { name: "NotoArabic", data: notoArabicData, style: "normal" as const, weight: 400 },
+              { name: "NotoArabic", data: notoArabicData, style: "normal" as const, weight: 700 },
+            ]
+          : []),
       ],
     }
   );

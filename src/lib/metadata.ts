@@ -48,6 +48,8 @@ export async function buildPageMetadata({
       type: "website",
       siteName: "Kemcon",
       locale: ogLocale(locale),
+      alternateLocale: locale === "ar" ? ["en_US"] : ["ar_EG"],
+      url: `${SITE_URL}/${locale}${path}`,
       title,
       description,
     },

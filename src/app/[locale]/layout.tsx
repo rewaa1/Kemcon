@@ -29,6 +29,8 @@ export async function generateMetadata({
       type: "website",
       siteName: "Kemcon",
       locale: locale === "ar" ? "ar_EG" : "en_US",
+      alternateLocale: locale === "ar" ? ["en_US"] : ["ar_EG"],
+      url: `${SITE_URL}/${locale}`,
       title,
       description,
     },
