@@ -32,21 +32,18 @@ type Status = "idle" | "submitting" | "sent" | "error";
 
 import { KEMCON_EMAIL, KEMCON_WHATSAPP } from "@/lib/config";
 
-const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? "";
-const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? "";
-
 async function uploadPhotos(files: File[]): Promise<string[]> {
   return Promise.all(
     files.map(async (file) => {
       const fd = new FormData();
       fd.append("file", file);
-      fd.append("upload_preset", UPLOAD_PRESET);
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-        { method: "POST", body: fd }
-      );
-      const json = (await res.json()) as { secure_url: string };
-      return json.secure_url;
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      if (!res.ok) {
+        const json = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(json.error ?? "Upload failed");
+      }
+      const json = (await res.json()) as { url: string };
+      return json.url;
     })
   );
 }
@@ -114,7 +111,10 @@ export function ContactSubmit({
 
     try {
       const res = await fetch("/api/contact", { method: "POST", body: fd });
-      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      const data = (await res.json().catch((e: unknown) => {
+        console.warn("[ContactSubmit] Failed to parse response JSON:", e);
+        return {};
+      })) as { error?: string };
       if (!res.ok) {
         setErrorMsg(
           data.error ||
@@ -194,10 +194,11 @@ export function ContactSubmit({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className={`block text-xs text-[var(--color-text-muted)] font-medium ${isAr ? "text-right" : ""}`}>
+            <label htmlFor="cs-name" className={`block text-xs text-[var(--color-text-muted)] font-medium ${isAr ? "text-right" : ""}`}>
               {isAr ? "الاسم الكامل *" : "Full Name *"}
             </label>
             <input
+              id="cs-name"
               type="text"
               value={name}
               onChange={(e) => onChange("name", e.target.value)}
@@ -206,10 +207,11 @@ export function ContactSubmit({
             />
           </div>
           <div className="space-y-1.5">
-            <label className={`block text-xs text-[var(--color-text-muted)] font-medium ${isAr ? "text-right" : ""}`}>
+            <label htmlFor="cs-phone" className={`block text-xs text-[var(--color-text-muted)] font-medium ${isAr ? "text-right" : ""}`}>
               {isAr ? "رقم الهاتف *" : "Phone Number *"}
             </label>
             <input
+              id="cs-phone"
               type="tel"
               value={phone}
               onChange={(e) => onChange("phone", e.target.value)}
@@ -218,10 +220,11 @@ export function ContactSubmit({
             />
           </div>
           <div className="sm:col-span-2 space-y-1.5">
-            <label className={`block text-xs text-[var(--color-text-muted)] font-medium ${isAr ? "text-right" : ""}`}>
+            <label htmlFor="cs-email" className={`block text-xs text-[var(--color-text-muted)] font-medium ${isAr ? "text-right" : ""}`}>
               {isAr ? "البريد الإلكتروني *" : "Email Address *"}
             </label>
             <input
+              id="cs-email"
               type="email"
               value={email}
               onChange={(e) => onChange("email", e.target.value)}

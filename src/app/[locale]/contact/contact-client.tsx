@@ -131,7 +131,7 @@ export default function ContactClient() {
         label={t("label")}
         title={t("title")}
         description={t("description")}
-        image="https://images.unsplash.com/photo-1660557989695-14fac79c086d?q=80&w=2000&auto=format&fit=crop"
+        image="/images/contact-hero.jpg"
         alt="Contact Kemcon"
       />
 

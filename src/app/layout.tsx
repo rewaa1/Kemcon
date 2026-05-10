@@ -9,24 +9,30 @@ import "./globals.css";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
+  weight: ["400", "700"],
   variable: "--font-playfair",
   display: "swap",
+  preload: true,
 });
 
 const inter = Inter({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
   display: "swap",
+  preload: true,
 });
 
 const notoSansArabic = Noto_Sans_Arabic({
   subsets: ["arabic"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-noto-sans-arabic",
   display: "swap",
 });
 
 const notoKufiArabic = Noto_Kufi_Arabic({
   subsets: ["arabic"],
+  weight: ["400", "600", "700"],
   variable: "--font-noto-kufi-arabic",
   display: "swap",
 });

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { KEMCON_EMAIL } from "@/lib/config";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -63,6 +64,15 @@ async function parseRequest(request: NextRequest): Promise<{
 }
 
 export async function POST(request: NextRequest) {
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  if (!checkRateLimit(`contact:${ip}`, 5, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait a minute and try again." },
+      { status: 429 }
+    );
+  }
+
   let parsed: Awaited<ReturnType<typeof parseRequest>>;
 
   try {

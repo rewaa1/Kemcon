@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   CATEGORY_STEPS,
   initialConfiguratorState,
@@ -69,6 +70,7 @@ export function ConfiguratorShell({
 }: ConfiguratorShellProps) {
   const isAr = locale === "ar";
   const router = useRouter();
+  const tc = useTranslations("configurator");
   const steps = CATEGORY_STEPS[category];
   const [currentStep, setCurrentStep] = useState(0);
   const [state, setState] = useState<ConfiguratorState>({
@@ -196,11 +198,7 @@ export function ConfiguratorShell({
 
   const confirmLeave = useCallback(() => {
     if (!isDirty) return true;
-    return window.confirm(
-      isAr
-        ? "لديك تقدم غير محفوظ. هل تريد المغادرة؟"
-        : "You have unsaved progress. Are you sure you want to leave?"
-    );
+    return window.confirm(tc("unsavedPrompt"));
   }, [isDirty, isAr]);
 
   return (
@@ -213,7 +211,7 @@ export function ConfiguratorShell({
             className={`flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors ${isAr ? "flex-row-reverse" : ""}`}
           >
             {isAr ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
-            {isAr ? "جميع المنتجات" : "All Products"}
+            {tc("allProducts")}
           </button>
           <span className="text-sm font-semibold text-[var(--color-heading)]">{categoryLabel}</span>
           <div className="w-24" />
@@ -257,14 +255,14 @@ export function ConfiguratorShell({
                 `}
               >
                 {isAr ? <ArrowRight size={16} /> : <ArrowLeft size={16} />}
-                {isAr ? "السابق" : "Back"}
+                {tc("back")}
               </button>
 
               {/* Selection chips */}
               {chips.length > 0 && (
                 <div className={`flex-1 flex items-center gap-2 overflow-x-auto min-w-0 ${isAr ? "flex-row-reverse" : ""}`}>
                   <span className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-widest flex-shrink-0">
-                    {isAr ? "اختياراتك:" : "Your picks:"}
+                    {tc("yourPicks")}
                   </span>
                   <div className="flex items-center gap-2 flex-nowrap">
                     {chips.map((chip, index) => (
@@ -292,6 +290,7 @@ export function ConfiguratorShell({
               <motion.button
                 onClick={goNext}
                 disabled={!canGoNext}
+                aria-disabled={!canGoNext}
                 whileHover={canGoNext ? { scale: 1.02 } : {}}
                 whileTap={canGoNext ? { scale: 0.98 } : {}}
                 className={`
@@ -303,7 +302,7 @@ export function ConfiguratorShell({
                   }
                 `}
               >
-                {isAr ? "التالي" : isLastStep ? "Review" : "Next"}
+                {isLastStep ? tc("review") : tc("next")}
                 {isAr ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
               </motion.button>
             </div>

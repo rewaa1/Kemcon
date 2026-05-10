@@ -33,6 +33,7 @@ export async function generateMetadata({
       url: `${SITE_URL}/${locale}`,
       title,
       description,
+      images: [{ url: `/${locale}/opengraph-image`, width: 1200, height: 630, alt: "Kemcon" }],
     },
     twitter: {
       card: "summary_large_image",
@@ -55,8 +56,14 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider messages={messages} locale={locale}>
       <LenisProvider>
+        <a
+          href="#main-content"
+          className="absolute -top-full left-4 z-[200] px-4 py-2 rounded-sm text-sm font-semibold bg-[var(--color-accent)] text-[var(--color-dark)] focus:top-4 transition-[top] duration-150"
+        >
+          {locale === "ar" ? "انتقل إلى المحتوى الرئيسي" : "Skip to main content"}
+        </a>
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <main id="main-content" className="flex-1">{children}</main>
         <Footer />
       </LenisProvider>
     </NextIntlClientProvider>

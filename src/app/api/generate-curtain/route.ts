@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function POST(request: NextRequest) {
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  if (!checkRateLimit(`generate:${ip}`, 3, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many generation requests. Please wait a minute." },
+      { status: 429 }
+    );
+  }
+
   const { prompt, seed, negative } = await request.json();
 
   const params = new URLSearchParams({

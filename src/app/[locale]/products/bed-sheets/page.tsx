@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { ConfiguratorShell } from "@/components/products/configurator/ConfiguratorShell";
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
 import { JsonLd } from "@/components/seo/JsonLd";
 
@@ -51,13 +52,15 @@ export default async function BedSheetsPage({ searchParams }: PageProps) {
   return (
     <>
       <JsonLd schema={schemas} />
-      <ConfiguratorShell
-        category="bed-sheets"
-        categoryLabel={isAr ? "ملاءات سرير" : "Bed Sheets"}
-        locale={locale}
-        initialFabricId={fabric}
-        initialFabricFamilyId={fabricFamily}
-      />
+      <ErrorBoundary>
+        <ConfiguratorShell
+          category="bed-sheets"
+          categoryLabel={isAr ? "ملاءات سرير" : "Bed Sheets"}
+          locale={locale}
+          initialFabricId={fabric}
+          initialFabricFamilyId={fabricFamily}
+        />
+      </ErrorBoundary>
     </>
   );
 }

@@ -18,7 +18,7 @@ export default function AboutClient() {
         label={t("label")}
         title={t("title")}
         description={t("heroDescription")}
-        image="https://images.unsplash.com/photo-1611048267451-e6ed903d4a38?q=80&w=2000&auto=format&fit=crop"
+        image="/images/about-hero.jpg"
         alt="About Kemcon"
       />
 
@@ -43,10 +43,10 @@ export default function AboutClient() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
             <p className={`text-xs font-semibold uppercase tracking-[0.3em] text-accent mb-3 ${isAr ? "text-right" : ""}`}>
-              {isAr ? "قيادتنا" : "Leadership"}
+              {t("leadership.sectionLabel")}
             </p>
             <h2 className={`text-3xl md:text-4xl font-bold text-foreground mb-16 ${isAr ? "text-right" : ""}`}>
-              {isAr ? "الرجل خلف الرؤية" : "The Man Behind the Vision"}
+              {t("leadership.sectionTitle")}
             </h2>
           </FadeIn>
 
@@ -54,20 +54,13 @@ export default function AboutClient() {
             {/* Photo */}
             <FadeIn direction={isAr ? "right" : "left"} className="w-full md:w-2/5 flex-shrink-0">
               <div className="relative aspect-[3/4] rounded-sm overflow-hidden bg-surface border border-accent/10">
-                {/* Placeholder — replace src with real image path once uploaded */}
+                {/* Placeholder — replace with <Image> once the photo is uploaded to /public/team/ */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-foreground/20">
                   <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                   <span className="text-xs tracking-widest uppercase">Photo coming soon</span>
                 </div>
-                {/* Uncomment and set src once the image is uploaded:
-                <img
-                  src="/team/kamal-soliman.jpg"
-                  alt="Kamal Soliman"
-                  className="w-full h-full object-cover object-top"
-                /> */}
-                {/* Subtle accent corner */}
                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-accent to-deep-accent" />
               </div>
             </FadeIn>
@@ -75,34 +68,26 @@ export default function AboutClient() {
             {/* Bio */}
             <FadeIn direction={isAr ? "left" : "right"} delay={0.1} className="flex-1">
               <p className={`text-xs font-semibold uppercase tracking-[0.25em] text-accent mb-2 ${isAr ? "text-right" : ""}`}>
-                {isAr ? "المؤسس والرئيس التنفيذي" : "Founder & CEO"}
+                {t("leadership.founderRole")}
               </p>
               <h3 className={`text-3xl md:text-4xl font-bold text-foreground mb-1 ${isAr ? "text-right" : ""}`}>
-                {isAr ? "كمال سليمان" : "Kamal Soliman"}
+                {t("leadership.founderName")}
               </h3>
               <p className={`text-sm text-foreground/40 mb-8 ${isAr ? "text-right" : ""}`}>
-                {isAr ? "مهندس معماري" : "Architecture Engineer"}
+                {t("leadership.founderTitle")}
               </p>
 
               <div className={`space-y-4 text-foreground/65 leading-relaxed ${isAr ? "text-right" : ""}`}>
-                <p>
-                  {isAr
-                    ? "بعقله الهندسي وحسّه الفني، أرسى كمال سليمان دعائم كيمكون منذ عام 1985، ليحوّلها من مشروع ناشئ إلى مجموعة تصنيعية رائدة تخدم كبرى سلاسل الفنادق في الشرق الأوسط."
-                    : "With an engineer's precision and an artist's eye, Kamal Soliman founded Kemcon in 1985 and built it from the ground up into a leading manufacturing group serving elite hotel chains across the Middle East."}
-                </p>
-                <p>
-                  {isAr
-                    ? "أشرف شخصياً على تطوير ذراع التصنيع إيجيتكس، وقاد توسّع المجموعة في الأسواق الإقليمية، مؤمناً دوماً بأن الجودة الحقيقية تولد من التفاصيل التي لا يراها أحد."
-                    : "He personally oversaw the development of Egytex, the group's manufacturing arm, and led its regional expansion — driven by the belief that true quality is born in the details no one else notices."}
-                </p>
+                <p>{t("leadership.bio1")}</p>
+                <p>{t("leadership.bio2")}</p>
               </div>
 
-              {/* Divider */}
+              {/* Stats */}
               <div className={`mt-10 pt-8 border-t border-accent/10 flex flex-wrap gap-8 ${isAr ? "justify-end" : ""}`}>
                 {[
-                  { value: "40+", label: isAr ? "عاماً من الخبرة" : "Years of Experience" },
-                  { value: "500+", label: isAr ? "فندق تم تجهيزه" : "Hotels Furnished" },
-                  { value: "4", label: isAr ? "أسواق إقليمية" : "Regional Markets" },
+                  { value: t("leadership.years"), label: t("leadership.yearsLabel") },
+                  { value: t("leadership.hotels"), label: t("leadership.hotelsLabel") },
+                  { value: t("leadership.markets"), label: t("leadership.marketsLabel") },
                 ].map((stat) => (
                   <div key={stat.label} className={isAr ? "text-right" : ""}>
                     <p className="text-2xl font-bold text-accent">{stat.value}</p>

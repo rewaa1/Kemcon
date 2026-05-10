@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FadeIn } from "@/components/motion/FadeIn";
 
 interface PageHeroProps {
@@ -14,10 +15,13 @@ export function PageHero({ label, title, description, image, alt }: PageHeroProp
   return (
     <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
       <div className="absolute inset-0">
-        <img
+        <Image
           src={image}
           alt={alt || title}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          sizes="100vw"
+          priority
         />
         <div className="absolute inset-0 bg-dark/70" />
       </div>

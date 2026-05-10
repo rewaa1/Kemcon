@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
+import Image from "next/image";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { StaggerContainer, staggerItem } from "@/components/motion/StaggerContainer";
 import { motion } from "framer-motion";
@@ -37,11 +38,13 @@ export function AboutPreview() {
           {/* Image Side */}
           <FadeIn direction="left" className="relative">
             <div className="relative">
-              <div className="aspect-[4/5] rounded-sm overflow-hidden shadow-lg">
-                <img
-                  src="https://images.unsplash.com/photo-1573052905904-34ad8c27f0cc?q=80&w=1200&auto=format&fit=crop"
+              <div className="relative aspect-[4/5] rounded-sm overflow-hidden shadow-lg">
+                <Image
+                  src="/images/about-preview.jpg"
                   alt="Kemcon luxury fabrics"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               </div>
               {/* Decorative Frame */}

@@ -403,6 +403,7 @@ export default function DesignPlanClient() {
                     {isOpen ? (
                       <motion.div
                         key="open"
+                        id={`dp-section-${key}`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -419,6 +420,8 @@ export default function DesignPlanClient() {
                           <button
                             onClick={() => toggleSection(key)}
                             aria-label={isAr ? "إخفاء" : "Hide"}
+                            aria-expanded={true}
+                            aria-controls={`dp-section-${key}`}
                             className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors p-1 -m-1"
                           >
                             <X size={16} strokeWidth={1.5} />
@@ -555,6 +558,8 @@ export default function DesignPlanClient() {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.15 }}
                         onClick={() => toggleSection(key)}
+                        aria-expanded={false}
+                        aria-controls={`dp-section-${key}`}
                         className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-sm border border-dashed border-[var(--color-deep-accent)]/30 text-[var(--color-text-muted)] hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-accent)]/[0.03] hover:text-[var(--color-text)] transition-all duration-200 group ${isAr ? "flex-row-reverse text-right" : "text-left"}`}
                       >
                         <Icon size={16} strokeWidth={1.5} className="flex-shrink-0" />

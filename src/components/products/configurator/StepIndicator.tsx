@@ -27,7 +27,7 @@ export function StepIndicator({ steps, currentStep, locale, onStepClick }: StepI
 
   return (
     <nav aria-label={isAr ? "خطوات" : "Steps"} className="w-full overflow-x-auto px-4 py-6">
-      <ol className="flex items-center gap-0 min-w-max mx-auto list-none">
+      <ol className="flex items-center justify-center gap-0 min-w-max mx-auto list-none">
         {steps.map((step, index) => {
           const isCompleted = index < currentStep;
           const isActive = index === currentStep;
