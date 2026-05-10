@@ -180,11 +180,11 @@ export default async function OGImage({
     {
       ...size,
       fonts: [
-        ...(playfairData ? [{ name: "Playfair", data: playfairData, style: "normal" as const, weight: 700 }] : []),
+        ...(playfairData ? [{ name: "Playfair", data: playfairData, style: "normal" as const, weight: 700 as const }] : []),
         ...(notoArabicData
           ? [
-              { name: "NotoArabic", data: notoArabicData, style: "normal" as const, weight: 400 },
-              { name: "NotoArabic", data: notoArabicData, style: "normal" as const, weight: 700 },
+              { name: "NotoArabic", data: notoArabicData, style: "normal" as const, weight: 400 as const },
+              { name: "NotoArabic", data: notoArabicData, style: "normal" as const, weight: 700 as const },
             ]
           : []),
       ],
