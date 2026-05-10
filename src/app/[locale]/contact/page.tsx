@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
+import { KEMCON_EMAIL, KEMCON_PHONE_TEL } from "@/lib/config";
 import { JsonLd } from "@/components/seo/JsonLd";
 import ContactClient from "./contact-client";
 
@@ -20,8 +21,8 @@ const localBusinessSchema = {
   "@id": `${SITE_URL}/#business`,
   name: "Kemcon",
   url: SITE_URL,
-  telephone: "+20-12-23122276",
-  email: "kemcon@yahoo.com",
+  telephone: KEMCON_PHONE_TEL,
+  email: KEMCON_EMAIL,
   foundingDate: "1985",
   address: {
     "@type": "PostalAddress",

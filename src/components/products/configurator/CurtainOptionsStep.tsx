@@ -100,7 +100,7 @@ export function CurtainOptionsStep({ state, onChange, locale }: CurtainOptionsSt
         </p>
       )}
 
-      {!state.requestMeasurement && (
+      {!state.requestMeasurement && state.curtainControl && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}

@@ -4,6 +4,7 @@ import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { Store, Factory, Phone } from "lucide-react";
 import { FadeIn } from "@/components/motion/FadeIn";
+import { KEMCON_WHATSAPP, KEMCON_PHONE_DISPLAY } from "@/lib/config";
 
 const navLinks = [
   { key: "home", href: "" },
@@ -93,8 +94,8 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={16} className="text-accent shrink-0" strokeWidth={1.5} />
-                <a href="https://wa.me/201223122276" target="_blank" rel="noopener noreferrer" dir="ltr" className="hover:text-accent transition-colors duration-300">
-                  +20 12 23122276
+                <a href={`https://wa.me/${KEMCON_WHATSAPP}`} target="_blank" rel="noopener noreferrer" dir="ltr" className="hover:text-accent transition-colors duration-300">
+                  {KEMCON_PHONE_DISPLAY}
                 </a>
               </li>
               <li className="flex items-center gap-3">

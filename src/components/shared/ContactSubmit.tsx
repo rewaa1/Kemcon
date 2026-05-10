@@ -30,6 +30,8 @@ interface ContactSubmitProps {
 
 type Status = "idle" | "submitting" | "sent" | "error";
 
+import { KEMCON_EMAIL, KEMCON_WHATSAPP } from "@/lib/config";
+
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? "";
 const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? "";
 
@@ -63,15 +65,22 @@ export function ContactSubmit({
   submitLabelAr = "إرسال الموجز",
   successTitleEn = "Brief Sent!",
   successTitleAr = "تم إرسال موجزك!",
-  successDescEn = "Your brief has been delivered to kemcon@yahoo.com. Our team will be in touch within 3–5 business days.",
-  successDescAr = "وصل موجزك إلى فريقنا على kemcon@yahoo.com. سيتواصل معك فريقنا خلال 3–5 أيام عمل.",
+  successDescEn = `Your brief has been delivered to ${KEMCON_EMAIL}. Our team will be in touch within 3–5 business days.`,
+  successDescAr = `وصل موجزك إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معك فريقنا خلال 3–5 أيام عمل.`,
 }: ContactSubmitProps) {
   const [status, setStatus] = useState<Status>("idle");
   const [submitStep, setSubmitStep] = useState<"uploading" | "sending" | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [whatsappUploading, setWhatsappUploading] = useState(false);
 
-  const isValid = !!(name.trim() && phone.trim() && email.trim());
+  const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const phoneDigits = phone.replace(/\D/g, "").length;
+  const isValid = !!(
+    name.trim() &&
+    EMAIL_RE.test(email.trim()) &&
+    phoneDigits >= 7 &&
+    phoneDigits <= 15
+  );
 
   const handleSubmit = async () => {
     if (!isValid || status === "submitting") return;
@@ -156,7 +165,7 @@ export function ContactSubmit({
 
         <div className="flex flex-col items-center gap-3 w-full">
           <a
-            href={`https://wa.me/201223122276?text=${buildWhatsAppMessage()}`}
+            href={`https://wa.me/${KEMCON_WHATSAPP}?text=${buildWhatsAppMessage()}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-[#25D366] hover:underline underline-offset-2 transition-colors"
@@ -282,14 +291,14 @@ export function ContactSubmit({
               setWhatsappUploading(true);
               try {
                 const urls = await uploadPhotos(photos);
-                window.open(`https://wa.me/201223122276?text=${buildWhatsAppMessage(urls)}`, "_blank");
+                window.open(`https://wa.me/${KEMCON_WHATSAPP}?text=${buildWhatsAppMessage(urls)}`, "_blank");
               } catch {
-                window.open(`https://wa.me/201223122276?text=${buildWhatsAppMessage()}`, "_blank");
+                window.open(`https://wa.me/${KEMCON_WHATSAPP}?text=${buildWhatsAppMessage()}`, "_blank");
               } finally {
                 setWhatsappUploading(false);
               }
             } else {
-              window.open(`https://wa.me/201223122276?text=${buildWhatsAppMessage()}`, "_blank");
+              window.open(`https://wa.me/${KEMCON_WHATSAPP}?text=${buildWhatsAppMessage()}`, "_blank");
             }
           }}
           className="inline-flex items-center gap-1.5 text-xs text-[#25D366]/80 hover:text-[#25D366] transition-colors disabled:opacity-60 disabled:cursor-wait"

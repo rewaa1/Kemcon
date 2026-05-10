@@ -4,6 +4,7 @@ import { Playfair_Display, Inter, Noto_Sans_Arabic, Noto_Kufi_Arabic } from "nex
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SITE_URL } from "@/lib/metadata";
+import { KEMCON_EMAIL, KEMCON_PHONE_TEL } from "@/lib/config";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -86,8 +87,8 @@ export default async function RootLayout({
               },
               contactPoint: {
                 "@type": "ContactPoint",
-                telephone: "+20-12-23122276",
-                email: "kemcon@yahoo.com",
+                telephone: KEMCON_PHONE_TEL,
+                email: KEMCON_EMAIL,
                 contactType: "customer service",
                 areaServed: ["EG", "SA", "AE", "JO"],
               },

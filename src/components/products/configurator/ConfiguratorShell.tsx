@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   CATEGORY_STEPS,
   initialConfiguratorState,
@@ -68,6 +68,7 @@ export function ConfiguratorShell({
   initialFabricFamilyId,
 }: ConfiguratorShellProps) {
   const isAr = locale === "ar";
+  const router = useRouter();
   const steps = CATEGORY_STEPS[category];
   const [currentStep, setCurrentStep] = useState(0);
   const [state, setState] = useState<ConfiguratorState>({
@@ -184,18 +185,36 @@ export function ConfiguratorShell({
 
   const showNav = currentStepId !== "inquiry" && currentStepId !== "aiVisualization";
 
+  const isDirty = currentStep > 0;
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
+
+  const confirmLeave = useCallback(() => {
+    if (!isDirty) return true;
+    return window.confirm(
+      isAr
+        ? "لديك تقدم غير محفوظ. هل تريد المغادرة؟"
+        : "You have unsaved progress. Are you sure you want to leave?"
+    );
+  }, [isDirty, isAr]);
+
   return (
     <div className="relative min-h-screen pt-20 pb-48 bg-[var(--color-bg-secondary)]">
       {/* Category header + back link */}
       <div className="sticky top-20 z-30 bg-[var(--color-bg-secondary)]/95 backdrop-blur-md border-b border-[var(--color-deep-accent)]/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-3">
-          <Link
-            href={`/${locale}/products`}
+          <button
+            onClick={() => confirmLeave() && router.push(`/${locale}/products`)}
             className={`flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors ${isAr ? "flex-row-reverse" : ""}`}
           >
             {isAr ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
             {isAr ? "جميع المنتجات" : "All Products"}
-          </Link>
+          </button>
           <span className="text-sm font-semibold text-[var(--color-heading)]">{categoryLabel}</span>
           <div className="w-24" />
         </div>

@@ -7,10 +7,12 @@ import { Mail, Store, Factory, Phone, Clock, MessageCircle, ArrowRight, ArrowLef
 import { PageHero } from "@/components/ui/PageHero";
 import { FadeIn } from "@/components/motion/FadeIn";
 
-const KEMCON_EMAIL = "kemcon@yahoo.com";
-const WHATSAPP_NUMBER = "201223122276";
-const SHOWROOM_URL = "https://maps.app.goo.gl/P258pkoaV3g7dLHP7";
-const FACTORY_URL = "https://maps.app.goo.gl/DCcFrvaM21skeTs1A";
+import {
+  KEMCON_EMAIL,
+  KEMCON_WHATSAPP as WHATSAPP_NUMBER,
+  SHOWROOM_MAP_URL as SHOWROOM_URL,
+  FACTORY_MAP_URL as FACTORY_URL,
+} from "@/lib/config";
 
 type Status = "idle" | "sending" | "sent" | "error";
 

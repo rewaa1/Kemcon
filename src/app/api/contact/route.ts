@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { KEMCON_EMAIL } from "@/lib/config";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 interface JsonPayload {
   name?: string;
@@ -25,6 +26,12 @@ async function parseRequest(request: NextRequest): Promise<{
     const data = await request.formData();
     const photos = data.getAll("photos") as File[];
 
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+    const oversized = photos.find((f) => f.size > MAX_FILE_SIZE);
+    if (oversized) {
+      throw new Error(`File "${oversized.name}" exceeds the 5 MB limit`);
+    }
+
     const attachments = await Promise.all(
       photos.map(async (file) => ({
         filename: file.name,
@@ -33,9 +40,10 @@ async function parseRequest(request: NextRequest): Promise<{
       }))
     );
 
+    const rawPhone = (data.get("phone") as string | null)?.trim() ?? "";
     return {
       name: (data.get("name") as string | null)?.trim() ?? "",
-      phone: (data.get("phone") as string | null)?.trim() ?? "",
+      phone: rawPhone.replace(/[\r\n]/g, ""),
       email: (data.get("email") as string | null)?.trim() ?? "",
       message: (data.get("message") as string | null)?.trim() ?? "",
       isAr: data.get("locale") === "ar",
@@ -46,7 +54,7 @@ async function parseRequest(request: NextRequest): Promise<{
   const payload = (await request.json()) as JsonPayload;
   return {
     name: payload.name?.trim() ?? "",
-    phone: payload.phone?.trim() ?? "",
+    phone: (payload.phone?.trim() ?? "").replace(/[\r\n]/g, ""),
     email: payload.email?.trim() ?? "",
     message: payload.message?.trim() ?? "",
     isAr: payload.locale === "ar",
@@ -59,8 +67,9 @@ export async function POST(request: NextRequest) {
 
   try {
     parsed = await parseRequest(request);
-  } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Invalid request body";
+    return NextResponse.json({ error: msg }, { status: 400 });
   }
 
   const { name, phone, email, message, isAr, attachments } = parsed;
@@ -83,7 +92,7 @@ export async function POST(request: NextRequest) {
   const port = Number(process.env.SMTP_PORT) || 587;
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
-  const to = process.env.CONTACT_TO || "info@kemcon.com";
+  const to = process.env.CONTACT_TO || KEMCON_EMAIL;
   const from = process.env.SMTP_FROM || (user ? `"Kemcon Website" <${user}>` : undefined);
 
   if (!host || !user || !pass || !from) {
