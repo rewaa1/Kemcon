@@ -41,7 +41,7 @@ export function AboutPreview() {
               <div className="relative aspect-[4/5] rounded-sm overflow-hidden shadow-lg">
                 <Image
                   src="/images/about-preview.jpg"
-                  alt="Kemcon luxury fabrics"
+                  alt="Kemcon craftsman working with premium upholstery fabric"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"

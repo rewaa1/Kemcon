@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, RefreshCw, ArrowRight, ArrowLeft, Images } from "lucide-react";
+import { Sparkles, RefreshCw, ArrowRight, ArrowLeft, Images, AlertCircle } from "lucide-react";
 import { fabrics, fabricFamilies } from "@/data/fabrics";
 import { colors } from "@/data/colors";
 import { patterns } from "@/data/patterns";
@@ -46,6 +46,7 @@ interface AIVisualizationStepProps {
 }
 
 type TabGenState = "idle" | "loading" | "done" | "error";
+type GenerationError = "rate-limited" | "unavailable" | "network";
 type Tab = "room" | "detail";
 type Mode = "ai" | "gallery";
 
@@ -62,6 +63,8 @@ export function AIVisualizationStep({
   const [activeTab, setActiveTab] = useState<Tab>("room");
   const [roomState, setRoomState] = useState<TabGenState>("idle");
   const [detailState, setDetailState] = useState<TabGenState>("idle");
+  const [roomError, setRoomError] = useState<GenerationError | null>(null);
+  const [detailError, setDetailError] = useState<GenerationError | null>(null);
   const [roomUrl, setRoomUrl] = useState<string | null>(null);
   const [detailUrl, setDetailUrl] = useState<string | null>(null);
   const [roomRegen, setRoomRegen] = useState(0);
@@ -115,12 +118,18 @@ export function AIVisualizationStep({
     ].join(", ");
 
   const fetchImage = async (prompt: string, seed: number) => {
-    const response = await fetch("/api/generate-curtain", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, seed, negative: NEGATIVE }),
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    let response: Response;
+    try {
+      response = await fetch("/api/generate-curtain", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt, seed, negative: NEGATIVE }),
+      });
+    } catch {
+      throw new Error("network");
+    }
+    if (response.status === 429) throw new Error("rate-limited");
+    if (!response.ok) throw new Error("unavailable");
     const pollinationsUrl = response.headers.get("X-Image-Url");
     const blob = await response.blob();
     return { blobUrl: URL.createObjectURL(blob), pollinationsUrl };
@@ -128,6 +137,7 @@ export function AIVisualizationStep({
 
   const generateRoom = async (isRegen = false) => {
     setRoomState("loading");
+    setRoomError(null);
     setRoomUrl(null);
     if (isRegen) setRoomRegen((r) => r + 1);
     try {
@@ -135,13 +145,15 @@ export function AIVisualizationStep({
       setRoomUrl(blobUrl);
       onChange({ aiImageUrl: pollinationsUrl, aiDisplayUrl: blobUrl });
       setRoomState("done");
-    } catch {
+    } catch (err) {
+      setRoomError((err as Error).message as GenerationError);
       setRoomState("error");
     }
   };
 
   const generateDetail = async (isRegen = false) => {
     setDetailState("loading");
+    setDetailError(null);
     setDetailUrl(null);
     if (isRegen) setDetailRegen((r) => r + 1);
     try {
@@ -151,12 +163,29 @@ export function AIVisualizationStep({
       if (!roomUrl) onChange({ aiDetailImageUrl: pollinationsUrl, aiDisplayUrl: blobUrl });
       else onChange({ aiDetailImageUrl: pollinationsUrl });
       setDetailState("done");
-    } catch {
+    } catch (err) {
+      setDetailError((err as Error).message as GenerationError);
       setDetailState("error");
     }
   };
 
   const anyDone = roomState === "done" || detailState === "done";
+
+  const tabError = activeTab === "room" ? roomError : detailError;
+
+  const errorMessage = (err: GenerationError | null) => {
+    if (err === "rate-limited")
+      return isAr
+        ? "وصلت إلى الحد الأقصى للطلبات. انتظر دقيقة ثم أعد المحاولة."
+        : "You've reached the generation limit. Wait a minute then try again.";
+    if (err === "network")
+      return isAr
+        ? "تعذّر الاتصال بخدمة الذكاء الاصطناعي. تحقق من اتصالك بالإنترنت."
+        : "Couldn't reach the AI service. Check your connection and try again.";
+    return isAr
+      ? "خدمة الذكاء الاصطناعي غير متاحة مؤقتًا. يمكنك إعادة المحاولة أو تصفح معرض مشاريعنا."
+      : "The AI service is temporarily unavailable. Try again or browse our portfolio instead.";
+  };
 
   const toggleInspirationImage = (src: string) => {
     const next = state.inspirationImages.includes(src)
@@ -440,17 +469,36 @@ export function AIVisualizationStep({
 
               {/* Error */}
               {tabGenState === "error" && (
-                <div className="flex flex-col items-center gap-4">
-                  <p className="text-sm text-red-400">
-                    {isAr ? "فشل التوليد" : "Generation failed"}
-                  </p>
-                  <button
-                    onClick={() => onGenerate(false)}
-                    className="flex items-center gap-2 text-sm text-[var(--color-accent)] hover:underline"
-                  >
-                    <RefreshCw size={14} />
-                    {isAr ? "إعادة المحاولة" : "Retry"}
-                  </button>
+                <div className="flex flex-col items-center gap-5 px-8 text-center">
+                  <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
+                    <AlertCircle size={22} className="text-red-400" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-sm font-semibold text-[var(--color-heading)]">
+                      {isAr ? "تعذّر توليد الصورة" : "Generation unavailable"}
+                    </p>
+                    <p className="text-xs text-[var(--color-text-muted)] max-w-xs">
+                      {errorMessage(tabError)}
+                    </p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <motion.button
+                      onClick={() => onGenerate(false)}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex items-center gap-2 px-5 py-2 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-xs font-semibold hover:bg-[var(--color-accent-hover)] transition-colors"
+                    >
+                      <RefreshCw size={13} />
+                      {isAr ? "إعادة المحاولة" : "Try again"}
+                    </motion.button>
+                    <button
+                      onClick={() => setMode("gallery")}
+                      className="flex items-center gap-2 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
+                    >
+                      <Images size={13} />
+                      {isAr ? "تصفح معرض مشاريعنا" : "Browse our portfolio"}
+                    </button>
+                  </div>
                 </div>
               )}
 

@@ -30,15 +30,21 @@ export async function buildPageMetadata({
   path,
   titleKey,
   descriptionKey,
+  ogImage,
 }: {
   locale: string;
   path: string;
   titleKey: string;
   descriptionKey: string;
+  ogImage?: string;
 }): Promise<Metadata> {
   const t = await getTranslations({ locale });
   const title = t(titleKey);
   const description = t(descriptionKey);
+
+  const ogImageUrl = ogImage
+    ? `${SITE_URL}/api/og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}&image=${encodeURIComponent(ogImage)}&locale=${locale}`
+    : `/${locale}/opengraph-image`;
 
   return {
     title,
@@ -52,7 +58,7 @@ export async function buildPageMetadata({
       url: `${SITE_URL}/${locale}${path}`,
       title,
       description,
-      images: [{ url: `/${locale}/opengraph-image`, width: 1200, height: 630, alt: "Kemcon" }],
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",

@@ -10,6 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
     path: "/clients",
     titleKey: "meta.pages.clients.title",
     descriptionKey: "meta.pages.clients.description",
+    ogImage: "images/clients-hero.jpg",
   });
 }
 

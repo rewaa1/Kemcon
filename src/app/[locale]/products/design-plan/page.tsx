@@ -10,6 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
     path: "/products/design-plan",
     titleKey: "meta.pages.designPlan.title",
     descriptionKey: "meta.pages.designPlan.description",
+    ogImage: "images/about-preview.jpg",
   });
 }
 

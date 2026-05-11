@@ -17,7 +17,7 @@ export function PageHero({ label, title, description, image, alt }: PageHeroProp
       <div className="absolute inset-0">
         <Image
           src={image}
-          alt={alt || title}
+          alt={alt ?? ""}
           fill
           className="object-cover"
           sizes="100vw"

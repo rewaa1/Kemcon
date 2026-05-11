@@ -431,7 +431,7 @@ export default function ClientsClient() {
         title={t("title")}
         description={t("description")}
         image="/images/clients-hero.jpg"
-        alt="Our Clients"
+        alt=""
       />
 
       {/* Region stats — clean grid, no emoji */}

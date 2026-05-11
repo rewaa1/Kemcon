@@ -10,6 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
     path: "/products/mass-production",
     titleKey: "meta.pages.massProduction.title",
     descriptionKey: "meta.pages.massProduction.description",
+    ogImage: "cards/configure-product-card.jpg",
   });
 }
 

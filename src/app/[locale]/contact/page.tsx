@@ -12,6 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
     path: "/contact",
     titleKey: "meta.pages.contact.title",
     descriptionKey: "meta.pages.contact.description",
+    ogImage: "images/contact-hero.jpg",
   });
 }
 

@@ -132,7 +132,7 @@ export default function ContactClient() {
         title={t("title")}
         description={t("description")}
         image="/images/contact-hero.jpg"
-        alt="Contact Kemcon"
+        alt=""
       />
 
       <section className="py-20 md:py-28 bg-[var(--color-bg-secondary)]">

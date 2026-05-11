@@ -264,7 +264,7 @@ export function InspirationGallery({
             <div className="relative max-w-3xl max-h-[80vh] w-full h-full">
               <Image
                 src={lightbox}
-                alt="Inspiration"
+                alt="Full-size hotel room inspiration photo"
                 fill
                 className="object-contain"
                 sizes="(max-width: 768px) 100vw, 800px"

@@ -11,6 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
     path: "/about",
     titleKey: "meta.pages.about.title",
     descriptionKey: "meta.pages.about.description",
+    ogImage: "images/about-hero.jpg",
   });
 }
 

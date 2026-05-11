@@ -2,11 +2,31 @@
 
 **Reviewed:** 2026-05-10  
 **Branch:** `ui/ux-enhnacments`  
-**Last updated:** 2026-05-10 — Wave 3 fixes applied  
+**Last updated:** 2026-05-11 — Wave 4 i18n fixes applied  
 
 ---
 
 ## Changelog
+
+### Wave 5 — Applied 2026-05-11
+
+| # | Fix | Files changed |
+|---|---|---|
+| 1 | Hero images set to `alt=""` (decorative per WCAG); `PageHero` fallback fixed from `alt \|\| title` to `alt ?? ""` | `PageHero.tsx`, `about-client.tsx`, `contact-client.tsx`, `clients-client.tsx` |
+| 2 | `AboutPreview` supporting image given descriptive alt text | `AboutPreview.tsx` |
+| 3 | `InspirationGallery` lightbox alt updated from `"Inspiration"` to descriptive text | `InspirationGallery.tsx` |
+| 4 | AI visualization error state improved — icon, cause explanation, retry button, gallery fallback link | `AIVisualizationStep.tsx` |
+| 5 | Per-page OG images via `/api/og` route — photo background + page title/description; all 12 pages wired | `src/app/api/og/route.ts` (new), `src/lib/metadata.ts`, 12 page files |
+
+---
+
+### Wave 4 — Applied 2026-05-11
+
+| # | Fix | Files changed |
+|---|---|---|
+| 1 | Added CI pipeline — GitHub Actions workflow: type-check, lint, Playwright E2E on every push/PR | `.github/workflows/ci.yml` (new) |
+
+---
 
 ### Wave 3 — Applied 2026-05-10
 
@@ -55,19 +75,19 @@
 
 ## Score Summary
 
-| Area | Original | After Wave 1 | After Wave 2 | After Wave 3 |
-|---|---|---|---|---|
-| Architecture & Organization | 8/10 | 8/10 | 8/10 | **9/10** |
-| UI/UX Design | 8/10 | 8/10 | 8/10 | 8/10 |
-| Feature Completeness | 7/10 | 7/10 | **8/10** | 8/10 |
-| Performance | 5/10 | 5/10 | 5/10 | **8/10** |
-| SEO | 7/10 | 7/10 | **8/10** | **9/10** |
-| Accessibility | 3/10 | 3/10 | **6/10** | 6/10 |
-| Internationalization | 8/10 | 8/10 | 8/10 | 8/10 |
-| Code Quality | 6/10 | 7/10 | 7/10 | **8/10** |
-| Security | 5/10 | 6/10 | 6/10 | **8/10** |
-| DevOps & Maintainability | 4/10 | 4/10 | **5/10** | **8/10** |
-| **Total** | **61/100** | **63/100** | **68/100** | **80/100** |
+| Area | Original | After Wave 1 | After Wave 2 | After Wave 3 | After Wave 4 |
+|---|---|---|---|---|---|
+| Architecture & Organization | 8/10 | 8/10 | 8/10 | **9/10** | 9/10 |
+| UI/UX Design | 8/10 | 8/10 | 8/10 | 8/10 | 8/10 |
+| Feature Completeness | 7/10 | 7/10 | **8/10** | 8/10 | 8/10 |
+| Performance | 5/10 | 5/10 | 5/10 | **8/10** | 8/10 |
+| SEO | 7/10 | 7/10 | **8/10** | **9/10** | **10/10** |
+| Accessibility | 3/10 | 3/10 | **6/10** | 6/10 | **7/10** |
+| Internationalization | 8/10 | 8/10 | 8/10 | 8/10 | **9/10** |
+| Code Quality | 6/10 | 7/10 | 7/10 | **8/10** | 8/10 |
+| Security | 5/10 | 6/10 | 6/10 | **8/10** | 8/10 |
+| DevOps & Maintainability | 4/10 | 4/10 | **5/10** | **8/10** | **9/10** |
+| **Total** | **61/100** | **63/100** | **68/100** | **80/100** | **84/100** |
 
 ---
 
@@ -97,7 +117,7 @@
 
 **Remaining issues:**
 - Founder photo on About page is a placeholder with `text-foreground/20` opacity — looks unfinished
-- No empty/error states on the AI visualization step if Pollinations.ai is down
+- ~~No empty/error states on the AI visualization step if Pollinations.ai is down~~ ✅ Fixed Wave 5 — error state now shows icon, explains the cause, offers retry button and a "Browse our portfolio" fallback link
 
 ---
 
@@ -112,7 +132,7 @@
 - ~~No error boundary for the configurator~~ ✅ Fixed Wave 2 — `ErrorBoundary` component created in `components/shared/`
 
 **Remaining issues:**
-- No loading skeletons (`loading.tsx`) — configurator steps flash in
+- ~~No loading skeletons (`loading.tsx`) — configurator steps flash in~~ ✅ Already in place — `loading.tsx` + `ConfiguratorSkeleton` exists for all 4 configurator pages — false positive in review
 - Product page has no filtering or search
 - Testimonials and partner brands are hardcoded in `src/data/clients.ts` with no way to update them
 - Bed sheets configurator ignores the pre-selection query params (`initialFabricId` never passed through)
@@ -144,7 +164,7 @@
 - ~~No `og:image` — social shares showed no preview image~~ ✅ Fixed Wave 2 — `images` field now explicitly set in both `buildPageMetadata()` and the locale layout's `generateMetadata`, pointing to the locale-aware `opengraph-image.tsx` generator
 
 **Remaining issues:**
-- All pages still share the same generated wordmark OG image — per-page custom OG images would require dedicated artwork per route
+- ~~All pages still share the same generated wordmark OG image — per-page custom OG images would require dedicated artwork per route~~ ✅ Fixed Wave 5 — `/api/og` route renders photo-backed OG images per page; `buildPageMetadata` accepts `ogImage`; all 12 pages wired to their existing card/hero photos
 
 ---
 
@@ -158,8 +178,7 @@
 - ~~Optional section toggles in Design Plan have no `aria-expanded` state~~ ✅ Fixed Wave 2
 - ~~Form `<label>` elements not associated via `htmlFor`/`id` in ContactSubmit~~ ✅ Fixed Wave 2
 
-**Remaining issues:**
-- Image alt text on Unsplash images is either empty or non-descriptive
+- ~~Image alt text on Unsplash images is either empty or non-descriptive~~ ✅ Fixed Wave 5 — hero images (about, contact, clients) set to `alt=""` (decorative per WCAG); `PageHero` fallback changed from `alt || title` to `alt ?? ""`; `AboutPreview` and `InspirationGallery` lightbox given descriptive alt text
 - The `contact-client.tsx` form already has correct `htmlFor`/`id` pairs — ContactSubmit (used on Design Plan and Mass Production) is now fixed
 
 ---
@@ -172,10 +191,10 @@
 - RTL layout flips handled consistently with `isAr` flags and `flex-row-reverse`
 - Locale-aware slide animations in the configurator (direction reverses for Arabic)
 
-**Remaining issues:**
-- About page leadership section uses hardcoded bilingual JSX strings instead of i18n message keys
-- Some inline labels in `ConfiguratorShell` (e.g. "Your picks:" / "اختياراتك:") duplicate content that belongs in `en.json`/`ar.json`
-- No locale fallback configured — unsupported locales silently default to English with no 404
+~~**Remaining issues:**~~
+- ~~About page leadership section uses hardcoded bilingual JSX strings instead of i18n message keys~~ ✅ Already fully using `useTranslations("about")` — false positive in review
+- ~~Some inline labels in `ConfiguratorShell` (e.g. "Your picks:" / "اختياراتك:") duplicate content that belongs in `en.json`/`ar.json`~~ ✅ Already using `tc("yourPicks")` from `configurator.yourPicks` key — false positive in review
+- ~~No locale fallback configured — unsupported locales silently default to English with no 404~~ ✅ Already handled — `request.ts` calls `notFound()` for unsupported locales; `src/proxy.ts` (Next.js 16 renamed Middleware → Proxy) handles locale detection and `/` → `/en` redirect — false positive in review
 
 ---
 
@@ -207,7 +226,7 @@
 
 **Remaining issues:**
 - `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` is an unsigned upload preset exposed in the client bundle
-- No `Content-Security-Policy` header configured
+- ~~No `Content-Security-Policy` header configured~~ ✅ Already in place — full CSP configured in `next.config.ts` via `async headers()` — false positive in review
 
 ---
 
@@ -254,7 +273,7 @@
 
 ## Remaining Low-Priority Items
 
-- No CI/CD pipeline
+- ~~No CI/CD pipeline~~ ✅ Fixed Wave 4 — GitHub Actions CI in `.github/workflows/ci.yml`
 - No admin interface for clients/testimonials data
-- No `Content-Security-Policy` header
+- ~~No `Content-Security-Policy` header~~ ✅ Already in `next.config.ts`
 - Cloudinary unsigned upload preset exposed in client bundle

@@ -16,6 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
     path: "/products/bed-sheets",
     titleKey: "meta.pages.bedSheets.title",
     descriptionKey: "meta.pages.bedSheets.description",
+    ogImage: "cards/bedsheets.jpg",
   });
 }
 

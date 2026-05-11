@@ -71,7 +71,9 @@ export function InquiryStep({
     if (state.aiDetailImageUrl) lines.push(`AI Fabric Detail: ${state.aiDetailImageUrl}`);
     if (state.inspirationImages.length) {
       const origin = typeof window !== "undefined" ? window.location.origin : "";
-      lines.push(`Inspiration References: ${state.inspirationImages.map((src) => `${origin}${src}`).join(", ")}`);
+      lines.push(
+        `Inspiration References:\n${state.inspirationImages.map((src, i) => `- Image ${i + 1}: ${origin}${src}`).join("\n")}`
+      );
     }
     return lines.join("\n");
   };

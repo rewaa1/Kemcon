@@ -19,7 +19,7 @@ export default function AboutClient() {
         title={t("title")}
         description={t("heroDescription")}
         image="/images/about-hero.jpg"
-        alt="About Kemcon"
+        alt=""
       />
 
       {/* Story */}
