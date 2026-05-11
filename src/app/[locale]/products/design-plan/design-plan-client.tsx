@@ -16,6 +16,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { FadeIn } from "@/components/motion/FadeIn";
+import { SITE_URL } from "@/lib/metadata";
+import { KEMCON_EMAIL } from "@/lib/config";
 import { InspirationGallery } from "@/components/shared/InspirationGallery";
 import { ContactSubmit } from "@/components/shared/ContactSubmit";
 
@@ -177,14 +179,19 @@ export default function DesignPlanClient() {
       lines.push(`Photos: ${form.images.length} file(s) attached`);
     }
     if (form.inspirationImages.length) {
-      lines.push(`Portfolio Inspiration: ${form.inspirationImages.map((src) => `https://kemcon.vercel.app${src}`).join(", ")}`);
+      lines.push(`Portfolio Inspiration: ${form.inspirationImages.map((src) => `${SITE_URL}${src}`).join(", ")}`);
     }
     return lines.join("\n");
   };
 
   const buildWhatsAppMessage = (photoUrls?: string[]) => {
+    const greeting = isAr ? "مرحباً كمكون،" : "Hello Kemcon,";
+    const intro = isAr ? "أود طلب خطة تصميم." : "I'd like to request a design plan.";
+    const nameLabel = isAr ? "الاسم" : "Name";
+    const phoneLabel = isAr ? "الهاتف" : "Phone";
+    const emailLabel = isAr ? "البريد الإلكتروني" : "Email";
     return encodeURIComponent(
-      `Hello Kemcon,\n\nI'd like to request a design plan.\n\n${buildSummary(photoUrls)}\n\nName: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email}`
+      `${greeting}\n\n${intro}\n\n${buildSummary(photoUrls)}\n\n${nameLabel}: ${form.name}\n${phoneLabel}: ${form.phone}\n${emailLabel}: ${form.email}`
     );
   };
 
@@ -250,7 +257,7 @@ export default function DesignPlanClient() {
       {/* Header */}
       <section className="relative py-20 md:py-24 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[260px] rounded-full blur-[100px] opacity-8 bg-[#c8a45a]" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[260px] rounded-full blur-[100px] opacity-[0.08] bg-[#c8a45a]" />
         </div>
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn direction="up">
@@ -396,6 +403,7 @@ export default function DesignPlanClient() {
                     {isOpen ? (
                       <motion.div
                         key="open"
+                        id={`dp-section-${key}`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -412,6 +420,8 @@ export default function DesignPlanClient() {
                           <button
                             onClick={() => toggleSection(key)}
                             aria-label={isAr ? "إخفاء" : "Hide"}
+                            aria-expanded={true}
+                            aria-controls={`dp-section-${key}`}
                             className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors p-1 -m-1"
                           >
                             <X size={16} strokeWidth={1.5} />
@@ -548,6 +558,8 @@ export default function DesignPlanClient() {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.15 }}
                         onClick={() => toggleSection(key)}
+                        aria-expanded={false}
+                        aria-controls={`dp-section-${key}`}
                         className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-sm border border-dashed border-[var(--color-deep-accent)]/30 text-[var(--color-text-muted)] hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-accent)]/[0.03] hover:text-[var(--color-text)] transition-all duration-200 group ${isAr ? "flex-row-reverse text-right" : "text-left"}`}
                       >
                         <Icon size={16} strokeWidth={1.5} className="flex-shrink-0" />
@@ -588,8 +600,8 @@ export default function DesignPlanClient() {
           buildSummary={buildSummary}
           buildWhatsAppMessage={buildWhatsAppMessage}
           photos={form.images}
-          successDescEn="Your brief has been delivered to kemcon@yahoo.com. Our architect will be in touch within 3–5 business days."
-          successDescAr="وصل موجزك إلى فريقنا على kemcon@yahoo.com. سيتواصل معك مصممنا المعماري خلال 3–5 أيام عمل."
+          successDescEn={`Your brief has been delivered to ${KEMCON_EMAIL}. Our architect will be in touch within 3–5 business days.`}
+          successDescAr={`وصل موجزك إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معك مصممنا المعماري خلال 3–5 أيام عمل.`}
         />
       </div>
     </div>

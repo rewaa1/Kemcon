@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { ContactSubmit } from "@/components/shared/ContactSubmit";
 import { FadeIn } from "@/components/motion/FadeIn";
+import { SITE_URL } from "@/lib/metadata";
+import { KEMCON_EMAIL } from "@/lib/config";
 import { InspirationGallery } from "@/components/shared/InspirationGallery";
 
 const PROJECT_TYPES = [
@@ -105,14 +107,21 @@ export default function MassProductionClient() {
     }
     if (form.notes) lines.push(`Additional Notes: ${form.notes}`);
     if (form.inspirationImages.length) {
-      lines.push(`Portfolio Inspiration: ${form.inspirationImages.map((src) => `https://kemcon.vercel.app${src}`).join(", ")}`);
+      lines.push(`Portfolio Inspiration: ${form.inspirationImages.map((src) => `${SITE_URL}${src}`).join(", ")}`);
     }
     return lines.join("\n");
   };
 
   const buildWhatsAppMessage = () => {
+    const greeting = isAr ? "مرحباً كمكون،" : "Hello Kemcon,";
+    const intro = isAr
+      ? "أود مناقشة مشروع إنتاج بالجملة."
+      : "I'd like to discuss a mass production project.";
+    const nameLabel = isAr ? "الاسم" : "Name";
+    const phoneLabel = isAr ? "الهاتف" : "Phone";
+    const emailLabel = isAr ? "البريد الإلكتروني" : "Email";
     return encodeURIComponent(
-      `Hello Kemcon,\n\nI'd like to discuss a mass production project.\n\n${buildSummary()}\n\nName: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email}`
+      `${greeting}\n\n${intro}\n\n${buildSummary()}\n\n${nameLabel}: ${form.name}\n${phoneLabel}: ${form.phone}\n${emailLabel}: ${form.email}`
     );
   };
 
@@ -367,8 +376,8 @@ export default function MassProductionClient() {
           submitLabelAr="إرسال الاستفسار"
           successTitleEn="Inquiry Sent!"
           successTitleAr="تم إرسال استفساركم!"
-          successDescEn="Your inquiry has been delivered to kemcon@yahoo.com. Our team will be in touch within 3–5 business days."
-          successDescAr="وصل استفساركم إلى فريقنا على kemcon@yahoo.com. سيتواصل معكم فريقنا خلال 3–5 أيام عمل."
+          successDescEn={`Your inquiry has been delivered to ${KEMCON_EMAIL}. Our team will be in touch within 3–5 business days.`}
+          successDescAr={`وصل استفساركم إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معكم فريقنا خلال 3–5 أيام عمل.`}
         />
       </div>
     </div>

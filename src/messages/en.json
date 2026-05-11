@@ -97,7 +97,30 @@
       "yearsLabel": "Years of Excellence",
       "products": "10,000+",
       "productsLabel": "Products Delivered"
+    },
+    "leadership": {
+      "sectionLabel": "Leadership",
+      "sectionTitle": "The Man Behind the Vision",
+      "founderRole": "Founder & CEO",
+      "founderName": "Kamal Soliman",
+      "founderTitle": "Architecture Engineer",
+      "bio1": "With an engineer's precision and an artist's eye, Kamal Soliman founded Kemcon in 1985 and built it from the ground up into a leading manufacturing group serving elite hotel chains across the Middle East.",
+      "bio2": "He personally oversaw the development of Egytex, the group's manufacturing arm, and led its regional expansion — driven by the belief that true quality is born in the details no one else notices.",
+      "years": "40+",
+      "yearsLabel": "Years of Experience",
+      "hotels": "500+",
+      "hotelsLabel": "Hotels Furnished",
+      "markets": "4",
+      "marketsLabel": "Regional Markets"
     }
+  },
+  "configurator": {
+    "allProducts": "All Products",
+    "yourPicks": "Your picks:",
+    "back": "Back",
+    "next": "Next",
+    "review": "Review",
+    "unsavedPrompt": "You have unsaved progress. Are you sure you want to leave?"
   },
   "products": {
     "label": "Our Collection",

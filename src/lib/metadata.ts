@@ -52,6 +52,7 @@ export async function buildPageMetadata({
       url: `${SITE_URL}/${locale}${path}`,
       title,
       description,
+      images: [{ url: `/${locale}/opengraph-image`, width: 1200, height: 630, alt: "Kemcon" }],
     },
     twitter: {
       card: "summary_large_image",

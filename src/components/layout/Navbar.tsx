@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
@@ -22,6 +22,8 @@ export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -32,6 +34,39 @@ export function Navbar() {
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
+
+  // Scroll lock
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
+  // Focus trap + Escape key
+  useEffect(() => {
+    if (!mobileOpen || !menuRef.current) return;
+    const menu = menuRef.current;
+    const focusable = Array.from(
+      menu.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')
+    );
+    focusable[0]?.focus();
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMobileOpen(false);
+        toggleRef.current?.focus();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last?.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first?.focus(); }
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [mobileOpen]);
 
   const isActive = (href: string) => {
     const fullPath = `/${locale}${href}`;
@@ -109,9 +144,12 @@ export function Navbar() {
 
               {/* Mobile Menu Toggle */}
               <button
+                ref={toggleRef}
                 className="lg:hidden flex flex-col gap-1.5 p-2 cursor-pointer"
                 onClick={() => setMobileOpen(!mobileOpen)}
-                aria-label="Toggle menu"
+                aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileOpen}
+                aria-controls="mobile-nav-menu"
               >
                 <motion.span
                   className={cn(
@@ -154,6 +192,11 @@ export function Navbar() {
               onClick={() => setMobileOpen(false)}
             />
             <motion.div
+              ref={menuRef}
+              id="mobile-nav-menu"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Navigation menu"
               className="absolute top-0 right-0 h-full w-80 max-w-[85vw] bg-background shadow-2xl"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}

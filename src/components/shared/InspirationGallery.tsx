@@ -67,9 +67,16 @@ export function InspirationGallery({
                   exit={{ scale: 0.8, opacity: 0 }}
                   className="relative w-16 h-16 rounded-sm overflow-hidden border border-[var(--color-accent)]/50 group flex-shrink-0"
                 >
-                  <Image src={src} alt="" fill className="object-cover" sizes="64px" />
+                  <Image
+                    src={src}
+                    alt={isAr ? "صورة إلهام مختارة" : "Selected inspiration image"}
+                    fill
+                    className="object-cover"
+                    sizes="64px"
+                  />
                   <button
                     onClick={() => onSelect(src)}
+                    aria-label={isAr ? "إزالة الصورة" : "Remove image"}
                     className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
                   >
                     <X size={14} className="text-white" />
@@ -249,6 +256,7 @@ export function InspirationGallery({
           >
             <button
               onClick={() => setLightbox(null)}
+              aria-label={isAr ? "إغلاق" : "Close"}
               className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
             >
               <X size={18} className="text-white" />

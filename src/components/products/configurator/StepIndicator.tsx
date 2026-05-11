@@ -26,8 +26,8 @@ export function StepIndicator({ steps, currentStep, locale, onStepClick }: StepI
   const isAr = locale === "ar";
 
   return (
-    <div className="w-full flex items-center justify-center px-4 py-6 overflow-x-auto">
-      <div className="flex items-center gap-0 min-w-max">
+    <nav aria-label={isAr ? "خطوات" : "Steps"} className="w-full overflow-x-auto px-4 py-6">
+      <ol className="flex items-center justify-center gap-0 min-w-max mx-auto list-none">
         {steps.map((step, index) => {
           const isCompleted = index < currentStep;
           const isActive = index === currentStep;
@@ -35,11 +35,15 @@ export function StepIndicator({ steps, currentStep, locale, onStepClick }: StepI
           const label = STEP_LABELS[step][isAr ? "ar" : "en"];
 
           return (
-            <div key={step} className="flex items-center">
+            <li key={step} className="flex items-center">
               {/* Step circle + label */}
               <div
+                aria-current={isActive ? "step" : undefined}
+                role={isClickable ? "button" : undefined}
+                tabIndex={isClickable ? 0 : undefined}
                 className={`flex flex-col items-center gap-2 ${isClickable ? "cursor-pointer group" : ""}`}
                 onClick={() => isClickable && onStepClick(index)}
+                onKeyDown={(e) => isClickable && (e.key === "Enter" || e.key === " ") && onStepClick(index)}
               >
                 <motion.div
                   className={`
@@ -86,10 +90,10 @@ export function StepIndicator({ steps, currentStep, locale, onStepClick }: StepI
                   />
                 </div>
               )}
-            </div>
+            </li>
           );
         })}
-      </div>
-    </div>
+      </ol>
+    </nav>
   );
 }

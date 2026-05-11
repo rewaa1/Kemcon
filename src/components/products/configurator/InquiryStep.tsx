@@ -8,6 +8,7 @@ import { colors } from "@/data/colors";
 import { patterns } from "@/data/patterns";
 import { frameMaterials, frameFinishes, fillingOptions } from "@/data/frames";
 import type { ConfiguratorState, CategoryType } from "@/types/configurator";
+import { KEMCON_EMAIL, KEMCON_WHATSAPP } from "@/lib/config";
 
 interface InquiryStepProps {
   state: ConfiguratorState;
@@ -28,12 +29,13 @@ export function InquiryStep({
   const [whatsappSent, setWhatsappSent] = useState(false);
   const [touched, setTouched] = useState({ name: false, phone: false, email: false });
 
-  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const nameError = !state.inquiryName.trim()
     ? (isAr ? "الاسم مطلوب" : "Name is required")
     : null;
-  const phoneError = state.inquiryPhone.replace(/\D/g, "").length < 7
-    ? (isAr ? "أدخل رقم هاتف صالح (٧ أرقام على الأقل)" : "Enter a valid phone number (min 7 digits)")
+  const phoneDigits = state.inquiryPhone.replace(/\D/g, "").length;
+  const phoneError = phoneDigits < 7 || phoneDigits > 15
+    ? (isAr ? "أدخل رقم هاتف صالح (٧–١٥ رقماً)" : "Enter a valid phone number (7–15 digits)")
     : null;
   const emailError = !EMAIL_RE.test(state.inquiryEmail.trim())
     ? (isAr ? "أدخل بريداً إلكترونياً صالحاً" : "Enter a valid email address")
@@ -68,15 +70,23 @@ export function InquiryStep({
     if (state.aiImageUrl) lines.push(`AI Room View: ${state.aiImageUrl}`);
     if (state.aiDetailImageUrl) lines.push(`AI Fabric Detail: ${state.aiDetailImageUrl}`);
     if (state.inspirationImages.length) {
-      lines.push(`Inspiration References: ${state.inspirationImages.map((src) => `https://kemcon.vercel.app${src}`).join(", ")}`);
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      lines.push(`Inspiration References: ${state.inspirationImages.map((src) => `${origin}${src}`).join(", ")}`);
     }
     return lines.join("\n");
   };
 
   const buildWhatsAppMessage = () => {
     const summary = buildSummaryText();
+    const greeting = isAr ? "مرحباً كمكون،" : "Hello Kemcon,";
+    const intro = isAr
+      ? "أود الاستفسار عن طلب مخصص:"
+      : "I would like to inquire about a custom order:";
+    const nameLabel = isAr ? "الاسم" : "Name";
+    const phoneLabel = isAr ? "الهاتف" : "Phone";
+    const emailLabel = isAr ? "البريد الإلكتروني" : "Email";
     return encodeURIComponent(
-      `Hello Kemcon,\n\nI would like to inquire about a custom order:\n\n${summary}\n\nName: ${state.inquiryName}\nPhone: ${state.inquiryPhone}\nEmail: ${state.inquiryEmail}`
+      `${greeting}\n\n${intro}\n\n${summary}\n\n${nameLabel}: ${state.inquiryName}\n${phoneLabel}: ${state.inquiryPhone}\n${emailLabel}: ${state.inquiryEmail}`
     );
   };
 
@@ -85,7 +95,7 @@ export function InquiryStep({
     const body = encodeURIComponent(
       `Name: ${state.inquiryName}\nPhone: ${state.inquiryPhone}\n\n${buildSummaryText()}`
     );
-    return `mailto:info@kemcon.com?subject=${subject}&body=${body}`;
+    return `mailto:${KEMCON_EMAIL}?subject=${subject}&body=${body}`;
   };
 
   const isFormValid = !nameError && !phoneError && !emailError;
@@ -338,13 +348,13 @@ export function InquiryStep({
           <Mail size={22} strokeWidth={1.5} />
           <div>
             <p className="text-sm font-semibold">{isAr ? "إرسال بالبريد" : "Send by Email"}</p>
-            <p className="text-[10px] opacity-70 mt-0.5">kemcon@yahoo.com</p>
+            <p className="text-[10px] opacity-70 mt-0.5">{KEMCON_EMAIL}</p>
           </div>
         </motion.a>
 
         {/* WhatsApp */}
         <motion.a
-          href={isFormValid ? `https://wa.me/201223122276?text=${buildWhatsAppMessage()}` : undefined}
+          href={isFormValid ? `https://wa.me/${KEMCON_WHATSAPP}?text=${buildWhatsAppMessage()}` : undefined}
           target="_blank"
           rel="noopener noreferrer"
           onClick={isFormValid ? () => setWhatsappSent(true) : (e) => { e.preventDefault(); touchAll(); }}

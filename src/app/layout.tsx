@@ -4,28 +4,35 @@ import { Playfair_Display, Inter, Noto_Sans_Arabic, Noto_Kufi_Arabic } from "nex
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SITE_URL } from "@/lib/metadata";
+import { KEMCON_EMAIL, KEMCON_PHONE_TEL } from "@/lib/config";
 import "./globals.css";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
+  weight: ["400", "700"],
   variable: "--font-playfair",
   display: "swap",
+  preload: true,
 });
 
 const inter = Inter({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
   display: "swap",
+  preload: true,
 });
 
 const notoSansArabic = Noto_Sans_Arabic({
   subsets: ["arabic"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-noto-sans-arabic",
   display: "swap",
 });
 
 const notoKufiArabic = Noto_Kufi_Arabic({
   subsets: ["arabic"],
+  weight: ["400", "600", "700"],
   variable: "--font-noto-kufi-arabic",
   display: "swap",
 });
@@ -86,8 +93,8 @@ export default async function RootLayout({
               },
               contactPoint: {
                 "@type": "ContactPoint",
-                telephone: "+20-12-23122276",
-                email: "kemcon@yahoo.com",
+                telephone: KEMCON_PHONE_TEL,
+                email: KEMCON_EMAIL,
                 contactType: "customer service",
                 areaServed: ["EG", "SA", "AE", "JO"],
               },

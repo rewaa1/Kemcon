@@ -430,7 +430,7 @@ export default function ClientsClient() {
         label={t("label")}
         title={t("title")}
         description={t("description")}
-        image="https://images.unsplash.com/photo-1625244724120-1fd1d34d00f6?q=80&w=2000&auto=format&fit=crop"
+        image="/images/clients-hero.jpg"
         alt="Our Clients"
       />
 
