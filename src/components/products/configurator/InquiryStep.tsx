@@ -9,7 +9,6 @@ import { patterns } from "@/data/patterns";
 import { frameMaterials, frameFinishes, fillingOptions } from "@/data/frames";
 import type { ConfiguratorState, CategoryType } from "@/types/configurator";
 import { KEMCON_EMAIL, KEMCON_WHATSAPP } from "@/lib/config";
-import { SITE_URL } from "@/lib/metadata";
 
 interface InquiryStepProps {
   state: ConfiguratorState;
@@ -71,7 +70,8 @@ export function InquiryStep({
     if (state.aiImageUrl) lines.push(`AI Room View: ${state.aiImageUrl}`);
     if (state.aiDetailImageUrl) lines.push(`AI Fabric Detail: ${state.aiDetailImageUrl}`);
     if (state.inspirationImages.length) {
-      lines.push(`Inspiration References: ${state.inspirationImages.map((src) => `${SITE_URL}${src}`).join(", ")}`);
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      lines.push(`Inspiration References: ${state.inspirationImages.map((src) => `${origin}${src}`).join(", ")}`);
     }
     return lines.join("\n");
   };
