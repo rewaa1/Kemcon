@@ -1054,7 +1054,7 @@ export const testimonials = [
 
 export const regions = [
   { name: "Egypt", flag: "🇪🇬", count: "200+" },
-  { name: "Saudi Arabia", flag: "🇸🇦", count: "150+" },
-  { name: "Emirates", flag: "🇦🇪", count: "100+" },
-  { name: "Jordan", flag: "🇯🇴", count: "50+" },
+  { name: "Saudi Arabia", flag: "🇸🇦", count: "10+" },
+  { name: "Emirates", flag: "🇦🇪", count: "5+" },
+  { name: "Jordan", flag: "🇯🇴", count: "10+" },
 ];
