@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   return buildPageMetadata({
     locale,
-    path: "/",
+    path: "",
     titleKey: "meta.title",
     descriptionKey: "meta.description",
   });
