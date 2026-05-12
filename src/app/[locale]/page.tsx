@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { buildPageMetadata } from "@/lib/metadata";
 import { Hero } from "@/components/sections/Hero";
+import { CompanyIntro } from "@/components/sections/CompanyIntro";
 import { HomeSections } from "./home-sections";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,7 +19,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       <Hero />
-      <HomeSections />
+      <HomeSections afterWhyKemcon={<CompanyIntro />} />
     </div>
   );
 }

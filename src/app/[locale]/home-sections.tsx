@@ -20,7 +20,7 @@ const CTABanner = dynamic(
   { ssr: false }
 );
 
-export function HomeSections() {
+export function HomeSections({ afterWhyKemcon }: { afterWhyKemcon?: React.ReactNode }) {
   return (
     <>
       <LazySection>
@@ -32,6 +32,7 @@ export function HomeSections() {
       <LazySection>
         <WhyKemcon />
       </LazySection>
+      {afterWhyKemcon}
       <LazySection rootMargin="200px">
         <CTABanner />
       </LazySection>
