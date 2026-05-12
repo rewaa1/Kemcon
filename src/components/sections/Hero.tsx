@@ -66,9 +66,9 @@ export function Hero() {
 
           {/* Title */}
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
+            initial={{ y: 20 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.6 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-warm-white leading-[1.08] mb-8"
           >
             {t("title")}
