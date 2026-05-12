@@ -3,14 +3,17 @@ import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://kemcon.com";
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://kemcon.com");
 
 function buildLanguageAlternates(path: string) {
   const languages: Record<string, string> = {};
   for (const locale of routing.locales) {
     languages[locale] = `/${locale}${path}`;
   }
-  languages["x-default"] = `/${routing.defaultLocale}${path}`;
+  // x-default must be a locale-neutral URL; using the root lets next-intl
+  // middleware redirect each visitor to their preferred locale automatically.
+  languages["x-default"] = path === "" ? "/" : `/${routing.defaultLocale}${path}`;
   return languages;
 }
 
