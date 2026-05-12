@@ -1,0 +1,30 @@
+# Kemcon
+
+> Egyptian manufacturer of premium home textiles and furnishings since 1985, supplying hotels and hospitality projects across the MENA region.
+
+## Key pages
+
+- [Home](https://kemcon.com/en): Overview of Kemcon's products and services
+- [Products](https://kemcon.com/en/products): Full product catalog hub
+- [Configure Product](https://kemcon.com/en/products/configure): Custom product configurator for curtains, sofas, chairs, and bed sheets
+- [Showroom](https://kemcon.com/en/products/showroom): Browse curated product collections
+- [Design Plan](https://kemcon.com/en/products/design-plan): End-to-end design planning for hospitality projects
+- [Mass Production](https://kemcon.com/en/products/mass-production): Large-scale manufacturing for hotel outfitting
+- [About](https://kemcon.com/en/about): Company history, values, and manufacturing capabilities
+- [Clients](https://kemcon.com/en/clients): Portfolio of completed hotel and hospitality projects
+- [Contact](https://kemcon.com/en/contact): Contact information and inquiry form
+
+## Product lines
+
+Kemcon manufactures fully customizable home textiles and furniture for the hospitality industry:
+
+- **Curtains** — blackout, sheer, linen, velvet, and custom fabric options
+- **Sofas** — custom upholstery with choice of fabric and frame finish
+- **Chairs** — hospitality-grade seating with configurable materials
+- **Bed Sheets** — Egyptian cotton, percale, sateen, and luxury blends
+
+All products are configurable by fabric type, color, frame material, and finish.
+
+## About
+
+Kemcon has been manufacturing since 1985, headquartered in Cairo, Egypt. The company serves major hotel brands across Egypt, Saudi Arabia, UAE, and Jordan, delivering complete room outfitting from design through mass production.
