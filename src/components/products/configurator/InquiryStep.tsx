@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Mail, MessageCircle, MapPin, CheckCircle } from "lucide-react";
 import { fabrics } from "@/data/fabrics";
@@ -212,11 +213,13 @@ export function InquiryStep({
           {/* AI visualization thumbnail */}
           {state.aiDisplayUrl && (
             <div className="pt-3 border-t border-[var(--color-deep-accent)]/15 flex items-center gap-4">
-              <div className="w-14 h-20 rounded-sm overflow-hidden border border-[var(--color-deep-accent)]/20 flex-shrink-0">
-                <img
+              <div className="relative w-14 h-20 rounded-sm overflow-hidden border border-[var(--color-deep-accent)]/20 flex-shrink-0">
+                <Image
                   src={state.aiDisplayUrl}
                   alt="AI curtain preview"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="56px"
                 />
               </div>
               <div>
@@ -241,8 +244,8 @@ export function InquiryStep({
               </p>
               <div className="flex gap-2 flex-wrap">
                 {state.inspirationImages.map((src) => (
-                  <div key={src} className="w-12 h-12 rounded-sm overflow-hidden border border-[var(--color-deep-accent)]/20 flex-shrink-0">
-                    <img src={src} alt="Inspiration" className="w-full h-full object-cover" />
+                  <div key={src} className="relative w-12 h-12 rounded-sm overflow-hidden border border-[var(--color-deep-accent)]/20 flex-shrink-0">
+                    <Image src={src} alt="Inspiration" fill className="object-cover" sizes="48px" />
                   </div>
                 ))}
               </div>

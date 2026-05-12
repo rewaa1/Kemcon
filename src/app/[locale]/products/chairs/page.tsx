@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
-import { ConfiguratorShell } from "@/components/products/configurator/ConfiguratorShell";
+import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
+
+const ConfiguratorShell = dynamic(() =>
+  import("@/components/products/configurator/ConfiguratorShell").then(
+    (m) => ({ default: m.ConfiguratorShell })
+  )
+);
 import { JsonLd } from "@/components/seo/JsonLd";
 
 interface PageProps {

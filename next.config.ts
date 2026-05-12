@@ -25,6 +25,12 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "image.pollinations.ai" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
+    ],
+  },
   async headers() {
     return [
       {

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
+import dynamic from "next/dynamic";
 import { buildPageMetadata } from "@/lib/metadata";
-import MassProductionClient from "./mass-production-client";
+
+const MassProductionClient = dynamic(() => import("./mass-production-client"));
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();

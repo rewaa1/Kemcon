@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { fabricFamilies, fabrics } from "@/data/fabrics";
 import type { ConfiguratorState } from "@/types/configurator";
@@ -103,10 +104,12 @@ export function FabricTypeStep({ state, onChange, locale }: FabricTypeStepProps)
                   style={fabric.image ? {} : { background: fabric.gradient }}
                 >
                   {fabric.image && (
-                    <img
+                    <Image
                       src={fabric.image}
                       alt={fabric.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                     />
                   )}
                 </div>

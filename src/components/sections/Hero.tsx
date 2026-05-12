@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useLocale } from "next-intl";
 
 export function Hero() {
@@ -22,14 +23,16 @@ export function Hero() {
     <section ref={ref} className="relative h-screen min-h-[700px] flex items-center overflow-hidden">
       {/* Background Image with Parallax */}
       <motion.div className="absolute inset-0 z-0" style={{ y }}>
-        <div
-          className="absolute inset-0 bg-cover bg-center scale-105"
-          style={{
-            backgroundImage:
-            "url('/cards/hero-homepage.jpg')",
-              // "url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=2000&auto=format&fit=crop')",
-          }}
-        />
+        <div className="absolute inset-0 scale-105">
+          <Image
+            src="/cards/hero-homepage.jpg"
+            alt="Kemcon luxury fabrics and furnishings"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        </div>
         {/* Gradient Overlay - richer for luxury feel */}
         <div className="absolute inset-0 bg-gradient-to-r from-dark/90 via-dark/65 to-dark/35" />
         <div className="absolute inset-0 bg-gradient-to-t from-dark/70 via-transparent to-dark/20" />

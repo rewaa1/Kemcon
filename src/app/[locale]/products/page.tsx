@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
+import dynamic from "next/dynamic";
 import { JsonLd } from "@/components/seo/JsonLd";
-import ProductsClient from "./products-client";
+
+const ProductsClient = dynamic(() => import("./products-client"));
 import { productCategories } from "@/data/productCategories";
 
 export default async function ProductsPage() {

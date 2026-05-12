@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { frameMaterials, frameFinishes, fillingOptions } from "@/data/frames";
 import type { ConfiguratorState } from "@/types/configurator";
@@ -60,10 +61,12 @@ export function ChairOptionsStep({
                 `}
               >
                 {material.image ? (
-                  <img
+                  <Image
                     src={material.image}
                     alt={material.name}
-                    className="w-14 h-14 rounded-sm object-cover border border-white/10"
+                    width={56}
+                    height={56}
+                    className="rounded-sm object-cover border border-white/10"
                   />
                 ) : (
                   <div

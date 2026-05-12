@@ -86,11 +86,13 @@ function Lightbox({
         className="flex items-center justify-center"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={images[index]}
           alt={`${name} — ${index + 1}`}
-          className="max-w-[90vw] max-h-[75vh] w-auto h-auto rounded-sm object-contain"
+          width={1200}
+          height={900}
+          className="max-w-[90vw] max-h-[75vh] rounded-sm object-contain"
+          style={{ width: "auto", height: "auto" }}
         />
       </motion.div>
 
