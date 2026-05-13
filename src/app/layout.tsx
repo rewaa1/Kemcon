@@ -46,10 +46,11 @@ export const metadata: Metadata = {
   description: "Premium Fabrics & Furnishings",
   icons: {
     icon: [
-      { url: "/favicon.png" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
       { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
     ],
-    shortcut: "/favicon.png",
+    shortcut: "/favicon.ico",
     apple: [{ url: "/icons/icon-180.png", sizes: "180x180", type: "image/png" }],
   },
 };

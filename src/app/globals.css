@@ -257,11 +257,13 @@ html.lenis body {
 }
 
 .animate-marquee {
-  animation: marquee 30s linear infinite;
+  animation: marquee 70s linear infinite;
+  will-change: transform;
 }
 
 [dir="rtl"] .animate-marquee {
-  animation: marquee-rtl 30s linear infinite;
+  animation: marquee-rtl 70s linear infinite;
+  will-change: transform;
 }
 
 /* ===== Gold Divider ===== */

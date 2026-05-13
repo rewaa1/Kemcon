@@ -11,14 +11,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { prompt, seed, negative } = await request.json();
+  const { prompt, seed, width = 1536, height = 1024 } = await request.json();
 
   const params = new URLSearchParams({
-    width: "1024",
-    height: "1536",
+    width: String(width),
+    height: String(height),
+    model: "flux-realism",
+    enhance: "true",
     nologo: "true",
     seed: String(seed),
-    ...(negative ? { negative } : {}),
   });
 
   const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?${params}`;

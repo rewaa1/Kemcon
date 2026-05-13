@@ -6,15 +6,17 @@ export type StepType =
   | "pattern"
   | "curtainOptions"
   | "chairOptions"
+  | "cushionOptions"
+  | "pillowOptions"
   | "aiVisualization"
   | "inquiry"
   | "customDescription";
 
 export const CATEGORY_STEPS: Record<CategoryType, StepType[]> = {
   curtains: ["fabric", "color", "pattern", "curtainOptions", "aiVisualization", "inquiry"],
-  chairs: ["fabric", "color", "pattern", "chairOptions", "aiVisualization", "inquiry"],
-  sofas: ["fabric", "color", "pattern", "chairOptions", "aiVisualization", "inquiry"],
-  "bed-sheets": ["fabric", "color", "pattern", "inquiry"],
+  chairs: ["fabric", "color", "pattern", "chairOptions", "cushionOptions", "aiVisualization", "inquiry"],
+  sofas: ["fabric", "color", "pattern", "chairOptions", "cushionOptions", "aiVisualization", "inquiry"],
+  "bed-sheets": ["fabric", "color", "pattern", "pillowOptions", "inquiry"],
   custom: ["customDescription", "inquiry"],
 };
 
@@ -33,6 +35,14 @@ export interface ConfiguratorState {
   frameMaterialId: string | null;
   frameFinishId: string | null;
   fillingId: string | null;
+  // Cushion add-on (chairs / sofas)
+  cushionAdd: boolean | null;
+  cushionSameFabric: boolean | null;
+  cushionQty: number | null;
+  // Pillow add-on (bed-sheets)
+  pillowAdd: boolean | null;
+  pillowFill: string | null;
+  pillowSize: string | null;
   // Custom
   customDescription: string;
   // AI Visualization
@@ -61,6 +71,12 @@ export const initialConfiguratorState: ConfiguratorState = {
   frameMaterialId: null,
   frameFinishId: null,
   fillingId: null,
+  cushionAdd: null,
+  cushionSameFabric: null,
+  cushionQty: null,
+  pillowAdd: null,
+  pillowFill: null,
+  pillowSize: null,
   customDescription: "",
   aiImageUrl: null,
   aiDetailImageUrl: null,

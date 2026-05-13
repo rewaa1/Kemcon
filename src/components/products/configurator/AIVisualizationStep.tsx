@@ -79,31 +79,41 @@ export function AIVisualizationStep({
   const patternVisual = PATTERN_VISUALS[pattern?.name ?? ""] ?? "solid color";
   const colorName = color?.name ?? "neutral";
 
-  const NEGATIVE = "blurry, low quality, cartoon, illustration, watermark, ugly, distorted, oversaturated, deformed, text, logo";
-
   const buildRoomPrompt = () => {
-    const base = "photorealistic interior design photograph";
-    const outro = "no people, ultra-detailed, hyperrealistic";
+    const lens = "shot on Canon EOS 5D Mark IV, 35mm lens, f/2.8, natural shallow depth of field";
+    const outro = "no people, 8k resolution, ultra-detailed, photorealistic";
     if (category === "chairs") {
       return [
-        base,
+        "photorealistic interior design photograph",
+        lens,
         `luxury hotel suite featuring an armchair upholstered in ${colorName} ${fabricVisual} ${patternVisual}`,
-        "armchair is the clear focal point, warm golden afternoon light, refined hotel setting",
+        "armchair is the clear focal point centred in frame, warm golden afternoon light, refined hotel setting",
         outro,
       ].join(", ");
     }
     if (category === "sofas") {
       return [
-        base,
+        "photorealistic interior design photograph",
+        lens,
         `luxury hotel lounge featuring a sofa upholstered in ${colorName} ${fabricVisual} ${patternVisual}`,
-        "sofa is the clear focal point filling the frame, warm golden afternoon light, grand hotel interior",
+        "sofa fills the frame as the clear focal point, warm golden afternoon light, grand hotel interior",
+        outro,
+      ].join(", ");
+    }
+    if (category === "bed-sheets") {
+      return [
+        "photorealistic interior design photograph",
+        lens,
+        `luxury hotel bedroom with bed dressed in ${colorName} ${fabricVisual} bed sheets ${patternVisual}`,
+        "bed is the clear focal point filling the frame, soft warm morning light, understated elegant hotel suite",
         outro,
       ].join(", ");
     }
     return [
-      base,
+      "photorealistic interior design photograph",
+      lens,
       `luxury hotel suite with floor-to-ceiling ${colorName} ${fabricVisual} curtains ${patternVisual}`,
-      "curtains are the clear focal point filling the frame, beautifully gathered with natural flowing drape",
+      "curtains fill the frame as the clear focal point, beautifully gathered with natural flowing drape",
       "tall arched windows, warm golden afternoon light, understated elegant interior",
       outro,
     ].join(", ");
@@ -112,18 +122,19 @@ export function AIVisualizationStep({
   const buildDetailPrompt = () =>
     [
       "professional textile product photography",
+      "shot on Canon EOS 100D, 100mm macro lens, f/2.8, crisp focus",
       `extreme close-up of ${colorName} ${fabricVisual} ${patternVisual}`,
-      "sharp crisp fabric texture, soft even studio lighting, gentle natural drape folds",
-      "neutral background, no people, ultra-detailed, hyperrealistic",
+      "sharp fabric texture with visible weave detail, soft even studio lighting, gentle natural drape folds",
+      "neutral linen background, no people, 8k resolution, ultra-detailed, photorealistic",
     ].join(", ");
 
-  const fetchImage = async (prompt: string, seed: number) => {
+  const fetchImage = async (prompt: string, seed: number, width: number, height: number) => {
     let response: Response;
     try {
       response = await fetch("/api/generate-curtain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, seed, negative: NEGATIVE }),
+        body: JSON.stringify({ prompt, seed, width, height }),
       });
     } catch {
       throw new Error("network");
@@ -141,7 +152,7 @@ export function AIVisualizationStep({
     setRoomUrl(null);
     if (isRegen) setRoomRegen((r) => r + 1);
     try {
-      const { blobUrl, pollinationsUrl } = await fetchImage(buildRoomPrompt(), Math.floor(Math.random() * 9999999));
+      const { blobUrl, pollinationsUrl } = await fetchImage(buildRoomPrompt(), Math.floor(Math.random() * 9999999), 1536, 1024);
       setRoomUrl(blobUrl);
       onChange({ aiImageUrl: pollinationsUrl, aiDisplayUrl: blobUrl });
       setRoomState("done");
@@ -157,7 +168,7 @@ export function AIVisualizationStep({
     setDetailUrl(null);
     if (isRegen) setDetailRegen((r) => r + 1);
     try {
-      const { blobUrl, pollinationsUrl } = await fetchImage(buildDetailPrompt(), Math.floor(Math.random() * 9999999));
+      const { blobUrl, pollinationsUrl } = await fetchImage(buildDetailPrompt(), Math.floor(Math.random() * 9999999), 1024, 1280);
       setDetailUrl(blobUrl);
       // Always store detail URL; room view takes priority for the display thumbnail
       if (!roomUrl) onChange({ aiDetailImageUrl: pollinationsUrl, aiDisplayUrl: blobUrl });

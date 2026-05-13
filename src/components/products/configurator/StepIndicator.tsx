@@ -10,6 +10,8 @@ const STEP_LABELS: Record<StepType, { en: string; ar: string }> = {
   pattern: { en: "Pattern", ar: "النمط" },
   curtainOptions: { en: "Options", ar: "الخيارات" },
   chairOptions: { en: "Frame & Fill", ar: "الإطار والحشو" },
+  cushionOptions: { en: "Cushions", ar: "الوسائد" },
+  pillowOptions: { en: "Pillows", ar: "المخدات" },
   aiVisualization: { en: "Preview", ar: "معاينة" },
   inquiry: { en: "Inquiry", ar: "الاستفسار" },
   customDescription: { en: "Describe", ar: "الوصف" },

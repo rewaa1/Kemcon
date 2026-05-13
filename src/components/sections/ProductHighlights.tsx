@@ -1,39 +1,23 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { StaggerContainer, staggerItem } from "@/components/motion/StaggerContainer";
 
 const productImages = [
-  {
-    key: "fabrics",
-    image: "/cards/fabrics.jpg",
-  },
-  {
-    key: "cushions",
-    image: "/cards/cushions.jpg",
-  },
-  {
-    key: "pillows",
-    image: "/cards/bed.jpg",
-  },
-  {
-    key: "sofas",
-    image: "/cards/sofa.jpg",
-  },
-  {
-    key: "chairs",
-    image: "/cards/chair.jpg",
-  },
-  {
-    key: "custom",
-    image: "/cards/custom.jpg",
-  },
+  { key: "curtains",  image: "/cards/curtains-home.jpg",  href: "/products/curtains" },
+  { key: "sofas",     image: "/cards/sofa.jpg",      href: "/products/sofas" },
+  { key: "chairs",    image: "/cards/chair.jpg",     href: "/products/chairs" },
+  { key: "bedSheets", image: "/cards/bedsheets-home.jpg", href: "/products/bed-sheets" },
+  { key: "fabrics",   image: "/cards/fabrics.jpg",   href: "/products/showroom" },
+  { key: "custom",    image: "/cards/custom.jpg",    href: "/products/custom" },
 ];
 
 export function ProductHighlights() {
   const t = useTranslations("products");
+  const locale = useLocale();
 
   return (
     <section className="py-28 md:py-40 bg-background-secondary relative">
@@ -52,11 +36,12 @@ export function ProductHighlights() {
             <motion.div
               key={product.key}
               variants={staggerItem}
-              className={`group relative rounded-sm overflow-hidden cursor-pointer ${
+              className={`group relative rounded-sm overflow-hidden ${
                 index === 0 ? "sm:col-span-2 lg:col-span-2 lg:row-span-2" : ""
               }`}
             >
-              <div className={`relative ${index === 0 ? "aspect-[4/3] lg:aspect-auto lg:h-full min-h-[400px]" : "aspect-[3/4]"}`}>
+            <Link href={`/${locale}${product.href}`} className="block w-full h-full">
+              <div className={`relative ${index === 0 ? "aspect-[16/9] lg:aspect-auto lg:h-full min-h-[300px]" : "aspect-[3/4]"}`}>
                 <img
                   src={product.image}
                   alt={t(`categories.${product.key}.name`)}
@@ -86,6 +71,7 @@ export function ProductHighlights() {
                 <div className="absolute top-5 right-5 w-8 h-8 border-t-2 border-r-2 border-accent/0 group-hover:border-accent/50 transition-all duration-500" />
                 <div className="absolute bottom-5 left-5 w-8 h-8 border-b-2 border-l-2 border-accent/0 group-hover:border-accent/50 transition-all duration-500" />
               </div>
+            </Link>
             </motion.div>
           ))}
         </StaggerContainer>

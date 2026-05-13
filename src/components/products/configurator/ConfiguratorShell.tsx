@@ -18,6 +18,8 @@ import { ColorStep } from "./ColorStep";
 import { PatternStep } from "./PatternStep";
 import { CurtainOptionsStep } from "./CurtainOptionsStep";
 import { ChairOptionsStep } from "./ChairOptionsStep";
+import { CushionOptionsStep } from "./CushionOptionsStep";
+import { PillowOptionsStep } from "./PillowOptionsStep";
 import { CustomDescriptionStep } from "./CustomDescriptionStep";
 import { InquiryStep } from "./InquiryStep";
 import { AIVisualizationStep } from "./AIVisualizationStep";
@@ -50,6 +52,14 @@ function canProceed(
       return !!state.curtainControl;
     case "chairOptions":
       return !!(state.frameMaterialId && state.frameFinishId && state.fillingId);
+    case "cushionOptions":
+      if (state.cushionAdd === null) return false;
+      if (state.cushionAdd === false) return true;
+      return !!(state.cushionSameFabric !== null && state.cushionQty !== null);
+    case "pillowOptions":
+      if (state.pillowAdd === null) return false;
+      if (state.pillowAdd === false) return true;
+      return !!(state.pillowFill && state.pillowSize);
     case "customDescription":
       return state.customDescription.trim().length > 10;
     case "aiVisualization":
@@ -132,6 +142,17 @@ export function ConfiguratorShell({
             productType={category as "chairs" | "sofas"}
           />
         );
+      case "cushionOptions":
+        return (
+          <CushionOptionsStep
+            state={state}
+            onChange={handleChange}
+            locale={locale}
+            productType={category as "chairs" | "sofas"}
+          />
+        );
+      case "pillowOptions":
+        return <PillowOptionsStep state={state} onChange={handleChange} locale={locale} />;
       case "customDescription":
         return <CustomDescriptionStep state={state} onChange={handleChange} locale={locale} />;
       case "aiVisualization":

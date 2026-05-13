@@ -417,11 +417,11 @@ export default function ClientsClient() {
     return featuredClients.filter((c) => getCountry(c.region) === activeFilter);
   }, [activeFilter, counts]);
 
-  // Reset pagination and scroll to grid on filter change
-  useEffect(() => {
+  const handleFilterChange = (filter: string) => {
+    setActiveFilter(filter);
     setVisibleCount(PAGE_SIZE);
     gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [activeFilter]);
+  };
 
   const visibleClients = filteredClients.slice(0, visibleCount);
   const hasMore = visibleCount < filteredClients.length;
@@ -474,7 +474,7 @@ export default function ClientsClient() {
             countryCounts={countryCounts}
             active={activeFilter}
             total={featuredClients.length}
-            onChange={setActiveFilter}
+            onChange={handleFilterChange}
           />
 
           <AnimatePresence mode="wait">

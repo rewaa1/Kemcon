@@ -66,6 +66,18 @@ export function InquiryStep({
       if (frame) lines.push(`Frame: ${frame.name}`);
       if (finish) lines.push(`Finish: ${finish.name}`);
       if (filling) lines.push(`Filling: ${filling.name}`);
+      if (state.cushionAdd === true) {
+        lines.push(`Cushions: ${state.cushionQty} per piece — ${state.cushionSameFabric ? "same fabric" : "fabric to be specified"}`);
+      } else if (state.cushionAdd === false) {
+        lines.push("Cushions: No");
+      }
+    }
+    if (category === "bed-sheets") {
+      if (state.pillowAdd === true) {
+        lines.push(`Pillows: ${state.pillowSize} size — ${state.pillowFill} fill`);
+      } else if (state.pillowAdd === false) {
+        lines.push("Pillows: No");
+      }
     }
     if (state.inquiryNotes) lines.push(`Notes: ${state.inquiryNotes}`);
     if (state.aiImageUrl) lines.push(`AI Room View: ${state.aiImageUrl}`);
@@ -135,6 +147,28 @@ export function InquiryStep({
       finish && { label: isAr ? "التشطيب" : "Finish", value: isAr ? finish.nameAr : finish.name, color: finish.hex },
     (category === "chairs" || category === "sofas") &&
       filling && { label: isAr ? "الحشو" : "Filling", value: isAr ? filling.nameAr : filling.name, color: undefined },
+    (category === "chairs" || category === "sofas") &&
+      state.cushionAdd === true && {
+        label: isAr ? "وسائد" : "Cushions",
+        value: `${state.cushionQty} — ${state.cushionSameFabric ? (isAr ? "نفس القماش" : "Same fabric") : (isAr ? "يُحدد لاحقاً" : "Separate fabric")}`,
+        color: undefined,
+      },
+    (category === "chairs" || category === "sofas") &&
+      state.cushionAdd === false && {
+        label: isAr ? "وسائد" : "Cushions",
+        value: isAr ? "لا" : "No",
+        color: undefined,
+      },
+    category === "bed-sheets" && state.pillowAdd === true && {
+      label: isAr ? "مخدات" : "Pillows",
+      value: `${state.pillowSize} — ${state.pillowFill}`,
+      color: undefined,
+    },
+    category === "bed-sheets" && state.pillowAdd === false && {
+      label: isAr ? "مخدات" : "Pillows",
+      value: isAr ? "لا" : "No",
+      color: undefined,
+    },
   ].filter(Boolean) as { label: string; value: string; color?: string }[];
 
   if (whatsappSent) {
