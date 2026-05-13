@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
+import Image from "next/image";
 import { PageHero } from "@/components/ui/PageHero";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { CTABanner } from "@/components/sections/CTABanner";
@@ -54,13 +55,13 @@ export default function AboutClient() {
             {/* Photo */}
             <FadeIn direction={isAr ? "right" : "left"} className="w-full md:w-2/5 flex-shrink-0">
               <div className="relative aspect-[3/4] rounded-sm overflow-hidden bg-surface border border-accent/10">
-                {/* Placeholder — replace with <Image> once the photo is uploaded to /public/team/ */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-foreground/20">
-                  <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  <span className="text-xs tracking-widest uppercase">Photo coming soon</span>
-                </div>
+                <Image
+                  src="/kamal-soliman.jpg"
+                  alt="Kamal Soliman — Founder & Architecture Engineer, Kemcon"
+                  fill
+                  className="object-cover object-top"
+                  sizes="(max-width: 768px) 100vw, 40vw"
+                />
                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-accent to-deep-accent" />
               </div>
             </FadeIn>

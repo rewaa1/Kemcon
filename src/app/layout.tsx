@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Playfair_Display, Inter, Noto_Sans_Arabic, Noto_Kufi_Arabic } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CurtainRevealClient } from "@/components/ui/CurtainRevealClient";
 import { SITE_URL } from "@/lib/metadata";
 import { KEMCON_EMAIL, KEMCON_PHONE_TEL } from "@/lib/config";
 import "./globals.css";
@@ -69,7 +70,13 @@ export default async function RootLayout({
       lang={locale}
       dir={direction}
       className={`${playfair.variable} ${inter.variable} ${notoSansArabic.variable} ${notoKufiArabic.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        {/* Inline style + script both in <head> so they block rendering before any body content paints */}
+        <style dangerouslySetInnerHTML={{ __html: `html[data-curtain]::before{content:'';position:fixed;inset:0;background:#111318;z-index:9998;pointer-events:none}` }} />
+        <script dangerouslySetInnerHTML={{ __html: `try{if(!localStorage.getItem('kemcon_intro_v1')){document.documentElement.setAttribute('data-curtain','1')}}catch(e){}` }} />
+      </head>
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased" suppressHydrationWarning>
         <JsonLd
           schema={[
@@ -110,6 +117,7 @@ export default async function RootLayout({
             },
           ]}
         />
+        <CurtainRevealClient />
         {children}
         <SpeedInsights />
       </body>
