@@ -61,7 +61,7 @@
   "nav": {
     "home": "Home",
     "about": "About",
-    "products": "Products",
+    "products": "Services",
     "clients": "Our Clients",
     "contact": "Contact"
   },
@@ -104,6 +104,12 @@
       "yearsLabel": "Years of Excellence",
       "products": "10,000+",
       "productsLabel": "Products Delivered"
+    },
+    "suppliers": {
+      "sectionLabel": "Global Sourcing",
+      "sectionTitle": "Our Fabric Suppliers",
+      "description": "We source premium textiles from leading manufacturers across Europe, the Americas, Asia, and the Middle East.",
+      "visit": "Visit website"
     },
     "leadership": {
       "sectionLabel": "Leadership",
@@ -197,7 +203,7 @@
     "label": "Our Partners",
     "title": "Trusted by Leading Hotels",
     "description": "Kemcon proudly serves prestigious hotels and resorts across Egypt, Saudi Arabia, Emirates, and Jordan.",
-    "cta": "See All Partners",
+    "cta": "See All Clients",
     "allDestinations": "All Destinations",
     "all": "All",
     "showing": "Showing",

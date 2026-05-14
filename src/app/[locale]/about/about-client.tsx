@@ -3,9 +3,11 @@
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
 import Image from "next/image";
+import Link from "next/link";
 import { PageHero } from "@/components/ui/PageHero";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { CTABanner } from "@/components/sections/CTABanner";
+import { suppliers } from "@/data/suppliers";
 
 export default function AboutClient() {
   const t = useTranslations("about");
@@ -132,6 +134,58 @@ export default function AboutClient() {
                 </p>
               </div>
             </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      {/* Fabric Suppliers */}
+      <section className="py-20 md:py-28 bg-background-secondary">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <p className={`text-xs font-semibold uppercase tracking-[0.3em] text-accent mb-3 ${isAr ? "text-right" : ""}`}>
+              {t("suppliers.sectionLabel")}
+            </p>
+            <h2 className={`text-3xl md:text-4xl font-bold text-foreground mb-4 ${isAr ? "text-right" : ""}`}>
+              {t("suppliers.sectionTitle")}
+            </h2>
+            <p className={`text-foreground/55 max-w-xl mb-14 ${isAr ? "text-right mr-auto" : ""}`}>
+              {t("suppliers.description")}
+            </p>
+          </FadeIn>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {suppliers.map((supplier, i) => (
+              <FadeIn key={supplier.id} delay={i * 0.03}>
+                <Link
+                  href={supplier.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex flex-col items-center gap-3 p-5 rounded-sm bg-surface border border-accent/10 hover:border-accent/30 transition-colors duration-200 h-full"
+                >
+                  {/* Logo or initial fallback */}
+                  <div className="w-12 h-12 relative flex items-center justify-center rounded-sm overflow-hidden bg-background-secondary flex-shrink-0">
+                    <Image
+                      src={supplier.logo}
+                      alt={supplier.name}
+                      fill
+                      className="object-contain p-1"
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                    />
+                    <span className="text-lg font-bold text-accent/60 select-none">
+                      {supplier.name.charAt(0)}
+                    </span>
+                  </div>
+
+                  <div className={`text-center flex-1 flex flex-col gap-1 ${isAr ? "text-right" : ""}`}>
+                    <p className="text-sm font-semibold text-foreground group-hover:text-accent transition-colors duration-200 leading-tight">
+                      {supplier.name}
+                    </p>
+                    <p className="text-[11px] text-foreground/40">{supplier.country}</p>
+                    <p className="text-[11px] text-foreground/55 leading-snug mt-1">{supplier.specialty}</p>
+                  </div>
+                </Link>
+              </FadeIn>
+            ))}
           </div>
         </div>
       </section>

@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { motion, AnimatePresence } from "framer-motion";
 import { CTABanner } from "@/components/sections/CTABanner";
 import Image from "next/image";
-import { featuredClients, partnerBrands, testimonials, regions, type FeaturedClient } from "@/data/clients";
+import { featuredClients, partnerBrands, regions, type FeaturedClient } from "@/data/clients";
 
 const ALL_TAB = "All Destinations";
 const PAGE_SIZE = 12;
@@ -141,6 +141,16 @@ function ClientCard({ client, index }: { client: FeaturedClient; index: number }
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const isPriority = index < 8;
+  const preloadedRef = useRef(false);
+
+  const handleMouseEnter = () => {
+    if (preloadedRef.current) return;
+    preloadedRef.current = true;
+    client.rooms.slice(0, 3).forEach((src) => {
+      const img = new window.Image();
+      img.src = `/_next/image?url=${encodeURIComponent(src)}&w=1920&q=75`;
+    });
+  };
 
   const prev = () => setLightboxIndex((i) => (i - 1 + client.rooms.length) % client.rooms.length);
   const next = () => setLightboxIndex((i) => (i + 1) % client.rooms.length);
@@ -152,6 +162,7 @@ function ClientCard({ client, index }: { client: FeaturedClient; index: number }
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: Math.min(index, 7) * 0.05, duration: 0.4 }}
         className="group relative rounded-sm overflow-hidden border border-accent/10 hover:border-accent/35 bg-surface cursor-pointer transition-all duration-500 hover:shadow-[0_12px_40px_rgba(0,0,0,0.55)]"
+        onMouseEnter={handleMouseEnter}
         onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
       >
         {/* Featured image */}
@@ -510,7 +521,7 @@ export default function ClientsClient() {
       </section>
 
       {/* Partner Brands */}
-      <section className="py-20 md:py-24 bg-background-secondary">
+      {/* <section className="py-20 md:py-24 bg-background-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading label="" title={t("partnersTitle")} />
           <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-accent/8 border border-accent/8">
@@ -537,34 +548,7 @@ export default function ClientsClient() {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 md:py-28 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeading label="" title={t("testimonialsTitle")} />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.12, duration: 0.4 }}
-                className="p-8 rounded-sm bg-surface border border-accent/10 relative flex flex-col"
-              >
-                <div className="text-5xl text-accent/15 font-serif leading-none mb-4">&ldquo;</div>
-                <p className="text-text-muted leading-relaxed italic flex-1 mb-6">{testimonial.quote}</p>
-                <div>
-                  <div className="gold-divider mb-4" />
-                  <p className="text-heading font-semibold text-sm">{testimonial.author}</p>
-                  <p className="text-text-muted text-xs mt-1">{testimonial.hotel}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      </section> */}
 
       <CTABanner />
     </>

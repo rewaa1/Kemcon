@@ -41,7 +41,7 @@ export function CurtainReveal() {
         }}
         initial={{ x: 0 }}
         animate={{ x: "-100%" }}
-        transition={{ duration: 0.65, delay: 0.35, ease: EASE }}
+        transition={{ duration: 1.0, delay: 0.5, ease: EASE }}
         onAnimationComplete={() => {
           localStorage.setItem(STORAGE_KEY, "1");
           setVisible(false);
@@ -58,7 +58,7 @@ export function CurtainReveal() {
         }}
         initial={{ x: 0 }}
         animate={{ x: "100%" }}
-        transition={{ duration: 0.65, delay: 0.35, ease: EASE }}
+        transition={{ duration: 1.0, delay: 0.5, ease: EASE }}
       />
 
       {/* Logo — fades out just as panels begin to part */}
@@ -66,7 +66,7 @@ export function CurtainReveal() {
         className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none select-none"
         initial={{ opacity: 1 }}
         animate={{ opacity: 0 }}
-        transition={{ duration: 0.2, delay: 0.25 }}
+        transition={{ duration: 0.3, delay: 0.35 }}
       >
         <span
           className="text-5xl md:text-7xl font-bold tracking-[0.25em]"
