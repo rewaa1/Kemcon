@@ -11,11 +11,11 @@ const csp = [
   // Tailwind + Framer Motion inline styles
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   // Local images, Cloudinary responses, AI-generated images
-  "img-src 'self' data: blob: https://res.cloudinary.com https://image.pollinations.ai",
+  "img-src 'self' data: blob: https://res.cloudinary.com https://gen.pollinations.ai",
   // Google Fonts files
   "font-src 'self' https://fonts.gstatic.com",
   // API calls: Cloudinary upload, Pollinations, GlitchTip/Sentry
-  "connect-src 'self' https://api.cloudinary.com https://image.pollinations.ai https://*.sentry.io https://*.ingest.sentry.io https://*.ingest.glitchtip.com",
+  "connect-src 'self' https://api.cloudinary.com https://gen.pollinations.ai https://*.sentry.io https://*.ingest.sentry.io https://*.ingest.glitchtip.com",
   // No iframes
   "frame-ancestors 'none'",
   // No plugins
@@ -27,7 +27,7 @@ const csp = [
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "image.pollinations.ai" },
+      { protocol: "https", hostname: "gen.pollinations.ai" },
       { protocol: "https", hostname: "res.cloudinary.com" },
     ],
   },

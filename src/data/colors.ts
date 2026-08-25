@@ -107,3 +107,109 @@ export const colors: Color[] = [
   { id: "dark-teal", name: "Dark Teal", nameAr: "تيل داكن", hex: "#003840", groupId: "dark" },
   { id: "dark-olive", name: "Dark Olive", nameAr: "زيتوني داكن", hex: "#3C3A00", groupId: "dark" },
 ];
+
+/**
+ * Names that collide with a fabric family, a frame material, or a generic
+ * material in this catalogue. For these the swatch name is dropped from the
+ * image prompt — "Linen" as a colour beside a linen fabric, or "Walnut" as a
+ * colour beside a walnut frame, describes the wrong thing to the model.
+ */
+const COLLIDING_NAMES = new Set([
+  "linen", "silk", "cotton", "wool", "velvet", "suede",
+  "walnut", "oak", "teak", "beech", "cherry", "maple",
+  "brass", "bronze", "steel", "ebony",
+  "stone", "bone", "pearl", "sand", "mushroom",
+]);
+
+const HUE_NAMES: [number, string][] = [
+  [10, "red"], [22, "burnt orange"], [38, "orange"], [50, "amber"], [66, "yellow"],
+  [83, "yellow-green"], [150, "green"], [175, "teal-green"], [192, "teal"],
+  [224, "blue"], [248, "deep blue"], [276, "violet"], [300, "purple"],
+  [330, "magenta-pink"], [361, "pink-red"],
+];
+
+/**
+ * Turns a swatch hex into plain colour language a diffusion model understands.
+ * Derived from the hex rather than the name so the prompt can never disagree
+ * with the swatch the customer actually clicked.
+ */
+export function describeColorHex(hex: string): string {
+  const n = parseInt(hex.replace("#", ""), 16);
+  const r = ((n >> 16) & 255) / 255;
+  const g = ((n >> 8) & 255) / 255;
+  const b = (n & 255) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const chroma = max - min;
+  const l = (max + min) / 2;
+
+  let h = 0;
+  if (chroma !== 0) {
+    if (max === r) h = 60 * (((g - b) / chroma) % 6);
+    else if (max === g) h = 60 * ((b - r) / chroma + 2);
+    else h = 60 * ((r - g) / chroma + 4);
+  }
+  h = (h + 360) % 360;
+
+  // Near-neutral greys
+  if (chroma < 0.07) {
+    if (l > 0.96) return "pure white";
+    if (l > 0.84) return "soft off-white";
+    if (l > 0.68) return "pale grey";
+    if (l > 0.42) return "mid grey";
+    if (l > 0.20) return "dark charcoal grey";
+    return "near-black";
+  }
+
+  // Warm low-chroma — the cream / beige / tan / taupe family
+  if (h >= 20 && h <= 75 && chroma < 0.34) {
+    if (l > 0.88) return "warm off-white";
+    if (l > 0.78) return "pale cream";
+    if (l > 0.66) return "soft beige";
+    if (l > 0.55) return "warm tan";
+    if (l > 0.42) return "warm taupe";
+    if (l > 0.28) return "muted brown-grey";
+    return "very dark brown";
+  }
+
+  // Cool low-chroma — the slate / blue-grey family
+  if (h >= 170 && h <= 270 && chroma < 0.22) {
+    if (l > 0.74) return "pale blue-grey";
+    if (l > 0.50) return "soft blue-grey";
+    if (l > 0.22) return "dark slate blue-grey";
+    return "near-black blue-grey";
+  }
+
+  let hue = HUE_NAMES.find(([bound]) => h < bound)![1];
+  if (h >= 10 && h < 50 && l < 0.46 && chroma < 0.55) hue = "brown";
+  if (h >= 10 && h < 50 && l < 0.26) hue = "dark brown";
+  if ((h >= 325 || h < 8) && l < 0.32 && chroma > 0.25) hue = "wine red";
+  if ((h >= 325 || h < 8) && l > 0.68) hue = "pink";
+
+  const lightness =
+    l > 0.86 ? "very pale " : l > 0.72 ? "pale " : l > 0.58 ? "light "
+    : l > 0.40 ? "" : l > 0.24 ? "deep " : "very dark ";
+  const saturation = chroma < 0.18 ? "muted " : chroma < 0.34 ? "soft " : "";
+
+  const prefix = hue.startsWith(lightness.trim()) ? "" : lightness;
+  return `${prefix}${saturation}${hue}`.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * The colour phrase used in image prompts: hex-derived description first so it
+ * carries the most attention, with the swatch name appended only when it adds
+ * a useful cue without describing a material.
+ */
+export function colorPromptPhrase(color: Color | undefined): string {
+  if (!color) return "a neutral tone";
+  const described = describeColorHex(color.hex);
+  const name = color.name.toLowerCase();
+  if (COLLIDING_NAMES.has(name)) return described;
+
+  // Drop words the description already used, so "Sage Green" beside
+  // "light muted green" reads "light muted green sage", not "... green sage green".
+  const seen = new Set(described.split(" "));
+  const extra = name.split(" ").filter((w) => !seen.has(w));
+  return extra.length ? `${described} ${extra.join(" ")}` : described;
+}

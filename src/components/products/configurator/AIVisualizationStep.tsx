@@ -4,38 +4,55 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, RefreshCw, ArrowRight, ArrowLeft, Images, AlertCircle } from "lucide-react";
 import { fabrics, fabricFamilies } from "@/data/fabrics";
-import { colors } from "@/data/colors";
+import { colors, colorPromptPhrase } from "@/data/colors";
 import { patterns } from "@/data/patterns";
+import { frameMaterials, frameFinishes, fillingOptions } from "@/data/frames";
 import type { CategoryType, ConfiguratorState } from "@/types/configurator";
 import { InspirationGallery } from "@/components/shared/InspirationGallery";
 
+// Texture, weave, weight and drape only — never colour. Colour words here
+// (the old "natural linen", "blackout") override the customer's swatch.
 const FABRIC_VISUALS: Record<string, string> = {
-  velvet: "rich pile velvet with deep light absorption and lustrous sheen",
-  linen: "natural linen with subtle woven texture and organic relaxed drape",
-  silk: "smooth silk with fluid drape and soft iridescent sheen",
-  cotton: "crisp cotton with clean structured lines and matte finish",
-  jacquard: "jacquard with intricate raised woven motifs and dimensional texture",
-  chenille: "soft chenille with velvety pile texture and gentle warmth",
-  brocade: "brocade with ornate raised pattern and fine metallic thread detail",
-  sheer: "translucent sheer fabric gently diffusing natural light",
-  blackout: "heavyweight blackout fabric with dense opaque weave",
-  wool: "textured wool with warm matte finish and natural flowing drape",
-  suede: "suede-effect fabric with soft nap and warm tactile quality",
-  synthetic: "technical synthetic blend with refined texture and controlled drape",
+  velvet: "a dense velvet pile with a soft directional sheen and heavy weight",
+  linen: "an open linen weave with visible slub texture and a relaxed drape",
+  silk: "a smooth silk face with fluid drape and a soft liquid sheen",
+  cotton: "a crisp cotton weave with a matte face and clean structured folds",
+  jacquard: "a jacquard weave with intricate raised motifs and dimensional relief",
+  chenille: "a soft chenille pile with a velvety hand and a dense tactile surface",
+  brocade: "a brocade weave with ornate raised motifs and fine metallic thread",
+  sheer: "a fine semi-transparent voile weave that gently diffuses daylight",
+  blackout: "a heavyweight densely woven face, completely opaque and light-blocking",
+  wool: "a textured wool weave with a matte face and a heavy flowing drape",
+  suede: "a suede-effect face with a soft brushed nap and a matte surface",
+  synthetic: "a technical woven blend with a fine even texture and controlled drape",
 };
 
+// Positive phrasing only — the old "no pattern" is a negation, which diffusion
+// models do not reliably honour.
 const PATTERN_VISUALS: Record<string, string> = {
-  Solid: "in a clean solid color with no pattern",
-  Striped: "with elegant vertical stripes",
-  Herringbone: "in a classic herringbone weave",
-  Checkered: "with a refined checkered motif",
-  Geometric: "with bold geometric motifs",
-  Damask: "with ornate damask medallion pattern",
-  Floral: "with delicate floral embroidery",
-  Paisley: "with intricate paisley motifs",
-  Abstract: "with expressive abstract pattern",
-  Moroccan: "with traditional Moroccan arabesque motifs",
+  Striped: "evenly spaced vertical stripes",
+  Herringbone: "a classic herringbone twill",
+  Checkered: "a regular checked motif",
+  Geometric: "bold repeating geometric motifs",
+  Damask: "an ornate damask medallion motif",
+  Floral: "delicate floral motifs",
+  Paisley: "intricate paisley motifs",
+  Abstract: "an expressive abstract motif",
+  Moroccan: "traditional Moroccan arabesque motifs",
 };
+
+// Only providers that accept one use this (DeepAI does, Pollinations ignores it).
+const NEGATIVE_PROMPT = [
+  "beige", "cream", "washed out", "desaturated", "colour cast", "wrong colour",
+  "blurry", "soft focus", "low detail", "distorted", "people", "text", "watermark",
+].join(", ");
+
+// Set to a number to hold the seed steady while tuning prompts, so a change in
+// the output is the prompt and not seed variance. null = random each run.
+const DEBUG_SEED: number | null = null;
+
+// Flip to false to silence the prompt debug output in the browser console.
+const DEBUG_PROMPTS = process.env.NODE_ENV !== "production";
 
 interface AIVisualizationStepProps {
   state: ConfiguratorState;
@@ -46,7 +63,7 @@ interface AIVisualizationStepProps {
 }
 
 type TabGenState = "idle" | "loading" | "done" | "error";
-type GenerationError = "rate-limited" | "unavailable" | "network";
+type GenerationError = "rate-limited" | "daily-limit" | "unavailable" | "network";
 type Tab = "room" | "detail";
 type Mode = "ai" | "gallery";
 
@@ -75,58 +92,138 @@ export function AIVisualizationStep({
   const pattern = patterns.find((p) => p.id === state.patternId);
   const family = fabricFamilies.find((f) => f.id === fabric?.familyId);
 
-  const fabricVisual = FABRIC_VISUALS[family?.id ?? ""] ?? `${fabric?.name ?? "fabric"} curtain fabric`;
-  const patternVisual = PATTERN_VISUALS[pattern?.name ?? ""] ?? "solid color";
-  const colorName = color?.name ?? "neutral";
+  const frameMaterial = frameMaterials.find((m) => m.id === state.frameMaterialId);
+  const frameFinish = frameFinishes.find((f) => f.id === state.frameFinishId);
+
+  const fabricVisual =
+    FABRIC_VISUALS[family?.id ?? ""] ?? "a finely woven upholstery-weight texture";
+  const patternVisual = PATTERN_VISUALS[pattern?.name ?? ""] ?? "";
+  const colorPhrase = colorPromptPhrase(color);
+
+  // A solid needs no pattern clause at macro range — saying so only competes
+  // with the weave detail. In the room shot a short cue still helps.
+  const roomPattern = patternVisual ? `patterned with ${patternVisual}` : "in a single solid colour";
+  const detailPattern = patternVisual ? `patterned with ${patternVisual}` : "";
+
+  const frameVisual = [
+    frameMaterial ? `a visible ${frameMaterial.name.toLowerCase()} frame and legs` : "",
+    frameFinish ? `in a ${frameFinish.name.toLowerCase()} finish` : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  // Shared tail. Neutral daylight rather than golden hour: this is a colour
+  // preview, so an accurate swatch matters more than mood.
+  const LIGHT = "even neutral daylight, true-to-life colour, no colour cast";
+  const FINISH = "sharp focus throughout, realistic materials, no people";
+  const ROOM = "calm uncluttered hotel interior behind it, pale neutral walls, muted furnishings";
 
   const buildRoomPrompt = () => {
-    const lens = "shot on Canon EOS 5D Mark IV, 35mm lens, f/2.8, natural shallow depth of field";
-    const outro = "no people, 8k resolution, ultra-detailed, photorealistic";
-    if (category === "chairs") {
+    if (category === "chairs" || category === "sofas") {
+      const piece = category === "chairs" ? "armchair" : "sofa";
       return [
-        "photorealistic interior design photograph",
-        lens,
-        `luxury hotel suite featuring an armchair upholstered in ${colorName} ${fabricVisual} ${patternVisual}`,
-        "armchair is the clear focal point centred in frame, warm golden afternoon light, refined hotel setting",
-        outro,
-      ].join(", ");
+        `interior photograph of a luxury hotel suite, a single ${piece} as the subject`,
+        `the ${piece} is upholstered in ${colorPhrase} fabric`,
+        `the upholstery has ${fabricVisual}`,
+        roomPattern,
+        frameVisual,
+        `the ${colorPhrase} ${piece} is centred and fills most of the frame`,
+        ROOM,
+        LIGHT,
+        FINISH,
+      ]
+        .filter(Boolean)
+        .join(", ");
     }
-    if (category === "sofas") {
-      return [
-        "photorealistic interior design photograph",
-        lens,
-        `luxury hotel lounge featuring a sofa upholstered in ${colorName} ${fabricVisual} ${patternVisual}`,
-        "sofa fills the frame as the clear focal point, warm golden afternoon light, grand hotel interior",
-        outro,
-      ].join(", ");
-    }
+
     if (category === "bed-sheets") {
       return [
-        "photorealistic interior design photograph",
-        lens,
-        `luxury hotel bedroom with bed dressed in ${colorName} ${fabricVisual} bed sheets ${patternVisual}`,
-        "bed is the clear focal point filling the frame, soft warm morning light, understated elegant hotel suite",
-        outro,
-      ].join(", ");
+        "interior photograph of a luxury hotel bedroom, the dressed bed as the subject",
+        `the bed is dressed in ${colorPhrase} bed linen`,
+        `the fabric has ${fabricVisual}`,
+        roomPattern,
+        `the ${colorPhrase} bedding fills most of the frame, crisply made with soft natural creases`,
+        ROOM,
+        LIGHT,
+        FINISH,
+      ]
+        .filter(Boolean)
+        .join(", ");
     }
+
     return [
-      "photorealistic interior design photograph",
-      lens,
-      `luxury hotel suite with floor-to-ceiling ${colorName} ${fabricVisual} curtains ${patternVisual}`,
-      "curtains fill the frame as the clear focal point, beautifully gathered with natural flowing drape",
-      "tall arched windows, warm golden afternoon light, understated elegant interior",
-      outro,
-    ].join(", ");
+      "interior photograph of a luxury hotel suite, floor-to-ceiling curtains as the subject",
+      `the curtains are made of ${colorPhrase} fabric`,
+      `the fabric has ${fabricVisual}`,
+      roomPattern,
+      `the ${colorPhrase} curtains fill most of the frame, hanging in deep even vertical folds`,
+      "a tall window behind them",
+      ROOM,
+      LIGHT,
+      FINISH,
+    ]
+      .filter(Boolean)
+      .join(", ");
   };
 
   const buildDetailPrompt = () =>
     [
-      "professional textile product photography",
-      "shot on Canon EOS 100D, 100mm macro lens, f/2.8, crisp focus",
-      `extreme close-up of ${colorName} ${fabricVisual} ${patternVisual}`,
-      "sharp fabric texture with visible weave detail, soft even studio lighting, gentle natural drape folds",
-      "neutral linen background, no people, 8k resolution, ultra-detailed, photorealistic",
-    ].join(", ");
+      `macro photograph of ${colorPhrase} fabric`,
+      fabricVisual,
+      detailPattern,
+      "draped in soft folds, raking studio light revealing the weave texture",
+      "mid-grey background, true-to-life colour, sharp focus",
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+  const logSelections = (variant: Tab, prompt: string) => {
+    if (!DEBUG_PROMPTS) return;
+
+    const filling = fillingOptions.find((f) => f.id === state.fillingId);
+
+    console.groupCollapsed(
+      `%c[prompt] ${variant} — ${category}`,
+      "color:#c9a227;font-weight:600"
+    );
+
+    console.table({
+      category,
+      fabricFamily: family ? `${family.name} (${family.id})` : "—",
+      fabric: fabric ? `${fabric.name} (${fabric.id})` : "—",
+      color: color ? `${color.name} ${color.hex}` : "—",
+      pattern: pattern ? `${pattern.name} (${pattern.id})` : "—",
+      frameMaterial: frameMaterial?.name ?? "—",
+      frameFinish: frameFinish?.name ?? "—",
+      filling: filling ? `${filling.name} / ${filling.firmness}` : "—",
+      cushions: state.cushionAdd
+        ? `${state.cushionQty ?? "?"}x ${state.cushionSameFabric ? "same fabric" : "contrast fabric"}`
+        : "—",
+      pillows: state.pillowAdd
+        ? `${state.pillowSize ?? "?"} / ${state.pillowFill ?? "?"}`
+        : "—",
+      curtainControl: state.curtainControl ?? "—",
+      curtainSize:
+        state.curtainWidth || state.curtainHeight
+          ? `${state.curtainWidth || "?"} x ${state.curtainHeight || "?"}`
+          : "—",
+      customDescription: state.customDescription || "—",
+    });
+
+    console.log("%cmapped phrases", "font-weight:600", {
+      colorPhrase,
+      fabricVisual,
+      roomPattern,
+      detailPattern,
+      fabricVisualMatched: Boolean(FABRIC_VISUALS[family?.id ?? ""]),
+      patternVisualMatched: Boolean(PATTERN_VISUALS[pattern?.name ?? ""]),
+    });
+
+    console.log("%cprompt sent to Pollinations", "font-weight:600");
+    console.log(prompt);
+    console.log("%cfull configurator state", "font-weight:600", state);
+    console.groupEnd();
+  };
 
   const fetchImage = async (prompt: string, seed: number, width: number, height: number) => {
     let response: Response;
@@ -134,14 +231,26 @@ export function AIVisualizationStep({
       response = await fetch("/api/generate-curtain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, seed, width, height }),
+        body: JSON.stringify({ prompt, negativePrompt: NEGATIVE_PROMPT, seed, width, height }),
       });
     } catch {
       throw new Error("network");
     }
-    if (response.status === 429) throw new Error("rate-limited");
+    if (response.status === 429) {
+      const reason = await response
+        .json()
+        .then((body) => body?.reason)
+        .catch(() => null);
+      throw new Error(reason === "daily" ? "daily-limit" : "rate-limited");
+    }
     if (!response.ok) throw new Error("unavailable");
     const pollinationsUrl = response.headers.get("X-Image-Url");
+    if (DEBUG_PROMPTS) {
+      console.log(
+        `%cserved by model: ${response.headers.get("X-Model-Used")}`,
+        "color:#c9a227;font-weight:600"
+      );
+    }
     const blob = await response.blob();
     return { blobUrl: URL.createObjectURL(blob), pollinationsUrl };
   };
@@ -152,7 +261,9 @@ export function AIVisualizationStep({
     setRoomUrl(null);
     if (isRegen) setRoomRegen((r) => r + 1);
     try {
-      const { blobUrl, pollinationsUrl } = await fetchImage(buildRoomPrompt(), Math.floor(Math.random() * 9999999), 1536, 1024);
+      const prompt = buildRoomPrompt();
+      logSelections("room", prompt);
+      const { blobUrl, pollinationsUrl } = await fetchImage(prompt, DEBUG_SEED ?? Math.floor(Math.random() * 9999999), 1536, 1024);
       setRoomUrl(blobUrl);
       onChange({ aiImageUrl: pollinationsUrl, aiDisplayUrl: blobUrl });
       setRoomState("done");
@@ -168,7 +279,9 @@ export function AIVisualizationStep({
     setDetailUrl(null);
     if (isRegen) setDetailRegen((r) => r + 1);
     try {
-      const { blobUrl, pollinationsUrl } = await fetchImage(buildDetailPrompt(), Math.floor(Math.random() * 9999999), 1024, 1280);
+      const prompt = buildDetailPrompt();
+      logSelections("detail", prompt);
+      const { blobUrl, pollinationsUrl } = await fetchImage(prompt, DEBUG_SEED ?? Math.floor(Math.random() * 9999999), 1024, 1280);
       setDetailUrl(blobUrl);
       // Always store detail URL; room view takes priority for the display thumbnail
       if (!roomUrl) onChange({ aiDetailImageUrl: pollinationsUrl, aiDisplayUrl: blobUrl });
@@ -185,6 +298,10 @@ export function AIVisualizationStep({
   const tabError = activeTab === "room" ? roomError : detailError;
 
   const errorMessage = (err: GenerationError | null) => {
+    if (err === "daily-limit")
+      return isAr
+        ? "وصلت إلى الحد اليومي للتوليد. جرّب غدًا أو تصفّح معرض مشاريعنا."
+        : "You've reached today's generation limit. Try again tomorrow or browse our portfolio.";
     if (err === "rate-limited")
       return isAr
         ? "وصلت إلى الحد الأقصى للطلبات. انتظر دقيقة ثم أعد المحاولة."

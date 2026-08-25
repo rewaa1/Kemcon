@@ -2,18 +2,27 @@
 
 import { useEffect, useLayoutEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { INTRO_COOKIE } from "@/lib/config";
 
 const foldGradient = (deg: string) =>
   `repeating-linear-gradient(${deg}, rgba(255,255,255,0.025) 0px, rgba(0,0,0,0.06) 8px, rgba(255,255,255,0.01) 16px, rgba(0,0,0,0.04) 24px, rgba(255,255,255,0.015) 32px, rgba(0,0,0,0.01) 40px)`;
 
 const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
-const STORAGE_KEY = "kemcon_intro_v1";
+const INTRO_MAX_AGE = 60 * 60 * 24 * 365;
+
+const hasSeenIntro = () =>
+  document.cookie.split("; ").some((entry) => entry.startsWith(`${INTRO_COOKIE}=`));
+
+const markIntroSeen = () => {
+  const secure = location.protocol === "https:" ? "; secure" : "";
+  document.cookie = `${INTRO_COOKIE}=1; path=/; max-age=${INTRO_MAX_AGE}; samesite=lax${secure}`;
+};
 
 export function CurtainReveal() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem(STORAGE_KEY)) {
+    if (!hasSeenIntro()) {
       setVisible(true);
     } else {
       document.documentElement.removeAttribute("data-curtain");
@@ -43,7 +52,7 @@ export function CurtainReveal() {
         animate={{ x: "-100%" }}
         transition={{ duration: 1.0, delay: 0.5, ease: EASE }}
         onAnimationComplete={() => {
-          localStorage.setItem(STORAGE_KEY, "1");
+          markIntroSeen();
           setVisible(false);
         }}
       />
