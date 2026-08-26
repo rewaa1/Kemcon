@@ -7,22 +7,22 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { FadeIn } from "@/components/motion/FadeIn";
 
 const brandLogos = [
-  { name: "Sheraton",        logo: "/clients/cairosheraton/sheraton_logo_white_bg.png" },
-  { name: "Le Méridien",     logo: "/clients/meridienhelioplis/le_meridien_white_bg.png" },
-  { name: "Four Seasons",    logo: "/clients/fourseasonscairo/fourseasons_logo.png" },
-  { name: "Hilton",          logo: "/clients/ramseshilton/Hilton-logo.png" },
-  { name: "Marriott",        logo: "/clients/marriottmenahouse/marriott-logo.png" },
-  { name: "Hyatt",           logo: "/clients/hyattoctober/logo.png" },
-  { name: "Steigenberger",   logo: "/clients/steigenberger-aldau/Steigenberger-logo.webp" },
-  { name: "Sofitel",         logo: "/clients/sofitel-hurghada/logo.png" },
-  { name: "InterContinental",logo: "/clients/intercontinental-city/logo.webp" },
-  { name: "Rotana",          logo: "/clients/rotana-sharm/logo.png" },
-  { name: "Kempinski",       logo: "/clients/kempinski-yanbu/logo.png" },
-  { name: "Fairmont",        logo: "/clients/fairmont-makkah/logo.png" },
-  { name: "Rixos",           logo: "/clients/rixos-sharm/logo1.png" },
-  { name: "Mövenpick",       logo: "/clients/movenpick-gouna/logo.png" },
-  { name: "St. Regis",       logo: "/clients/st-regis/logo.png" },
-  { name: "Radisson Blu",    logo: "/clients/radisson-alex/logo.png" },
+  { name: "Sheraton",        logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKot6JY7ZO5Ixie0E7aCrF3KzymN162BkLWTqpZ" },
+  { name: "Le Méridien",     logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoDAxkiJKtTGSY50nBevl9JkXw2hLZPHzxc1IR" },
+  { name: "Four Seasons",    logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoTQjXDuCIqDsOE6oZFJyjVC4Pbl5viu03Hkh1" },
+  { name: "Hilton",          logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoSGIUWaa3y8qcB6ekDnxL7t2AaHzC9ITRVMs1" },
+  { name: "Marriott",        logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKopUdECHYGuPH375xOmAQUV4DWMbaqJ9knshdy" },
+  { name: "Hyatt",           logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKorFTKBtflJrQhzGdw5Smi6apVgP1EUBTyCskA" },
+  { name: "Steigenberger",   logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoplZKMoYGuPH375xOmAQUV4DWMbaqJ9knshdy" },
+  { name: "Sofitel",         logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoLQ8AwDnszxb8nrMGymHSQJXtdBkRKE6Y72iZ" },
+  { name: "InterContinental",logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoBlvCFHTJCRvDNA8b0LQJX9lSTUMyfKqerOI5" },
+  { name: "Rotana",          logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKogSmYcXtYOp3EzU4ZnwhGQeDvAoaFf6CP5d2r" },
+  { name: "Kempinski",       logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKormyMjVlJrQhzGdw5Smi6apVgP1EUBTyCskAM" },
+  { name: "Fairmont",        logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKobi0ntahcZ4kVF5fpBX80NsPjxCT369rzStoO" },
+  { name: "Rixos",           logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoSGgBrGc3y8qcB6ekDnxL7t2AaHzC9ITRVMs1" },
+  { name: "Mövenpick",       logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoCjQtBvRHg31aI7PxDs8urdqY20hzBbpyQtiN" },
+  { name: "St. Regis",       logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoRhK8uVPyYsPZxbmrvTI2RHMhcCD9fUa8tzpn" },
+  { name: "Radisson Blu",    logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoVIbMa9a2LDzfdtyXCZN81pHvqeShcjA0Kuro" },
 ];
 
 export function ClientsShowcase() {

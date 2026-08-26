@@ -11,11 +11,11 @@ const csp = [
   // Tailwind + Framer Motion inline styles
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   // Local images, Cloudinary responses, AI-generated images
-  "img-src 'self' data: blob: https://res.cloudinary.com https://gen.pollinations.ai",
+  "img-src 'self' data: blob: https://res.cloudinary.com https://gen.pollinations.ai https://utfs.io https://2e3n0iobhs.ufs.sh",
   // Google Fonts files
   "font-src 'self' https://fonts.gstatic.com",
   // API calls: Cloudinary upload, Pollinations, GlitchTip/Sentry
-  "connect-src 'self' https://api.cloudinary.com https://gen.pollinations.ai https://*.sentry.io https://*.ingest.sentry.io https://*.ingest.glitchtip.com",
+  "connect-src 'self' https://api.cloudinary.com https://gen.pollinations.ai https://utfs.io https://2e3n0iobhs.ufs.sh https://*.supabase.co https://*.sentry.io https://*.ingest.sentry.io https://*.ingest.glitchtip.com",
   // No iframes
   "frame-ancestors 'none'",
   // No plugins
@@ -29,6 +29,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "gen.pollinations.ai" },
       { protocol: "https", hostname: "res.cloudinary.com" },
+      // Pinned to our UploadThing app rather than *.ufs.sh — /_next/image is
+      // outside the middleware matcher, so a wildcard is an open image proxy.
+      { protocol: "https", hostname: "2e3n0iobhs.ufs.sh", pathname: "/f/**" },
+      { protocol: "https", hostname: "utfs.io", pathname: "/f/**" },
     ],
   },
   async headers() {

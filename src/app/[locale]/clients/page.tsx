@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import dynamic from "next/dynamic";
 import { buildPageMetadata } from "@/lib/metadata";
+import { getFeaturedClients } from "@/lib/showcaseClients";
 
 const ClientsClient = dynamic(() => import("./clients-client"));
 
@@ -16,6 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function ClientsPage() {
-  return <ClientsClient />;
+export default async function ClientsPage() {
+  const featuredClients = await getFeaturedClients();
+  return <ClientsClient featuredClients={featuredClients} />;
 }

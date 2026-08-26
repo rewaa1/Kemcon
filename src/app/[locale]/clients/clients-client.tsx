@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { motion, AnimatePresence } from "framer-motion";
 import { CTABanner } from "@/components/sections/CTABanner";
 import Image from "next/image";
-import { featuredClients, partnerBrands, regions, type FeaturedClient } from "@/data/clients";
+import { partnerBrands, regions, type FeaturedClient } from "@/data/clients";
 
 const ALL_TAB = "All Destinations";
 const PAGE_SIZE = 12;
@@ -405,7 +405,11 @@ function DestinationFilter({
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default function ClientsClient() {
+interface ClientsClientProps {
+  featuredClients: FeaturedClient[];
+}
+
+export default function ClientsClient({ featuredClients }: ClientsClientProps) {
   const t = useTranslations("clients");
   const [activeFilter, setActiveFilter] = useState(ALL_TAB);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -420,13 +424,13 @@ export default function ClientsClient() {
       cmap[country] = (cmap[country] ?? 0) + 1;
     }
     return { regionList: Object.keys(map).sort(), counts: map, countryCounts: cmap };
-  }, []);
+  }, [featuredClients]);
 
   const filteredClients = useMemo(() => {
     if (activeFilter === ALL_TAB) return featuredClients;
     if (activeFilter in counts) return featuredClients.filter((c) => c.region === activeFilter);
     return featuredClients.filter((c) => getCountry(c.region) === activeFilter);
-  }, [activeFilter, counts]);
+  }, [activeFilter, counts, featuredClients]);
 
   const handleFilterChange = (filter: string) => {
     setActiveFilter(filter);
