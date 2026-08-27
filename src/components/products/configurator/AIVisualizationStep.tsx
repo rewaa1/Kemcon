@@ -58,7 +58,6 @@ interface AIVisualizationStepProps {
   state: ConfiguratorState;
   onChange: (updates: Partial<ConfiguratorState>) => void;
   locale: string;
-  onNext: () => void;
   category: CategoryType;
 }
 
@@ -71,7 +70,6 @@ export function AIVisualizationStep({
   state,
   onChange,
   locale,
-  onNext,
   category,
 }: AIVisualizationStepProps) {
   const isAr = locale === "ar";
@@ -398,14 +396,6 @@ export function AIVisualizationStep({
           </motion.button>
         </div>
 
-        <div className="text-center">
-          <button
-            onClick={onNext}
-            className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
-          >
-            {isAr ? "تخطي ←" : "Skip this step →"}
-          </button>
-        </div>
       </div>
     );
   }
@@ -439,25 +429,6 @@ export function AIVisualizationStep({
           isAr={isAr}
         />
 
-        <div className={`flex items-center ${state.inspirationImages.length > 0 ? "justify-between" : "justify-center"} pt-2`}>
-          <button
-            onClick={onNext}
-            className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
-          >
-            {isAr ? "تخطي ←" : "Skip →"}
-          </button>
-          {state.inspirationImages.length > 0 && (
-            <motion.button
-              onClick={onNext}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-sm font-semibold hover:bg-[var(--color-accent-hover)] transition-colors ${isAr ? "flex-row-reverse" : ""}`}
-            >
-              {isAr ? `التالي (${state.inspirationImages.length} صور)` : `Continue (${state.inspirationImages.length} selected)`}
-              {isAr ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
-            </motion.button>
-          )}
-        </div>
       </div>
     );
   }
@@ -659,36 +630,6 @@ export function AIVisualizationStep({
         </div>
       </div>
 
-      {/* Continue / Skip */}
-      <div className={`flex items-center ${anyDone ? "justify-between" : "justify-center"} max-w-2xl mx-auto`}>
-        {!anyDone && (
-          <button
-            onClick={onNext}
-            className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
-          >
-            {isAr ? "متابعة بدون معاينة ←" : "Continue without preview →"}
-          </button>
-        )}
-        {anyDone && (
-          <>
-            <button
-              onClick={onNext}
-              className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
-            >
-              {isAr ? "تخطي ←" : "Skip →"}
-            </button>
-            <motion.button
-              onClick={onNext}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-sm font-semibold hover:bg-[var(--color-accent-hover)] transition-colors ${isAr ? "flex-row-reverse" : ""}`}
-            >
-              {isAr ? "التالي" : "Continue"}
-              {isAr ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
-            </motion.button>
-          </>
-        )}
-      </div>
     </div>
   );
 }

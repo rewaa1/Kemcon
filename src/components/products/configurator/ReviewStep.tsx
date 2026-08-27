@@ -1,14 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { ClipboardList, Minus, Plus, Check, Layers, ArrowRight, ArrowLeft } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Minus, Plus } from "lucide-react";
 import type { ConfiguratorState, CategoryType } from "@/types/configurator";
-import { useBriefStore } from "@/lib/brief/store";
 import { lineItemFromConfigurator } from "@/lib/brief/types";
-import { lineItemChips, MAX_INSPIRATION, UNIT_LABELS } from "@/lib/brief/format";
+import { lineItemChips, UNIT_LABELS } from "@/lib/brief/format";
 
 interface ReviewStepProps {
   state: ConfiguratorState;
@@ -18,6 +15,10 @@ interface ReviewStepProps {
   categoryLabel: string;
   /** Set when the visitor arrived via "edit" on an existing brief item. */
   editingId: string | null;
+  quantity: number;
+  onQuantityChange: (quantity: number) => void;
+  /** True once this piece is in the brief — further commits update it. */
+  committed: boolean;
 }
 
 /**
@@ -27,10 +28,9 @@ interface ReviewStepProps {
  * therefore never told the server a lead existed. The configurator now
  * produces a line item; sending happens once, on `/products/brief`.
  *
- * The step owns exactly one line item. Once committed, its id is held in
- * `committedId` and every later commit *replaces* that item rather than
- * appending — so pressing the button twice cannot put two copies of the same
- * piece into the brief, and changing a selection afterwards updates it.
+ * The commit action itself lives in `ConfiguratorBar` so it stays pinned to the
+ * viewport with every other step's action, rather than sitting at the bottom of
+ * this card where it had to be scrolled to.
  */
 export function ReviewStep({
   state,
@@ -39,65 +39,16 @@ export function ReviewStep({
   category,
   categoryLabel,
   editingId,
+  quantity,
+  onQuantityChange,
+  committed,
 }: ReviewStepProps) {
   const isAr = locale === "ar";
-  const router = useRouter();
-  const Arrow = isAr ? ArrowLeft : ArrowRight;
-
-  const addItem = useBriefStore((s) => s.addItem);
-  const replaceItem = useBriefStore((s) => s.replaceItem);
-  const openDrawer = useBriefStore((s) => s.openDrawer);
-  const items = useBriefStore((s) => s.items);
-  const toggleInspiration = useBriefStore((s) => s.toggleInspiration);
-  const briefInspiration = useBriefStore((s) => s.inspirationImages);
-
-  const existing = editingId ? items.find((i) => i.id === editingId) : undefined;
-  const [quantity, setQuantity] = useState(existing?.quantity ?? 1);
-  const [committedId, setCommittedId] = useState<string | null>(editingId);
-
-  const hasCommitted = committedId !== null;
   const isEditing = editingId !== null;
 
-  const draft = lineItemFromConfigurator(state, category, quantity, committedId ?? undefined);
+  const draft = lineItemFromConfigurator(state, category, quantity);
   const chips = lineItemChips(draft, isAr);
   const unit = UNIT_LABELS[category][isAr ? "ar" : "en"];
-
-  /**
-   * Inspiration is chosen per-item inside the AI visualization step but belongs
-   * to the brief as a whole, so it is merged up on commit. The cap is the same
-   * one the brief page enforces, so the two can never disagree.
-   */
-  const mergeInspiration = () => {
-    for (const src of state.inspirationImages) {
-      if (!briefInspiration.includes(src)) toggleInspiration(src, MAX_INSPIRATION);
-    }
-  };
-
-  const commit = () => {
-    if (committedId) {
-      replaceItem({ ...draft, id: committedId });
-    } else {
-      addItem(draft);
-      setCommittedId(draft.id);
-    }
-    mergeInspiration();
-  };
-
-  const handleCommit = () => {
-    commit();
-    openDrawer();
-  };
-
-  const handleAddAnother = () => {
-    commit();
-    router.push(`/${locale}/products`);
-  };
-
-  const primaryLabel = isEditing
-    ? isAr ? "حفظ التغييرات" : "Save changes"
-    : hasCommitted
-      ? isAr ? "تحديث الموجز" : "Update your brief"
-      : isAr ? "أضف إلى الموجز" : "Add to Brief";
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -178,7 +129,7 @@ export function ReviewStep({
           <div className={`inline-flex items-center gap-2 ${isAr ? "flex-row-reverse" : ""}`}>
             <div className={`inline-flex items-center rounded-sm border border-[var(--color-deep-accent)]/25 ${isAr ? "flex-row-reverse" : ""}`}>
               <button
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
                 disabled={quantity <= 1}
                 aria-label={isAr ? "إنقاص" : "Decrease"}
                 className="w-9 h-9 flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
@@ -189,12 +140,12 @@ export function ReviewStep({
                 type="number"
                 min={1}
                 value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, Number(e.target.value) || 1))}
+                onChange={(e) => onQuantityChange(Math.max(1, Number(e.target.value) || 1))}
                 aria-label={isAr ? "الكمية" : "Quantity"}
                 className="w-14 h-9 bg-transparent text-center text-sm font-semibold tabular-nums text-[var(--color-text)] focus:outline-none"
               />
               <button
-                onClick={() => setQuantity((q) => q + 1)}
+                onClick={() => onQuantityChange(quantity + 1)}
                 aria-label={isAr ? "زيادة" : "Increase"}
                 className="w-9 h-9 flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors cursor-pointer"
               >
@@ -226,44 +177,20 @@ export function ReviewStep({
         />
       </div>
 
-      {/* Actions */}
-      <div className="space-y-3">
-        <motion.button
-          onClick={handleCommit}
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
-          className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-sm font-semibold tracking-wide hover:bg-[var(--color-accent-hover)] transition-colors cursor-pointer ${isAr ? "flex-row-reverse" : ""}`}
-        >
-          {hasCommitted && !isEditing ? <Check size={16} /> : <ClipboardList size={16} strokeWidth={1.75} />}
-          {primaryLabel}
-        </motion.button>
-
-        <AnimatePresence initial={false}>
-          {hasCommitted && !isEditing && (
-            <motion.p
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className={`text-xs text-[var(--color-text-muted)] overflow-hidden ${isAr ? "text-right" : "text-center"}`}
-            >
-              {isAr
-                ? "هذه القطعة في موجزك. أي تعديل هنا يحدّثها بدل إضافة نسخة جديدة."
-                : "This piece is in your brief. Further changes update it rather than adding a copy."}
-            </motion.p>
-          )}
-        </AnimatePresence>
-
-        {!isEditing && (
-          <button
-            onClick={handleAddAnother}
-            className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-sm border border-[var(--color-deep-accent)]/30 text-[var(--color-text-muted)] text-sm font-medium hover:border-[var(--color-accent)]/40 hover:text-[var(--color-text)] transition-colors cursor-pointer ${isAr ? "flex-row-reverse" : ""}`}
+      <AnimatePresence initial={false}>
+        {committed && !isEditing && (
+          <motion.p
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className={`text-xs text-[var(--color-text-muted)] overflow-hidden ${isAr ? "text-right" : "text-center"}`}
           >
-            <Layers size={15} strokeWidth={1.5} />
-            {isAr ? "صمّم قطعة أخرى" : "Configure another piece"}
-            <Arrow size={14} />
-          </button>
+            {isAr
+              ? "هذه القطعة في موجزك. أي تعديل هنا يحدّثها بدل إضافة نسخة جديدة."
+              : "This piece is in your brief. Further changes update it rather than adding a copy."}
+          </motion.p>
         )}
-      </div>
+      </AnimatePresence>
     </div>
   );
 }
