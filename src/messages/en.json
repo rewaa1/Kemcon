@@ -129,7 +129,10 @@
     "back": "Back",
     "next": "Next",
     "review": "Review",
-    "unsavedPrompt": "You have unsaved progress. Are you sure you want to leave?"
+    "leaveTitle": "Leave this piece?",
+    "leaveBody": "This piece hasn't been added to your brief yet. Leaving now discards the selections you've made here — anything already in your brief is safe.",
+    "leaveStay": "Keep configuring",
+    "leaveConfirm": "Discard and leave"
   },
   "products": {
     "label": "Our Collection",

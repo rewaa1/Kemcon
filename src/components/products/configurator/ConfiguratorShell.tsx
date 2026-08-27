@@ -24,6 +24,14 @@ import { CustomDescriptionStep } from "./CustomDescriptionStep";
 import { ReviewStep } from "./ReviewStep";
 import { AIVisualizationStep } from "./AIVisualizationStep";
 import { ConfiguratorBar, type PickChip } from "./ConfiguratorBar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { fabrics } from "@/data/fabrics";
 import { colors } from "@/data/colors";
 import { patterns } from "@/data/patterns";
@@ -110,6 +118,7 @@ export function ConfiguratorShell({
    * warned about unsaved changes before the visitor had touched a thing.
    */
   const [touched, setTouched] = useState(false);
+  const [leaveOpen, setLeaveOpen] = useState(false);
 
   /**
    * The review step's working state lives here rather than in the step, so the
@@ -295,9 +304,20 @@ export function ConfiguratorShell({
     return () => window.removeEventListener("beforeunload", handler);
   }, [isDirty]);
 
-  const confirmLeave = () => {
-    if (!isDirty) return true;
-    return window.confirm(tc("unsavedPrompt"));
+  const leave = () => router.push(`/${locale}/products`);
+
+  /**
+   * `window.confirm` blocks the whole page on an OS-chrome box that ignores the
+   * site's language direction and styling. The dialog says the same thing in
+   * the site's own voice — and can be honest that the brief itself is safe,
+   * which the old one-line prompt could not convey.
+   */
+  const requestLeave = () => {
+    if (!isDirty) {
+      leave();
+      return;
+    }
+    setLeaveOpen(true);
   };
 
   /**
@@ -321,6 +341,9 @@ export function ConfiguratorShell({
     for (const src of state.inspirationImages) {
       if (!briefInspiration.includes(src)) toggleBriefInspiration(src, MAX_INSPIRATION);
     }
+    // The piece is in the brief now, so there is no unsaved work to warn about
+    // until something changes again.
+    setTouched(false);
   };
 
   const handleChipClick = (step: StepType) => {
@@ -385,7 +408,7 @@ export function ConfiguratorShell({
       <div className="sticky top-20 z-30 bg-[var(--color-bg-secondary)]/95 backdrop-blur-md border-b border-[var(--color-deep-accent)]/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-3">
           <button
-            onClick={() => confirmLeave() && router.push(`/${locale}/products`)}
+            onClick={requestLeave}
             className={`flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors ${isAr ? "flex-row-reverse" : ""}`}
           >
             {isAr ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
@@ -413,6 +436,36 @@ export function ConfiguratorShell({
           </motion.div>
         </AnimatePresence>
       </div>
+
+      <Dialog open={leaveOpen} onOpenChange={setLeaveOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="rounded-sm max-w-md bg-[var(--color-bg)] ring-1 ring-[var(--color-deep-accent)]/25 p-6"
+        >
+          <DialogHeader className={isAr ? "text-right" : ""}>
+            <DialogTitle className="text-lg font-bold text-[var(--color-heading)]">
+              {tc("leaveTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+              {tc("leaveBody")}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className={`gap-2 ${isAr ? "sm:flex-row-reverse" : ""}`}>
+            <button
+              onClick={() => setLeaveOpen(false)}
+              className="px-5 py-2.5 rounded-sm border border-[var(--color-deep-accent)]/30 text-sm font-medium text-[var(--color-text-muted)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-text)] transition-colors cursor-pointer"
+            >
+              {tc("leaveStay")}
+            </button>
+            <button
+              onClick={leave}
+              className="px-5 py-2.5 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-sm font-semibold hover:bg-[var(--color-accent-hover)] transition-colors cursor-pointer"
+            >
+              {tc("leaveConfirm")}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* One fixed surface for picks and navigation, on every step */}
       <ConfiguratorBar

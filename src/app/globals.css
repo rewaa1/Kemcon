@@ -4,6 +4,29 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * First-visit curtain scrim.
+ *
+ * `data-curtain` is server-rendered onto <html> (see src/app/layout.tsx), so
+ * this paints an opaque panel before any body content — no flash of the site
+ * before CurtainReveal mounts.
+ *
+ * It lives here rather than in an inline <style> in <head>. A React-rendered
+ * <style> in <head> is fragile: browser extensions inject their own tags there
+ * before hydration, React then matches ours against theirs and reports a
+ * hydration mismatch. This rule is entirely static, so a stylesheet — which is
+ * render-blocking in <head> and gives the same paint guarantee — is the right
+ * home for it.
+ */
+html[data-curtain]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: #111318;
+  z-index: 9998;
+  pointer-events: none;
+}
+
 /* ===== Kemcon Slate & Bone Theme ===== */
 
 :root {

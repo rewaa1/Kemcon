@@ -74,10 +74,6 @@ export default async function RootLayout({
       {...(introSeen ? {} : { "data-curtain": "1" })}
       suppressHydrationWarning
     >
-      <head>
-        {/* data-curtain is rendered onto <html> above, so this paints before any body content */}
-        <style dangerouslySetInnerHTML={{ __html: `html[data-curtain]::before{content:'';position:fixed;inset:0;background:#111318;z-index:9998;pointer-events:none}` }} />
-      </head>
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased" suppressHydrationWarning>
         <JsonLd
           schema={[
