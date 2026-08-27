@@ -20,14 +20,6 @@
         "title": "Our Products",
         "description": "From bespoke configuration to mass production — explore Kemcon's full range of curtains, chairs, sofas, bed linen, and custom hospitality furnishings."
       },
-      "configure": {
-        "title": "Configure Your Product",
-        "description": "Design every detail of your fabric or furnishing — choose materials, colours, patterns, and dimensions, then send your brief to Kemcon's team."
-      },
-      "showroom": {
-        "title": "Fabric Showroom",
-        "description": "Browse Kemcon's full fabric library — sheers, blackouts, velvets, linens, and silks across hundreds of colours and patterns from leading mills worldwide."
-      },
       "designPlan": {
         "title": "Design & Plan",
         "description": "Share your project — hotel, resort, or residence — and Kemcon's design team will plan the fabrics, finishes, and furnishings tailored to your space."
@@ -55,6 +47,10 @@
       "custom": {
         "title": "Custom Solutions",
         "description": "Have something unique in mind? Describe your vision and Kemcon's team will craft fabrics, upholstery, or furnishings exactly to your specification."
+      },
+      "brief": {
+        "title": "Your Brief",
+        "description": "Review the pieces you have configured, add project details, and send your brief to Kemcon in one message."
       }
     }
   },

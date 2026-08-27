@@ -26,11 +26,13 @@ interface ContactSubmitProps {
   successTitleAr?: string;
   successDescEn?: string;
   successDescAr?: string;
+  /** Fired once, after the brief has been accepted by `/api/contact`. */
+  onSuccess?: () => void;
 }
 
 type Status = "idle" | "submitting" | "sent" | "error";
 
-import { KEMCON_EMAIL, KEMCON_WHATSAPP } from "@/lib/config";
+import { KEMCON_EMAIL, KEMCON_WHATSAPP, SHOWROOM_MAP_URL } from "@/lib/config";
 
 async function uploadPhotos(files: File[]): Promise<string[]> {
   return Promise.all(
@@ -64,11 +66,19 @@ export function ContactSubmit({
   successTitleAr = "تم إرسال موجزك!",
   successDescEn = `Your brief has been delivered to ${KEMCON_EMAIL}. Our team will be in touch within 3–5 business days.`,
   successDescAr = `وصل موجزك إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معك فريقنا خلال 3–5 أيام عمل.`,
+  onSuccess,
 }: ContactSubmitProps) {
   const [status, setStatus] = useState<Status>("idle");
   const [submitStep, setSubmitStep] = useState<"uploading" | "sending" | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [whatsappUploading, setWhatsappUploading] = useState(false);
+  /**
+   * The WhatsApp message is frozen at the moment of a successful send.
+   * `onSuccess` may clear the underlying brief, which would otherwise leave the
+   * success card offering an empty message. Snapshotting also means the link
+   * keeps the uploaded photo URLs, which it previously dropped.
+   */
+  const [sentWhatsAppText, setSentWhatsAppText] = useState("");
 
   const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const phoneDigits = phone.replace(/\D/g, "").length;
@@ -125,7 +135,9 @@ export function ContactSubmit({
         setStatus("error");
         return;
       }
+      setSentWhatsAppText(buildWhatsAppMessage(photoUrls));
       setStatus("sent");
+      onSuccess?.();
     } catch {
       setErrorMsg(
         isAr
@@ -165,7 +177,7 @@ export function ContactSubmit({
 
         <div className="flex flex-col items-center gap-3 w-full">
           <a
-            href={`https://wa.me/${KEMCON_WHATSAPP}?text=${buildWhatsAppMessage()}`}
+            href={`https://wa.me/${KEMCON_WHATSAPP}?text=${sentWhatsAppText || buildWhatsAppMessage()}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-[#25D366] hover:underline underline-offset-2 transition-colors"
@@ -315,7 +327,7 @@ export function ContactSubmit({
         </button>
         <span className="text-[var(--color-deep-accent)]/30 text-xs">·</span>
         <button
-          onClick={() => window.open("https://maps.app.goo.gl/P258pkoaV3g7dLHP7", "_blank")}
+          onClick={() => window.open(SHOWROOM_MAP_URL, "_blank")}
           className="inline-flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
         >
           <MapPin size={13} strokeWidth={1.5} />

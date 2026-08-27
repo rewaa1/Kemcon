@@ -11,7 +11,7 @@ const productImages = [
   { key: "sofas",     image: "/cards/sofa.jpg",      href: "/products/sofas" },
   { key: "chairs",    image: "/cards/chair.jpg",     href: "/products/chairs" },
   { key: "bedSheets", image: "/cards/bedsheets-home.jpg", href: "/products/bed-sheets" },
-  { key: "fabrics",   image: "/cards/fabrics.jpg",   href: "/products/showroom" },
+  { key: "fabrics",   image: "/cards/fabrics.jpg",   href: "/products" },
   { key: "custom",    image: "/cards/custom.jpg",    href: "/products/custom" },
 ];
 

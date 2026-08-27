@@ -13,7 +13,7 @@ const STEP_LABELS: Record<StepType, { en: string; ar: string }> = {
   cushionOptions: { en: "Cushions", ar: "الوسائد" },
   pillowOptions: { en: "Pillows", ar: "المخدات" },
   aiVisualization: { en: "Preview", ar: "معاينة" },
-  inquiry: { en: "Inquiry", ar: "الاستفسار" },
+  review: { en: "Review", ar: "المراجعة" },
   customDescription: { en: "Describe", ar: "الوصف" },
 };
 

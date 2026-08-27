@@ -38,6 +38,7 @@ export function PatternStep({ state, onChange, locale }: PatternStepProps) {
             <motion.button
               key={pattern.id}
               onClick={() => onChange({ patternId: pattern.id })}
+              data-testid="step-option"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.2, delay: index * 0.04 }}

@@ -104,6 +104,7 @@ export function ColorStep({ state, onChange, locale }: ColorStepProps) {
               <motion.button
                 key={color.id}
                 onClick={() => handleColorClick(color.id)}
+                data-testid="step-option"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2, delay: index * 0.03 }}

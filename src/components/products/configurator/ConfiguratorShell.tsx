@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -21,12 +21,14 @@ import { ChairOptionsStep } from "./ChairOptionsStep";
 import { CushionOptionsStep } from "./CushionOptionsStep";
 import { PillowOptionsStep } from "./PillowOptionsStep";
 import { CustomDescriptionStep } from "./CustomDescriptionStep";
-import { InquiryStep } from "./InquiryStep";
+import { ReviewStep } from "./ReviewStep";
 import { AIVisualizationStep } from "./AIVisualizationStep";
 import { SelectionBar } from "../SelectionBar";
 import { fabrics } from "@/data/fabrics";
 import { colors } from "@/data/colors";
 import { patterns } from "@/data/patterns";
+import { useBriefStore } from "@/lib/brief/store";
+import { configuratorStateFromLineItem } from "@/lib/brief/types";
 
 interface ConfiguratorShellProps {
   category: CategoryType;
@@ -34,6 +36,8 @@ interface ConfiguratorShellProps {
   locale: string;
   initialFabricId?: string;
   initialFabricFamilyId?: string;
+  /** Brief line item being edited, from `?edit=<id>`. */
+  editId?: string;
 }
 
 function canProceed(
@@ -64,7 +68,7 @@ function canProceed(
       return state.customDescription.trim().length > 10;
     case "aiVisualization":
       return true;
-    case "inquiry":
+    case "review":
       return true;
     default:
       return true;
@@ -77,6 +81,7 @@ export function ConfiguratorShell({
   locale,
   initialFabricId,
   initialFabricFamilyId,
+  editId,
 }: ConfiguratorShellProps) {
   const isAr = locale === "ar";
   const router = useRouter();
@@ -92,17 +97,46 @@ export function ConfiguratorShell({
   });
   const [direction, setDirection] = useState<1 | -1>(1);
 
+  // Edit mode: seed from the brief once the persisted store has rehydrated.
+  // The store is empty during SSR and on the first client render, so this
+  // cannot run during initialisation without a hydration mismatch.
+  const briefHydrated = useBriefStore((s) => s.hydrated);
+  const briefItems = useBriefStore((s) => s.items);
+  const [seededFor, setSeededFor] = useState<string | null>(null);
+  /**
+   * Whether the visitor has actually changed anything. Previously this was
+   * `currentStep > 0`, which meant edit mode — which lands on the last step —
+   * warned about unsaved changes before the visitor had touched a thing.
+   */
+  const [touched, setTouched] = useState(false);
+
+  // Adjusting state during render — React's documented pattern for reacting to
+  // a changed input — rather than in an effect, which would render once with
+  // the wrong state and then cascade.
+  if (editId && briefHydrated && seededFor !== editId) {
+    const item = briefItems.find((i) => i.id === editId);
+    if (item) {
+      setSeededFor(editId);
+      setState((prev) => configuratorStateFromLineItem(item, prev));
+      // Land on the review step — the visitor came to change one detail, not
+      // to walk the whole flow again. Every earlier step stays reachable.
+      setCurrentStep(steps.length - 1);
+    }
+  }
+
   const currentStepId = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
   const isFirstStep = currentStep === 0;
   const canGoNext = canProceed(currentStepId, state, category);
 
   const handleChange = (updates: Partial<ConfiguratorState>) => {
+    setTouched(true);
     setState((prev) => ({ ...prev, ...updates }));
   };
 
   const goNext = () => {
     if (!canGoNext) return;
+    setTouched(true);
     setDirection(1);
     setCurrentStep((s) => Math.min(s + 1, steps.length - 1));
   };
@@ -165,14 +199,15 @@ export function ConfiguratorShell({
             category={category}
           />
         );
-      case "inquiry":
+      case "review":
         return (
-          <InquiryStep
+          <ReviewStep
             state={state}
             onChange={handleChange}
             locale={locale}
             category={category}
             categoryLabel={categoryLabel}
+            editingId={editId ?? null}
           />
         );
       default:
@@ -206,9 +241,9 @@ export function ConfiguratorShell({
     },
   ].filter(Boolean) as { label: string; bg: string | null; isGradient: boolean }[];
 
-  const showNav = currentStepId !== "inquiry" && currentStepId !== "aiVisualization";
+  const showNav = currentStepId !== "review" && currentStepId !== "aiVisualization";
 
-  const isDirty = currentStep > 0;
+  const isDirty = touched;
 
   useEffect(() => {
     if (!isDirty) return;
@@ -217,10 +252,10 @@ export function ConfiguratorShell({
     return () => window.removeEventListener("beforeunload", handler);
   }, [isDirty]);
 
-  const confirmLeave = useCallback(() => {
+  const confirmLeave = () => {
     if (!isDirty) return true;
     return window.confirm(tc("unsavedPrompt"));
-  }, [isDirty, isAr]);
+  };
 
   return (
     <div className="relative min-h-screen pt-20 pb-48 bg-[var(--color-bg-secondary)]">

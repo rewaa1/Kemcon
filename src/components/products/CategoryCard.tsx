@@ -56,7 +56,7 @@ export function CategoryCard({
     >
       <Link href={href} className="group block h-full">
         <div
-          className={`relative overflow-hidden border border-white/[0.06] transition-colors duration-500 group-hover:border-white/[0.12] ${
+          className={`relative flex overflow-hidden border border-white/[0.06] transition-colors duration-500 group-hover:border-white/[0.12] ${
             fullWidth ? "min-h-[150px]" : "min-h-[290px]"
           }`}
         >
@@ -74,13 +74,24 @@ export function CategoryCard({
             className={`absolute inset-0 transition-opacity duration-500 ${
               fullWidth
                 ? "bg-gradient-to-r from-[#111318]/92 via-[#111318]/65 to-[#111318]/25"
-                : "bg-gradient-to-t from-[#111318]/96 via-[#111318]/55 to-[#111318]/10"
+                : "bg-gradient-to-t from-[#111318]/95 via-[#111318]/55 to-[#111318]/10"
             }`}
           />
 
+          {/*
+            A second scrim sized to the text block. The single gradient above
+            is tuned to the darker card images; over a bright one (the sheer
+            curtains) the description washed out. Scoping the heavy darkening
+            to where the copy actually sits keeps the rest of the photograph
+            intact instead of flattening every card to protect one.
+          */}
+          {!fullWidth && (
+            <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-[#111318] via-[#111318]/80 to-transparent pointer-events-none" />
+          )}
+
           {/* Content */}
           <div
-            className={`relative h-full p-7 flex ${
+            className={`relative flex-1 min-w-0 p-7 flex ${
               fullWidth
                 ? `items-center justify-between gap-8 ${isAr ? "flex-row-reverse" : ""}`
                 : "flex-col justify-end"

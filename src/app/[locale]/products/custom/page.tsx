@@ -1,8 +1,19 @@
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
-import { ConfiguratorShell } from "@/components/products/configurator/ConfiguratorShell";
+import dynamic from "next/dynamic";
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
 import { JsonLd } from "@/components/seo/JsonLd";
+
+const ConfiguratorShell = dynamic(() =>
+  import("@/components/products/configurator/ConfiguratorShell").then(
+    (m) => ({ default: m.ConfiguratorShell })
+  )
+);
+
+interface PageProps {
+  searchParams: Promise<{ edit?: string }>;
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -15,9 +26,10 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function CustomPage() {
+export default async function CustomPage({ searchParams }: PageProps) {
   const locale = await getLocale();
   const isAr = locale === "ar";
+  const { edit } = await searchParams;
 
   const pageUrl = `${SITE_URL}/${locale}/products/custom`;
 
@@ -47,11 +59,14 @@ export default async function CustomPage() {
   return (
     <>
       <JsonLd schema={schemas} />
-      <ConfiguratorShell
-        category="custom"
-        categoryLabel={isAr ? "حل مخصص" : "Custom Solution"}
-        locale={locale}
-      />
+      <ErrorBoundary>
+        <ConfiguratorShell
+          category="custom"
+          categoryLabel={isAr ? "حل مخصص" : "Custom Solution"}
+          locale={locale}
+          editId={edit}
+        />
+      </ErrorBoundary>
     </>
   );
 }

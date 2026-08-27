@@ -4,6 +4,7 @@ import { getMessages, getTranslations } from "next-intl/server";
 import { LenisProvider } from "@/components/providers/LenisProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { BriefDrawer } from "@/components/brief/BriefDrawer";
 import { SITE_URL, pageAlternates } from "@/lib/metadata";
 
 export async function generateMetadata({
@@ -65,6 +66,8 @@ export default async function LocaleLayout({
         <Navbar />
         <main id="main-content" className="flex-1">{children}</main>
         <Footer />
+        {/* Mounted once above the routes so the brief survives navigation. */}
+        <BriefDrawer />
       </LenisProvider>
     </NextIntlClientProvider>
   );

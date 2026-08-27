@@ -12,17 +12,17 @@ test.describe("Curtains configurator — happy path", () => {
   });
 
   test("can advance through all steps", async ({ page }) => {
-    const nextBtn = page.getByRole("button", { name: /next|التالي/i });
+    const nextBtn = page.getByRole("button", { name: "Next", exact: true });
 
     // Step 1 — fabric: pick the first available chip
-    const firstChip = page.locator("[data-testid='step-option']").first();
+    const firstChip = page.getByTestId("step-option").first();
     if (await firstChip.isVisible()) await firstChip.click();
     await expect(nextBtn).not.toHaveAttribute("aria-disabled", "true");
     await nextBtn.click();
 
     // Step 2 — continue if there is a next
     if (await nextBtn.isVisible()) {
-      const chip = page.locator("[data-testid='step-option']").first();
+      const chip = page.getByTestId("step-option").first();
       if (await chip.isVisible()) await chip.click();
       await nextBtn.click();
     }
