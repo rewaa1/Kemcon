@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, RefreshCw, ArrowRight, ArrowLeft, Images, AlertCircle } from "lucide-react";
+import { Sparkles, RefreshCw, Images, AlertCircle } from "lucide-react";
 import { fabrics, fabricFamilies } from "@/data/fabrics";
 import { colors, colorPromptPhrase } from "@/data/colors";
 import { patterns } from "@/data/patterns";
@@ -291,7 +291,6 @@ export function AIVisualizationStep({
     }
   };
 
-  const anyDone = roomState === "done" || detailState === "done";
 
   const tabError = activeTab === "room" ? roomError : detailError;
 

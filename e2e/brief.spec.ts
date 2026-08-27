@@ -75,9 +75,10 @@ test.describe("Brief — configurator to brief page", () => {
     await page.getByRole("button", { name: /Add to Brief/i }).click();
     expect(await itemCount()).toBe(1);
 
-    // Drawer opens over the step; dismiss it and commit again.
+    // Drawer opens over the step; dismiss it and commit again from the
+    // fixed bar, which now owns the action on every step.
     await page.keyboard.press("Escape");
-    await page.getByRole("button", { name: /Update your brief/i }).click();
+    await page.getByRole("button", { name: /Update brief/i }).click();
     expect(await itemCount()).toBe(1);
   });
 
