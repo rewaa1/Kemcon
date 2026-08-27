@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { HONEYPOT_FIELD } from "@/lib/requestGuards";
+import { HoneypotField } from "@/components/shared/HoneypotField";
 import { useLocale, useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Store, Factory, Phone, Clock, MessageCircle, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
@@ -23,6 +25,7 @@ export default function ContactClient() {
   const Arrow = isAr ? ArrowLeft : ArrowRight;
 
   const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
+  const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -41,7 +44,7 @@ export default function ContactClient() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, locale }),
+        body: JSON.stringify({ ...form, locale, [HONEYPOT_FIELD]: honeypot }),
       });
 
       const data = (await res.json().catch(() => ({}))) as { error?: string };
@@ -146,6 +149,7 @@ export default function ContactClient() {
               </p>
 
               <form onSubmit={handleEmailSubmit} className="space-y-5">
+                <HoneypotField value={honeypot} onChange={setHoneypot} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label

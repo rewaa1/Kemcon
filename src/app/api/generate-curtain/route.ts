@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { checkRateLimit } from "@/lib/rateLimit";
+import { checkRateLimit, checkGlobalLimit } from "@/lib/rateLimit";
+import { clientIp, isCrossOriginRequest } from "@/lib/requestGuards";
 import {
   QUOTA_COOKIE,
   VISITOR_COOKIE,
@@ -85,6 +86,11 @@ function pollinationsRequest(
 }
 
 export async function POST(request: NextRequest) {
+  // Each generation spends real provider credit.
+  if (isCrossOriginRequest(request)) {
+    return NextResponse.json({ error: "Cross-origin requests are not allowed." }, { status: 403 });
+  }
+
   // Identity first: the quota cookie is signed against this id.
   const existingVisitorId = readVisitorId(request);
   const issued = existingVisitorId ? null : issueVisitorId();
@@ -122,11 +128,24 @@ export async function POST(request: NextRequest) {
   // Second layer: a shared IP burst cap, so one office cannot exhaust the
   // provider quota by clearing cookies. Best-effort only — this resets on
   // serverless cold starts.
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const ip = clientIp(request);
   if (!checkRateLimit(`generate:${ip}`, 10, 60_000)) {
     return withCookies(
       NextResponse.json(
         { error: "Too many generation requests from this network. Please wait a minute.", reason: "burst" },
+        { status: 429, headers: { "Retry-After": "60" } }
+      )
+    );
+  }
+
+  // Every generation spends provider credit, so cap the endpoint as a whole —
+  // the per-visitor cookie quota and the per-IP burst are both blind to volume
+  // spread across many visitors.
+  if (!checkGlobalLimit("generate", 60, 60_000)) {
+    console.warn("[generate] global rate ceiling hit — shedding requests");
+    return withCookies(
+      NextResponse.json(
+        { error: "We are generating a lot of previews right now. Please try again shortly.", reason: "burst" },
         { status: 429, headers: { "Retry-After": "60" } }
       )
     );

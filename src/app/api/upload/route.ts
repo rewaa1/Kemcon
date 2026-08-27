@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
-import { checkRateLimit } from "@/lib/rateLimit";
+import { checkRateLimit, checkGlobalLimit } from "@/lib/rateLimit";
+import { clientIp, isCrossOriginRequest } from "@/lib/requestGuards";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -14,9 +15,18 @@ function sign(params: Record<string, string>, apiSecret: string): string {
 }
 
 export async function POST(request: NextRequest) {
-  const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  // Every upload costs Cloudinary storage, so this one is worth guarding too.
+  if (isCrossOriginRequest(request)) {
+    return NextResponse.json({ error: "Cross-origin requests are not allowed." }, { status: 403 });
+  }
+
+  const ip = clientIp(request);
   if (!checkRateLimit(`upload:${ip}`, 10, 60_000)) {
+    return NextResponse.json({ error: "Too many upload requests." }, { status: 429 });
+  }
+
+  if (!checkGlobalLimit("upload", 120, 60_000)) {
+    console.warn("[upload] global rate ceiling hit — shedding requests");
     return NextResponse.json({ error: "Too many upload requests." }, { status: 429 });
   }
 

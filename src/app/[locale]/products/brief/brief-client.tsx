@@ -31,6 +31,7 @@ import {
   MAX_INSPIRATION,
   type BriefSnapshot,
 } from "@/lib/brief/format";
+import { buildBriefPayload } from "@/lib/brief/payload";
 import { KEMCON_EMAIL } from "@/lib/config";
 
 const PROPERTY_TYPES = [
@@ -703,6 +704,9 @@ export default function BriefClient() {
           onChange={(field, value) => setContact({ [field]: value })}
           buildSummary={buildSummary}
           buildWhatsAppMessage={buildWhatsAppMessage}
+          buildPayload={(submissionId, photoUrls) =>
+            buildBriefPayload(snapshot, locale, submissionId, photoUrls)
+          }
           photos={photos}
           successDescEn={`Your brief has been delivered to ${KEMCON_EMAIL}. Our team will be in touch within 3–5 business days.`}
           successDescAr={`وصل موجزك إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معك فريقنا خلال 3–5 أيام عمل.`}

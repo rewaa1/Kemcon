@@ -1,9 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { KEMCON_EMAIL } from "@/lib/config";
-import { checkRateLimit } from "@/lib/rateLimit";
+import { checkRateLimit, checkGlobalLimit } from "@/lib/rateLimit";
+import { HONEYPOT_FIELD, clientIp, isCrossOriginRequest, isHoneypotFilled } from "@/lib/requestGuards";
+import { saveBrief } from "@/lib/leads";
+import { parseBriefPayload, type ValidatedBriefPayload } from "@/lib/brief/payloadSchema";
 
+/**
+ * The structured brief is client-supplied. Validation lives in
+ * `payloadSchema.ts` rather than in hand-rolled helpers here — the first
+ * attempt used a spread and a couple of clamp functions, and left whole
+ * objects unchecked as a result.
+ */
 const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+const MAX_PAYLOAD_BYTES = 256 * 1024;
+
+function readPayload(raw: string | null): ValidatedBriefPayload | null {
+  if (!raw || raw.length > MAX_PAYLOAD_BYTES) return null;
+  try {
+    return parseBriefPayload(JSON.parse(raw));
+  } catch {
+    return null;
+  }
+}
 
 interface JsonPayload {
   name?: string;
@@ -20,6 +40,8 @@ async function parseRequest(request: NextRequest): Promise<{
   message: string;
   isAr: boolean;
   attachments: { filename: string; content: Buffer; contentType: string }[];
+  payload: ValidatedBriefPayload | null;
+  honeypot: unknown;
 }> {
   const contentType = request.headers.get("content-type") ?? "";
 
@@ -49,6 +71,8 @@ async function parseRequest(request: NextRequest): Promise<{
       message: (data.get("message") as string | null)?.trim() ?? "",
       isAr: data.get("locale") === "ar",
       attachments,
+      payload: readPayload(data.get("payload") as string | null),
+      honeypot: data.get(HONEYPOT_FIELD),
     };
   }
 
@@ -60,15 +84,32 @@ async function parseRequest(request: NextRequest): Promise<{
     message: payload.message?.trim() ?? "",
     isAr: payload.locale === "ar",
     attachments: [],
+    payload: null,
+    honeypot: (payload as Record<string, unknown>)[HONEYPOT_FIELD],
   };
 }
 
 export async function POST(request: NextRequest) {
-  const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  // A form on someone else's page submitting through a visitor's browser.
+  if (isCrossOriginRequest(request)) {
+    return NextResponse.json({ error: "Cross-origin requests are not allowed." }, { status: 403 });
+  }
+
+  const ip = clientIp(request);
   if (!checkRateLimit(`contact:${ip}`, 5, 60_000)) {
     return NextResponse.json(
       { error: "Too many requests. Please wait a minute and try again." },
+      { status: 429 }
+    );
+  }
+
+  // Checked after the per-IP limit so one abusive caller cannot spend the
+  // shared budget. Catches volume spread across many addresses, which a
+  // per-IP limit cannot see at all.
+  if (!checkGlobalLimit("contact", 60, 60_000)) {
+    console.warn("[contact] global rate ceiling hit — shedding requests");
+    return NextResponse.json(
+      { error: "We are receiving an unusual number of requests. Please try again shortly." },
       { status: 429 }
     );
   }
@@ -82,7 +123,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: msg }, { status: 400 });
   }
 
-  const { name, phone, email, message, isAr, attachments } = parsed;
+  const { name, phone, email, message, isAr, attachments, payload, honeypot } = parsed;
+
+  if (isHoneypotFilled(honeypot)) {
+    // Answer as though it worked. A 400 just tells the bot which field to skip.
+    console.warn("[contact] honeypot triggered — discarding submission");
+    return NextResponse.json({ ok: true });
+  }
 
   if (!name || !email || !message) {
     return NextResponse.json(
@@ -98,6 +145,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Store first. The database is the system of record: if the write succeeds
+  // the lead is safe even when email fails, and vice versa.
+  // Contact details come from the validated form fields, never from the
+  // payload, so the stored record cannot disagree with the email that is sent.
+  const leadResult = payload ? await saveBrief(payload, { name, phone, email }) : null;
+  const stored = leadResult?.ok === true;
+  const reference = leadResult?.ok ? leadResult.reference : null;
+
   const host = process.env.SMTP_HOST;
   const port = Number(process.env.SMTP_PORT) || 587;
   const user = process.env.SMTP_USER;
@@ -107,6 +162,7 @@ export async function POST(request: NextRequest) {
 
   if (!host || !user || !pass || !from) {
     console.error("Contact form: missing SMTP env vars");
+    if (stored) return NextResponse.json({ ok: true, reference });
     return NextResponse.json(
       { error: isAr ? "خطأ في إعدادات الخادم" : "Server is not configured to send email" },
       { status: 500 }
@@ -120,7 +176,9 @@ export async function POST(request: NextRequest) {
     auth: { user, pass },
   });
 
-  const subject = isAr ? `استفسار جديد من ${name}` : `New inquiry from ${name}`;
+  const baseSubject = isAr ? `استفسار جديد من ${name}` : `New inquiry from ${name}`;
+  // The reference lets the team match the email to the CRM record at a glance.
+  const subject = reference ? `${baseSubject} [${reference}]` : baseSubject;
 
   const text = [
     `Name: ${name}`,
@@ -156,13 +214,14 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Contact form: sendMail failed", error);
+    if (stored) return NextResponse.json({ ok: true, reference });
     return NextResponse.json(
       { error: isAr ? "فشل إرسال الرسالة. حاول مرة أخرى." : "Failed to send message. Please try again." },
       { status: 502 }
     );
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, reference });
 }
 
 function escapeHtml(input: string) {

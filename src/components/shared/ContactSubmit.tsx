@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send,
@@ -26,6 +26,11 @@ interface ContactSubmitProps {
   successTitleAr?: string;
   successDescEn?: string;
   successDescAr?: string;
+  /**
+   * Structured form of the submission, stored in the CRM alongside the email.
+   * Omitted by the plain contact page, which has no brief behind it.
+   */
+  buildPayload?: (submissionId: string, photoUrls: string[]) => unknown;
   /** Fired once, after the brief has been accepted by `/api/contact`. */
   onSuccess?: () => void;
 }
@@ -33,6 +38,7 @@ interface ContactSubmitProps {
 type Status = "idle" | "submitting" | "sent" | "error";
 
 import { KEMCON_EMAIL, KEMCON_WHATSAPP, SHOWROOM_MAP_URL } from "@/lib/config";
+import { newBriefId } from "@/lib/brief/reference";
 
 async function uploadPhotos(files: File[]): Promise<string[]> {
   return Promise.all(
@@ -66,6 +72,7 @@ export function ContactSubmit({
   successTitleAr = "تم إرسال موجزك!",
   successDescEn = `Your brief has been delivered to ${KEMCON_EMAIL}. Our team will be in touch within 3–5 business days.`,
   successDescAr = `وصل موجزك إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معك فريقنا خلال 3–5 أيام عمل.`,
+  buildPayload,
   onSuccess,
 }: ContactSubmitProps) {
   const [status, setStatus] = useState<Status>("idle");
@@ -79,6 +86,13 @@ export function ContactSubmit({
    * keeps the uploaded photo URLs, which it previously dropped.
    */
   const [sentWhatsAppText, setSentWhatsAppText] = useState("");
+  /**
+   * Identifies this submission across retries. If the request times out after
+   * the server already stored the brief, clicking send again reuses this id so
+   * the server recognises the repeat instead of creating a second lead. Cleared
+   * on success, so the next brief is genuinely new.
+   */
+  const submissionIdRef = useRef<string | null>(null);
 
   const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const phoneDigits = phone.replace(/\D/g, "").length;
@@ -118,6 +132,10 @@ export function ContactSubmit({
     fd.append("email", email);
     fd.append("message", buildSummary(photoUrls));
     fd.append("locale", locale);
+    if (buildPayload) {
+      if (!submissionIdRef.current) submissionIdRef.current = newBriefId();
+      fd.append("payload", JSON.stringify(buildPayload(submissionIdRef.current, photoUrls)));
+    }
 
     try {
       const res = await fetch("/api/contact", { method: "POST", body: fd });
@@ -136,6 +154,7 @@ export function ContactSubmit({
         return;
       }
       setSentWhatsAppText(buildWhatsAppMessage(photoUrls));
+      submissionIdRef.current = null;
       setStatus("sent");
       onSuccess?.();
     } catch {
