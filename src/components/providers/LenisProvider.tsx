@@ -34,6 +34,20 @@ export function scrollToTop(immediate = true) {
   else window.scrollTo({ top: 0, behavior: immediate ? "auto" : "smooth" });
 }
 
+/**
+ * Smooth-scroll to an element, offset for the fixed header. Same reason as
+ * above — a bare `scrollIntoView` fights the Lenis loop.
+ */
+export function scrollToElement(selector: string, offset = -96) {
+  const el = document.querySelector(selector);
+  if (!el) return;
+  if (instance) instance.scrollTo(el as HTMLElement, { offset });
+  else {
+    const top = el.getBoundingClientRect().top + window.scrollY + offset;
+    window.scrollTo({ top, behavior: "smooth" });
+  }
+}
+
 export function LenisProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const lenis = new Lenis({

@@ -8,17 +8,23 @@ import { FadeIn } from "@/components/motion/FadeIn";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { CategoryGrid } from "@/components/products/CategoryGrid";
 import { FabricCatalog } from "@/components/products/FabricCatalog";
+import { GuidedIntake } from "@/components/products/GuidedIntake";
 import type { CategoryType } from "@/types/configurator";
 
 /**
  * `/products` — the section the nav labels "Services".
  *
- * Two entrances to the same configurator, presented as complements rather than
- * as rival service cards: start from a product, or start from a fabric. Both
- * end at the same brief.
- *
  * The page opens editorially — it states what Kemcon is before it shows a
  * filter — because this is the section's front page, not a category listing.
+ *
+ * Below that, three ways in, in order of how much the visitor already knows:
+ *   1. `GuidedIntake` — two questions that route people who do not yet know
+ *      whether they want a configured piece, a design plan, or a bulk quote.
+ *   2. The category cards — for someone who knows the product.
+ *   3. The fabric catalog — for someone who knows the material.
+ *
+ * All three converge on the same brief. The intake only routes; skipping it
+ * costs the visitor nothing.
  */
 
 const SERVICES = [
@@ -86,7 +92,7 @@ export default function ProductsClient() {
   return (
     <div className="bg-[var(--color-bg-secondary)]">
       {/* ── Editorial opening ── */}
-      <section className="relative pt-28 pb-14 overflow-hidden">
+      <section className="relative pt-28 pb-10 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[620px] h-[300px] rounded-full blur-[120px] opacity-[0.07] bg-[#c8a45a]" />
         </div>
@@ -115,8 +121,16 @@ export default function ProductsClient() {
         </div>
       </section>
 
+      {/* ── Two questions that route the visitor ── */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
+        <GuidedIntake categoriesAnchor="#product-categories" />
+      </section>
+
       {/* ── Start from a product ── */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-5">
+      <section
+        id="product-categories"
+        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-5 scroll-mt-32"
+      >
         <Divider label={isAr ? "ابدأ من المنتج" : "Start with a product"} isAr={isAr} />
         <CategoryGrid
           categories={categories}
