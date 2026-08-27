@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, Compass, Plus, RotateCcw, X } from "lucide-react";
 import { useBriefStore } from "@/lib/brief/store";
 import { scrollToElement } from "@/components/providers/LenisProvider";
 import type { BriefType } from "@/lib/brief/types";
@@ -13,13 +13,14 @@ import type { BriefType } from "@/lib/brief/types";
  * Two questions that route the visitor, so nobody has to recognise themselves
  * in Kemcon's internal service names.
  *
- * The section's remaining ambiguity is not "which product" — the category cards
- * answer that — it is "do I configure a piece, request a design plan, or ask
- * for a bulk quote?". A hotel buyer needing 300 panels cannot tell, and someone
- * who wants a room designed for them has to know that "Design Plan" means them.
+ * Collapsed by default, deliberately. The category cards already answer "which
+ * product" and the service cards are plainly worded, so most visitors need no
+ * routing at all — and an expanded form directly beneath the page's editorial
+ * opening reads as lead qualification rather than as help. Offered as a quiet
+ * line, it costs nothing to ignore and is there for the person who is stuck.
  *
- * The answers set the brief type, so the brief page later collects the right
- * project fields whichever route the visitor took.
+ * It uses the same progressive-disclosure pattern as the optional sections on
+ * the Design Plan form, so it is a shape the site already uses.
  */
 
 type Furnishing = "home" | "hotel" | "office" | "unsure";
@@ -150,6 +151,7 @@ export function GuidedIntake({ categoriesAnchor }: { categoriesAnchor: string })
   const setBriefType = useBriefStore((s) => s.setType);
   const setBriefProject = useBriefStore((s) => s.setProject);
 
+  const [open, setOpen] = useState(false);
   const [furnishing, setFurnishing] = useState<Furnishing | null>(null);
   const [scale, setScale] = useState<Scale | null>(null);
 
@@ -159,7 +161,8 @@ export function GuidedIntake({ categoriesAnchor }: { categoriesAnchor: string })
   const go = (destination: Destination, type: BriefType) => {
     setBriefType(type);
 
-    // Seed what we already know, so the visitor is not asked twice.
+    // Seed what we already know. The destination forms read these back, so the
+    // visitor is not asked the same thing twice.
     if (furnishing === "hotel" || furnishing === "office") {
       const value = furnishing === "hotel" ? "hotel" : "office";
       if (type === "bulk") setBriefProject({ projectType: value });
@@ -175,16 +178,64 @@ export function GuidedIntake({ categoriesAnchor }: { categoriesAnchor: string })
     setScale(null);
   };
 
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        aria-expanded={false}
+        aria-controls="guided-intake"
+        className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-sm border border-dashed border-[var(--color-deep-accent)]/30 text-[var(--color-text-muted)] hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-accent)]/[0.03] hover:text-[var(--color-text)] transition-all duration-200 group cursor-pointer ${isAr ? "flex-row-reverse text-right" : "text-left"}`}
+      >
+        <Compass size={16} strokeWidth={1.5} className="flex-shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium leading-tight">
+            {isAr ? "لست متأكدًا من أين تبدأ؟" : "Not sure where to start?"}
+          </p>
+          <p className="text-[11px] text-[var(--color-text-muted)]/80 mt-0.5 leading-tight">
+            {isAr
+              ? "أجب عن سؤالين وسنرشدك إلى المكان المناسب."
+              : "Answer two quick questions and we'll point you to the right place."}
+          </p>
+        </div>
+        <Plus
+          size={14}
+          strokeWidth={1.75}
+          className="flex-shrink-0 transition-transform duration-200 group-hover:rotate-90 text-[var(--color-text-muted)]/60 group-hover:text-[var(--color-accent)]"
+        />
+      </button>
+    );
+  }
+
   return (
-    <div className="rounded-sm border border-[var(--color-deep-accent)]/20 bg-[var(--color-surface)]/60 backdrop-blur-sm p-6 sm:p-7 space-y-5">
+    <motion.div
+      id="guided-intake"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+      className="glass-card rounded-sm p-6 sm:p-7 space-y-5"
+    >
       {/* Question 1 */}
       <div role="group" aria-labelledby="intake-q1" className="space-y-3">
-        <p
-          id="intake-q1"
-          className={`text-sm font-semibold text-[var(--color-heading)] ${isAr ? "text-right" : ""}`}
-        >
-          {isAr ? "ماذا تودّ أن تفرش؟" : "What are you furnishing?"}
-        </p>
+        <div className={`flex items-start justify-between gap-4 ${isAr ? "flex-row-reverse" : ""}`}>
+          <p
+            id="intake-q1"
+            className={`text-sm font-semibold text-[var(--color-heading)] ${isAr ? "text-right" : ""}`}
+          >
+            {isAr ? "ماذا تودّ أن تفرش؟" : "What are you furnishing?"}
+          </p>
+          <button
+            onClick={() => {
+              setOpen(false);
+              reset();
+            }}
+            aria-label={isAr ? "إخفاء" : "Hide"}
+            aria-expanded
+            aria-controls="guided-intake"
+            className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors p-1 -m-1 flex-shrink-0 cursor-pointer"
+          >
+            <X size={16} strokeWidth={1.5} />
+          </button>
+        </div>
         <div className={`flex flex-wrap gap-2 ${isAr ? "justify-end" : ""}`}>
           {FURNISHING.map((option) => (
             <button
@@ -202,97 +253,101 @@ export function GuidedIntake({ categoriesAnchor }: { categoriesAnchor: string })
         </div>
       </div>
 
-      {/* Question 2 — only where it changes the answer */}
-      <AnimatePresence initial={false}>
-        {needsScale && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden"
-          >
-            <div role="group" aria-labelledby="intake-q2" className="space-y-3 pt-1">
-              <p
-                id="intake-q2"
-                className={`text-sm font-semibold text-[var(--color-heading)] ${isAr ? "text-right" : ""}`}
-              >
-                {isAr ? "كم عدد الغرف؟" : "How many rooms?"}
-              </p>
-              <div className={`flex flex-wrap gap-2 ${isAr ? "justify-end" : ""}`}>
-                {SCALE.map((option) => (
-                  <button
-                    key={option.value}
-                    aria-pressed={scale === option.value}
-                    onClick={() => setScale(scale === option.value ? null : option.value)}
-                    className={chipClass(scale === option.value)}
-                  >
-                    {isAr ? option.ar : option.en}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Resolution */}
-      <AnimatePresence initial={false}>
-        {resolution && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden"
-          >
-            <div
-              aria-live="polite"
-              className="pt-4 border-t border-[var(--color-deep-accent)]/15 space-y-4"
+      {/*
+        One live region covering both the follow-up question and the answer, so
+        a screen reader is told when either appears. Announcing only the
+        resolution left the second question silent.
+      */}
+      <div aria-live="polite" className="space-y-5 empty:hidden">
+        <AnimatePresence initial={false}>
+          {needsScale && (
+            <motion.div
+              key="scale"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden"
             >
-              <p
-                className={`text-sm text-[var(--color-text-muted)] leading-relaxed max-w-xl ${isAr ? "text-right ms-auto" : ""}`}
-              >
-                {isAr ? resolution.ar.note : resolution.en.note}
-              </p>
-
-              <div
-                className={`flex flex-wrap items-center gap-x-5 gap-y-3 ${isAr ? "flex-row-reverse" : ""}`}
-              >
-                <motion.button
-                  onClick={() => go(resolution.destination, resolution.type)}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`inline-flex items-center gap-2 px-6 py-3 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-sm font-semibold hover:bg-[var(--color-accent-hover)] transition-colors cursor-pointer ${isAr ? "flex-row-reverse" : ""}`}
+              <div role="group" aria-labelledby="intake-q2" className="space-y-3 pt-1">
+                <p
+                  id="intake-q2"
+                  className={`text-sm font-semibold text-[var(--color-heading)] ${isAr ? "text-right" : ""}`}
                 >
-                  {isAr ? resolution.ar.cta : resolution.en.cta}
-                  <Arrow size={15} />
-                </motion.button>
-
-                {/* The visitor who does not want to self-serve. Today this
-                    person has no path but to leave or message on WhatsApp,
-                    and nothing structured is ever recorded. */}
-                {resolution.offerAdvice && (
-                  <button
-                    onClick={() => go("design-plan", "design")}
-                    className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent)] underline underline-offset-4 transition-colors cursor-pointer"
-                  >
-                    {isAr ? "أو دع فريقنا ينصحك" : "Or have our team advise you"}
-                  </button>
-                )}
-
-                <button
-                  onClick={reset}
-                  className={`inline-flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]/70 hover:text-[var(--color-text)] transition-colors cursor-pointer ${isAr ? "flex-row-reverse me-auto" : "ms-auto"}`}
-                >
-                  <RotateCcw size={12} />
-                  {isAr ? "إعادة" : "Start over"}
-                </button>
+                  {isAr ? "كم عدد الغرف؟" : "How many rooms?"}
+                </p>
+                <div className={`flex flex-wrap gap-2 ${isAr ? "justify-end" : ""}`}>
+                  {SCALE.map((option) => (
+                    <button
+                      key={option.value}
+                      aria-pressed={scale === option.value}
+                      onClick={() => setScale(scale === option.value ? null : option.value)}
+                      className={chipClass(scale === option.value)}
+                    >
+                      {isAr ? option.ar : option.en}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence initial={false}>
+          {resolution && (
+            <motion.div
+              key="resolution"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden"
+            >
+              <div className="pt-4 border-t border-[var(--color-deep-accent)]/15 space-y-4">
+                <p
+                  className={`text-sm text-[var(--color-text-muted)] leading-relaxed max-w-xl ${isAr ? "text-right ms-auto" : ""}`}
+                >
+                  {isAr ? resolution.ar.note : resolution.en.note}
+                </p>
+
+                <div
+                  className={`flex flex-wrap items-center gap-x-5 gap-y-3 ${isAr ? "flex-row-reverse" : ""}`}
+                >
+                  <motion.button
+                    onClick={() => go(resolution.destination, resolution.type)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`inline-flex items-center gap-2 px-6 py-3 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-sm font-semibold hover:bg-[var(--color-accent-hover)] transition-colors cursor-pointer ${isAr ? "flex-row-reverse" : ""}`}
+                  >
+                    {isAr ? resolution.ar.cta : resolution.en.cta}
+                    <Arrow size={15} />
+                  </motion.button>
+
+                  {/* The visitor who does not want to self-serve. Today this
+                      person has no path but to leave or message on WhatsApp,
+                      and nothing structured is ever recorded. */}
+                  {resolution.offerAdvice && (
+                    <button
+                      onClick={() => go("design-plan", "design")}
+                      className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent)] underline underline-offset-4 transition-colors cursor-pointer"
+                    >
+                      {isAr ? "أو دع فريقنا ينصحك" : "Or have our team advise you"}
+                    </button>
+                  )}
+
+                  <button
+                    onClick={reset}
+                    className={`inline-flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]/70 hover:text-[var(--color-text)] transition-colors cursor-pointer ${isAr ? "flex-row-reverse me-auto" : "ms-auto"}`}
+                  >
+                    <RotateCcw size={12} />
+                    {isAr ? "إعادة" : "Start over"}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
   );
 }

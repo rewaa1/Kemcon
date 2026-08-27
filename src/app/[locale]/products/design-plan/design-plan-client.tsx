@@ -71,6 +71,9 @@ export default function DesignPlanClient() {
   const setBriefPhotos = useBriefStore((s) => s.setPhotos);
   const toggleBriefInspiration = useBriefStore((s) => s.toggleInspiration);
   const briefInspiration = useBriefStore((s) => s.inspirationImages);
+  const briefHydrated = useBriefStore((s) => s.hydrated);
+  const briefProject = useBriefStore((s) => s.project);
+  const briefNotes = useBriefStore((s) => s.notes);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragCounter = useRef(0);
@@ -87,6 +90,30 @@ export default function DesignPlanClient() {
     images: [],
     inspirationImages: [],
   });
+
+  /**
+   * Read the brief back into the form once the store has rehydrated.
+   *
+   * Without this the form always starts empty and its `handleContinue`
+   * overwrites the brief with those empties — so anything the guided intake
+   * seeded was wiped, and coming back from the brief page lost everything the
+   * visitor had already typed. Adjusting state during render rather than in an
+   * effect is React's documented pattern for reacting to changed input.
+   */
+  const [seededFromBrief, setSeededFromBrief] = useState(false);
+  if (briefHydrated && !seededFromBrief) {
+    setSeededFromBrief(true);
+    setForm((prev) => ({
+      ...prev,
+      propertyType: briefProject.propertyType || prev.propertyType,
+      scope: briefProject.scope || prev.scope,
+      numRooms: briefProject.numRooms || prev.numRooms,
+      stylePrefs: briefProject.stylePrefs.length ? briefProject.stylePrefs : prev.stylePrefs,
+      dimensions: briefProject.dimensions || prev.dimensions,
+      notes: briefNotes || prev.notes,
+      inspirationImages: briefInspiration.length ? briefInspiration : prev.inspirationImages,
+    }));
+  }
 
   // Derived rather than set in an effect: object URLs are a pure function of
   // the selected files, and the effect only handles revoking them.

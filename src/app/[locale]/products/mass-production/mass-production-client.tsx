@@ -59,6 +59,9 @@ export default function MassProductionClient() {
   const addBriefItem = useBriefStore((s) => s.addItem);
   const toggleBriefInspiration = useBriefStore((s) => s.toggleInspiration);
   const briefInspiration = useBriefStore((s) => s.inspirationImages);
+  const briefHydrated = useBriefStore((s) => s.hydrated);
+  const briefProject = useBriefStore((s) => s.project);
+  const briefNotes = useBriefStore((s) => s.notes);
 
   const [form, setForm] = useState<FormState>({
     projectType: "",
@@ -69,6 +72,24 @@ export default function MassProductionClient() {
     notes: "",
     inspirationImages: [],
   });
+
+  /**
+   * Read the brief back once hydrated — see the note in design-plan-client.
+   * The guided intake seeds `projectType` here, and `handleContinue` would
+   * otherwise overwrite it with an empty string.
+   */
+  const [seededFromBrief, setSeededFromBrief] = useState(false);
+  if (briefHydrated && !seededFromBrief) {
+    setSeededFromBrief(true);
+    setForm((prev) => ({
+      ...prev,
+      projectType: briefProject.projectType || prev.projectType,
+      propertyName: briefProject.propertyName || prev.propertyName,
+      timeline: briefProject.timeline || prev.timeline,
+      notes: briefNotes || prev.notes,
+      inspirationImages: briefInspiration.length ? briefInspiration : prev.inspirationImages,
+    }));
+  }
 
   const toggleProduct = (value: string) => {
     setForm((prev) => {

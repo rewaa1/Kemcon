@@ -160,8 +160,26 @@ export default function BriefClient() {
     buildBriefWhatsAppText(snapshot, isAr, photoUrls ?? []);
 
   const totalPieces = items.reduce((sum, i) => sum + safeQuantity(i.quantity), 0);
-  const showDesignFields = type === "design";
-  const showBulkFields = type === "bulk";
+  /**
+   * Render any project data that exists, not just the fields the current brief
+   * type would collect.
+   *
+   * `formatBrief` submits every non-empty project field regardless of type, so
+   * gating purely on type meant a visitor who switched type — one click from
+   * the guided intake — could be sending details they could no longer see or
+   * remove. What is on screen is now what gets sent.
+   */
+  const hasDesignData = !!(
+    project.propertyType ||
+    project.scope ||
+    project.numRooms ||
+    project.stylePrefs.length ||
+    project.dimensions
+  );
+  const hasBulkData = !!(project.projectType || project.propertyName);
+
+  const showDesignFields = type === "design" || hasDesignData;
+  const showBulkFields = type === "bulk" || hasBulkData;
 
   // Until the persisted store has been read back, render the same neutral
   // shell the server produced.
