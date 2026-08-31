@@ -17,14 +17,18 @@ import type { CategoryType } from "@/types/configurator";
  * The page opens editorially — it states what Kemcon is before it shows a
  * filter — because this is the section's front page, not a category listing.
  *
- * Below that, three ways in, in order of how much the visitor already knows:
- *   1. `GuidedIntake` — two questions that route people who do not yet know
- *      whether they want a configured piece, a design plan, or a bulk quote.
+ * Below that, `GuidedIntake` — two questions that route people who do not yet
+ * know whether they want a configured piece, a design plan, or a bulk quote.
+ * It only routes; skipping it costs the visitor nothing.
+ *
+ * Then the ways in, led by the ones where Kemcon does the work:
+ *   1. The service cards — hand the whole job over (design plan, bulk order).
  *   2. The category cards — for someone who knows the product.
  *   3. The fabric catalog — for someone who knows the material.
  *
- * All three converge on the same brief. The intake only routes; skipping it
- * costs the visitor nothing.
+ * All of them converge on the same brief. The divider labels read as a
+ * sequence ("Let us take it on" → "Or start with a product" → "Or start with
+ * a fabric"), so reordering the sections means rewording them too.
  */
 
 const SERVICES = [
@@ -126,37 +130,9 @@ export default function ProductsClient() {
         <GuidedIntake categoriesAnchor="#product-categories" />
       </section>
 
-      {/* ── Start from a product ── */}
-      <section
-        id="product-categories"
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-5 scroll-mt-32"
-      >
-        <Divider label={isAr ? "ابدأ من المنتج" : "Start with a product"} isAr={isAr} />
-        <CategoryGrid
-          categories={categories}
-          locale={locale}
-          basePath={`/${locale}/products`}
-        />
-      </section>
-
-      {/* ── Or start from a fabric ── */}
-      <section className="pb-8">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-          <Divider label={isAr ? "أو ابدأ من القماش" : "Or start with a fabric"} isAr={isAr} />
-          <p
-            className={`text-sm text-[var(--color-text-muted)] leading-relaxed mt-4 max-w-xl ${isAr ? "text-right ms-auto" : ""}`}
-          >
-            {isAr
-              ? "اختر المنتج لتصفية الأقمشة المتوافقة، ثم صمّم مباشرة من القماش الذي أعجبك."
-              : "Filter by what you're making, then configure straight from the fabric you like."}
-          </p>
-        </div>
-        <FabricCatalog />
-      </section>
-
-      {/* ── Or let us take it on ── */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 space-y-5">
-        <Divider label={isAr ? "أو دعنا نتولى الأمر" : "Or let us take it on"} isAr={isAr} />
+      {/* ── Let us take it on ── */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-5">
+        <Divider label={isAr ? "دعنا نتولى الأمر" : "Let us take it on"} isAr={isAr} />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {SERVICES.map((card, i) => {
@@ -235,6 +211,34 @@ export default function ProductsClient() {
             );
           })}
         </div>
+      </section>
+
+      {/* ── Or start from a product ── */}
+      <section
+        id="product-categories"
+        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-5 scroll-mt-32"
+      >
+        <Divider label={isAr ? "أو ابدأ من المنتج" : "Or start with a product"} isAr={isAr} />
+        <CategoryGrid
+          categories={categories}
+          locale={locale}
+          basePath={`/${locale}/products`}
+        />
+      </section>
+
+      {/* ── Or start from a fabric ── */}
+      <section className="pb-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+          <Divider label={isAr ? "أو ابدأ من القماش" : "Or start with a fabric"} isAr={isAr} />
+          <p
+            className={`text-sm text-[var(--color-text-muted)] leading-relaxed mt-4 max-w-xl ${isAr ? "text-right ms-auto" : ""}`}
+          >
+            {isAr
+              ? "اختر المنتج لتصفية الأقمشة المتوافقة، ثم صمّم مباشرة من القماش الذي أعجبك."
+              : "Filter by what you're making, then configure straight from the fabric you like."}
+          </p>
+        </div>
+        <FabricCatalog />
       </section>
 
       <CTABanner />

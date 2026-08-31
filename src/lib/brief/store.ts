@@ -8,6 +8,7 @@ import {
   type BriefProject,
   type BriefType,
 } from "./types";
+import { track } from "@/lib/journey/track";
 
 /**
  * The brief store — the one piece of state that outlives a route.
@@ -91,7 +92,10 @@ export const useBriefStore = create<BriefState>()(
       hydrated: false,
       drawerOpen: false,
 
-      openDrawer: () => set({ drawerOpen: true }),
+      openDrawer: () => {
+        track({ t: "brief_open" });
+        set({ drawerOpen: true });
+      },
       closeDrawer: () => set({ drawerOpen: false }),
 
       setType: (type) => set({ type }),
@@ -108,7 +112,14 @@ export const useBriefStore = create<BriefState>()(
           items: s.items.map((i) => (i.id === item.id ? item : i)),
         })),
 
-      removeItem: (id) => set((s) => ({ items: s.items.filter((i) => i.id !== id) })),
+      removeItem: (id) =>
+        set((s) => {
+          // Read the category off the item before it goes, so the analytics
+          // page can show *what* people drop, not just that they dropped one.
+          const removed = s.items.find((i) => i.id === id);
+          if (removed) track({ t: "brief_item_remove", category: removed.category });
+          return { items: s.items.filter((i) => i.id !== id) };
+        }),
 
       setQuantity: (id, quantity) =>
         set((s) => ({

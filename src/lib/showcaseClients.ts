@@ -1,24 +1,33 @@
-import { createClient } from "@supabase/supabase-js";
 import { featuredClients, type FeaturedClient } from "@/data/clients";
 
 /**
- * Client showcase data, read from the CRM's Supabase database.
+ * Client showcase data, read from the Kemcon CRM.
  *
- * The website only ever holds the anon key. Row-level security on
- * `ShowcaseHotel` restricts it to `isPublished = true`, so an unpublished hotel
- * is unreachable from here even if the query asked for it — the filter below is
- * belt-and-braces, not the security boundary.
+ * This used to query the CRM's Supabase database directly with the anon key,
+ * with row-level security limiting it to published rows. The CRM has since
+ * moved to Neon, which has no PostgREST equivalent — and handing this site a
+ * database credential to replace the anon key would have been a step backwards.
+ *
+ * So the CRM publishes `GET /api/showcase` instead: published hotels only,
+ * public columns only, filtered server-side where we cannot influence it. This
+ * site holds no credential at all.
  *
  * Published rows are merged over the static `featuredClients` list, matched by
- * slug, so hotels can be published one at a time without the page shrinking to
- * only those published so far. Falls back entirely to the static list when
- * Supabase is unconfigured or errors. See docs/crm-showcase-migration.md.
+ * slug, so the page never shrinks to however many hotels happen to be published
+ * that day. Falls back entirely to the static list when the CRM URL is unset,
+ * unreachable, slow, or returns anything unexpected — the clients page must
+ * render even when the CRM is down.
  */
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const CRM_SHOWCASE_URL = process.env.CRM_SHOWCASE_URL;
 
-export const isShowcaseRemote = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+/** How long a stale copy may be served before we re-ask the CRM. */
+const REVALIDATE_SECONDS = 300;
+
+/** The CRM is a nice-to-have here; never let it hold up the page. */
+const TIMEOUT_MS = 5_000;
+
+export const isShowcaseRemote = Boolean(CRM_SHOWCASE_URL);
 
 interface ShowcaseRow {
   slug: string;
@@ -47,37 +56,51 @@ function toFeaturedClient(row: ShowcaseRow): FeaturedClient {
   };
 }
 
+/** A row is only usable if it has the fields the carousel actually renders. */
+function isUsable(row: unknown): row is ShowcaseRow {
+  if (typeof row !== "object" || row === null) return false;
+  const r = row as Record<string, unknown>;
+  return (
+    typeof r.slug === "string" &&
+    typeof r.name === "string" &&
+    typeof r.region === "string" &&
+    typeof r.logoUrl === "string" &&
+    typeof r.featuredUrl === "string"
+  );
+}
+
 export async function getFeaturedClients(): Promise<FeaturedClient[]> {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return featuredClients;
+  if (!CRM_SHOWCASE_URL) return featuredClients;
 
   try {
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: { persistSession: false },
+    const response = await fetch(CRM_SHOWCASE_URL, {
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+      next: { revalidate: REVALIDATE_SECONDS },
     });
 
-    const { data, error } = await supabase
-      .from("ShowcaseHotel")
-      .select("slug, name, region, stars, logoUrl, featuredUrl, images:ShowcaseHotelImage(url, sortOrder)")
-      .eq("isPublished", true)
-      .order("sortOrder", { ascending: true });
-
-    if (error) {
-      console.error("[showcase] Supabase query failed, using static list:", error.message);
+    if (!response.ok) {
+      console.error(`[showcase] CRM returned ${response.status}, using static list`);
       return featuredClients;
     }
 
-    const rows = (data ?? []) as ShowcaseRow[];
-    const published = rows.map(toFeaturedClient);
+    const body: unknown = await response.json();
+    const rows = (body as { hotels?: unknown }).hotels;
+    if (!Array.isArray(rows)) {
+      console.error("[showcase] unexpected response shape, using static list");
+      return featuredClients;
+    }
 
-    // Merge rather than replace. Hotels are published one at a time as their
-    // images move to UploadThing, and replacing would drop the site from 59
-    // clients to however many happen to be published that day.
+    const published = rows.filter(isUsable).map(toFeaturedClient);
+    if (published.length === 0) return featuredClients;
+
+    // Merge rather than replace: hotels are published one at a time, and
+    // replacing would drop the page from 59 clients to however many are live.
     const publishedSlugs = new Set(published.map((client) => client.id));
     const notYetPublished = featuredClients.filter((client) => !publishedSlugs.has(client.id));
 
     return [...published, ...notYetPublished];
   } catch (error) {
-    console.error("[showcase] Supabase unreachable, using static list:", error);
+    console.error("[showcase] CRM unreachable, using static list:", error);
     return featuredClients;
   }
 }

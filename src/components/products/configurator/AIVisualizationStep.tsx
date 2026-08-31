@@ -9,6 +9,7 @@ import { patterns } from "@/data/patterns";
 import { frameMaterials, frameFinishes, fillingOptions } from "@/data/frames";
 import type { CategoryType, ConfiguratorState } from "@/types/configurator";
 import { InspirationGallery } from "@/components/shared/InspirationGallery";
+import { track } from "@/lib/journey/track";
 
 // Texture, weave, weight and drape only — never colour. Colour words here
 // (the old "natural linen", "blackout") override the customer's swatch.
@@ -258,6 +259,10 @@ export function AIVisualizationStep({
     setRoomError(null);
     setRoomUrl(null);
     if (isRegen) setRoomRegen((r) => r + 1);
+    // Tracked on the room render only. The detail render is the same intent
+    // seen from a second angle, and counting both would double every visitor
+    // who used the feature once.
+    track({ t: "ai_visualize", category });
     try {
       const prompt = buildRoomPrompt();
       logSelections("room", prompt);

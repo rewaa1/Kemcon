@@ -160,6 +160,35 @@ export default function BriefClient() {
     buildBriefWhatsAppText(snapshot, isAr, photoUrls ?? []);
 
   const totalPieces = items.reduce((sum, i) => sum + safeQuantity(i.quantity), 0);
+
+  /**
+   * The same brief, structured, for the CRM to file next to the prose version.
+   *
+   * Chips are resolved to English labels rather than sent as raw fabric and
+   * colour ids: those ids mean nothing outside this codebase, and a lead that
+   * can only be read by re-parsing a paragraph is not much of a record.
+   */
+  const buildMeta = () => ({
+    briefType: type,
+    totalPieces,
+    notes,
+    inspirationImages,
+    project: Object.fromEntries(
+      Object.entries(project).filter(([, value]) =>
+        Array.isArray(value) ? value.length > 0 : Boolean(value)
+      )
+    ),
+    items: items.map((item) => ({
+      category: item.category,
+      quantity: safeQuantity(item.quantity),
+      title: lineItemTitle(item, false),
+      notes: item.notes,
+      aiImageUrl: item.aiImageUrl,
+      options: Object.fromEntries(
+        lineItemChips(item, false).map((chip) => [chip.label, chip.value])
+      ),
+    })),
+  });
   /**
    * Render any project data that exists, not just the fields the current brief
    * type would collect.
@@ -722,6 +751,9 @@ export default function BriefClient() {
           buildSummary={buildSummary}
           buildWhatsAppMessage={buildWhatsAppMessage}
           photos={photos}
+          formType="brief"
+          briefType={type}
+          buildMeta={buildMeta}
           successDescEn={`Your brief has been delivered to ${KEMCON_EMAIL}. Our team will be in touch within 3–5 business days.`}
           successDescAr={`وصل موجزك إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معك فريقنا خلال 3–5 أيام عمل.`}
           onSuccess={() => {

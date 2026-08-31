@@ -16,6 +16,10 @@ const routes = [
   { path: "/products/sofas", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/products/bed-sheets", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/products/custom", priority: 0.7, changeFrequency: "monthly" as const },
+  // Low priority, but they belong here: search engines expect a site to have
+  // them, and a policy nobody can find is not much of a policy.
+  { path: "/privacy", priority: 0.3, changeFrequency: "yearly" as const },
+  { path: "/terms", priority: 0.3, changeFrequency: "yearly" as const },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import type { CategoryType } from "@/types/configurator";
+import { track } from "@/lib/journey/track";
 
 const CATEGORY_IMAGE: Record<CategoryType, string> = {
   curtains: "/cards/curtains.jpg",
@@ -54,7 +55,16 @@ export function CategoryCard({
       transition={{ duration: 0.45, delay: index * 0.07 }}
       className="h-full"
     >
-      <Link href={href} className="group block h-full">
+      {/*
+        Recorded on the click rather than on the destination page: this says
+        which cards on the hub actually pull people in, including the ones who
+        never wait for the configurator to load.
+      */}
+      <Link
+        href={href}
+        className="group block h-full"
+        onClick={() => track({ t: "product_view", category })}
+      >
         <div
           className={`relative flex overflow-hidden border border-white/[0.06] transition-colors duration-500 group-hover:border-white/[0.12] ${
             fullWidth ? "min-h-[150px]" : "min-h-[290px]"

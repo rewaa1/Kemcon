@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
+import { CONSENT_REOPEN_EVENT } from "@/lib/consent";
 import Link from "next/link";
 import { Store, Factory, Phone } from "lucide-react";
 import { FadeIn } from "@/components/motion/FadeIn";
@@ -147,6 +148,32 @@ export function Footer() {
             <p>
               © {currentYear} Kemcon. {t("rights")}.
             </p>
+
+            {/* Legal. The cookie control is a button, not a link: withdrawing
+                consent happens in place rather than on a settings page. */}
+            <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+              <Link
+                href={`/${locale}/privacy`}
+                className="hover:text-accent transition-colors duration-300"
+              >
+                {t("legal.privacy")}
+              </Link>
+              <Link
+                href={`/${locale}/terms`}
+                className="hover:text-accent transition-colors duration-300"
+              >
+                {t("legal.terms")}
+              </Link>
+              <button
+                type="button"
+                onClick={() =>
+                  window.dispatchEvent(new Event(CONSENT_REOPEN_EVENT))
+                }
+                className="hover:text-accent transition-colors duration-300"
+              >
+                {t("legal.cookieSettings")}
+              </button>
+            </nav>
             <div className="gold-divider md:hidden" />
           </div>
         </div>

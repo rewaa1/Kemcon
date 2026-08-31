@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,6 +28,7 @@ import { fabrics } from "@/data/fabrics";
 import { colors } from "@/data/colors";
 import { patterns } from "@/data/patterns";
 import { useBriefStore } from "@/lib/brief/store";
+import { track } from "@/lib/journey/track";
 import { configuratorStateFromLineItem, lineItemFromConfigurator } from "@/lib/brief/types";
 import { MAX_INSPIRATION } from "@/lib/brief/format";
 
@@ -145,9 +146,47 @@ export function ConfiguratorShell({
   const isFirstStep = currentStep === 0;
   const canGoNext = canProceed(currentStepId, state, category);
 
+  /**
+   * Step progress, tracked from an effect on the step itself rather than from
+   * `goNext`. Forward, back, a chip click and edit mode's jump to review all
+   * land here, so there is one call site instead of four.
+   *
+   * The refs are strict-mode guards: development mounts effects twice, which
+   * would otherwise double every step in the funnel.
+   */
+  const openTracked = useRef(false);
+  const lastTrackedStep = useRef<StepType | null>(null);
+
+  useEffect(() => {
+    if (openTracked.current) return;
+    openTracked.current = true;
+    track({ t: "configurator_open", category });
+  }, [category]);
+
+  useEffect(() => {
+    if (lastTrackedStep.current === currentStepId) return;
+    lastTrackedStep.current = currentStepId;
+    track({ t: "configurator_step", category, step: currentStepId });
+  }, [category, currentStepId]);
+
   const handleChange = (updates: Partial<ConfiguratorState>) => {
     setTouched(true);
     setState((prev) => ({ ...prev, ...updates }));
+
+    /**
+     * Taste, recorded centrally. Every pick in every step funnels through this
+     * one callback, so the three step components stay untouched — and a step
+     * added later is tracked the moment it calls `onChange`.
+     */
+    if (updates.fabricId) {
+      track({
+        t: "fabric_select",
+        fabricId: updates.fabricId,
+        familyId: updates.fabricFamilyId ?? undefined,
+      });
+    }
+    if (updates.colorId) track({ t: "color_select", colorId: updates.colorId });
+    if (updates.patternId) track({ t: "pattern_select", patternId: updates.patternId });
   };
 
   const goNext = () => {
@@ -316,6 +355,9 @@ export function ConfiguratorShell({
     else {
       addBriefItem(draft);
       setCommittedId(draft.id);
+      // Only the first commit is a new piece in the brief; pressing the button
+      // again edits that same line item and is not a second add.
+      track({ t: "brief_item_add", category, quantity: reviewQuantity });
     }
     // Inspiration is picked per-piece but belongs to the brief as a whole.
     for (const src of state.inspirationImages) {

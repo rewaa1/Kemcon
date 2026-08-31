@@ -6,6 +6,7 @@ import { useLocale } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Compass, Plus, RotateCcw, X } from "lucide-react";
 import { useBriefStore } from "@/lib/brief/store";
+import { track } from "@/lib/journey/track";
 import { scrollToElement } from "@/components/providers/LenisProvider";
 import type { BriefType } from "@/lib/brief/types";
 
@@ -242,8 +243,12 @@ export function GuidedIntake({ categoriesAnchor }: { categoriesAnchor: string })
               key={option.value}
               aria-pressed={furnishing === option.value}
               onClick={() => {
-                setFurnishing(furnishing === option.value ? null : option.value);
+                const next = furnishing === option.value ? null : option.value;
+                setFurnishing(next);
                 setScale(null);
+                // Only a chosen answer is worth recording. Deselecting is the
+                // visitor changing their mind, not an answer.
+                if (next) track({ t: "intake_answer", question: "furnishing", answer: next });
               }}
               className={chipClass(furnishing === option.value)}
             >
@@ -281,7 +286,11 @@ export function GuidedIntake({ categoriesAnchor }: { categoriesAnchor: string })
                     <button
                       key={option.value}
                       aria-pressed={scale === option.value}
-                      onClick={() => setScale(scale === option.value ? null : option.value)}
+                      onClick={() => {
+                        const next = scale === option.value ? null : option.value;
+                        setScale(next);
+                        if (next) track({ t: "intake_answer", question: "scale", answer: next });
+                      }}
                       className={chipClass(scale === option.value)}
                     >
                       {isAr ? option.ar : option.en}

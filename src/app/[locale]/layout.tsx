@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { LenisProvider } from "@/components/providers/LenisProvider";
+import { JourneyProvider } from "@/components/providers/JourneyProvider";
+import { CookieBanner } from "@/components/legal/CookieBanner";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { BriefDrawer } from "@/components/brief/BriefDrawer";
@@ -68,6 +70,9 @@ export default async function LocaleLayout({
         <Footer />
         {/* Mounted once above the routes so the brief survives navigation. */}
         <BriefDrawer />
+        {/* Records page views and time on page; renders nothing. */}
+        <JourneyProvider />
+        <CookieBanner />
       </LenisProvider>
     </NextIntlClientProvider>
   );
