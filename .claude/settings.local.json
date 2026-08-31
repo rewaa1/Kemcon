@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(cd \"c:/Users/HP/kemcon-crm\" && npx prisma generate 2>&1 | tail -15)",
+      "Read(//c/Users/HP/kemcon-crm/**)"
     ]
   }
 }

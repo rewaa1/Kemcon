@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, RefreshCw, ArrowRight, ArrowLeft, Images, AlertCircle } from "lucide-react";
+import { Sparkles, RefreshCw, Images, AlertCircle } from "lucide-react";
 import { fabrics, fabricFamilies } from "@/data/fabrics";
 import { colors, colorPromptPhrase } from "@/data/colors";
 import { patterns } from "@/data/patterns";
 import { frameMaterials, frameFinishes, fillingOptions } from "@/data/frames";
 import type { CategoryType, ConfiguratorState } from "@/types/configurator";
 import { InspirationGallery } from "@/components/shared/InspirationGallery";
+import { track } from "@/lib/journey/track";
 
 // Texture, weave, weight and drape only — never colour. Colour words here
 // (the old "natural linen", "blackout") override the customer's swatch.
@@ -58,7 +59,6 @@ interface AIVisualizationStepProps {
   state: ConfiguratorState;
   onChange: (updates: Partial<ConfiguratorState>) => void;
   locale: string;
-  onNext: () => void;
   category: CategoryType;
 }
 
@@ -71,7 +71,6 @@ export function AIVisualizationStep({
   state,
   onChange,
   locale,
-  onNext,
   category,
 }: AIVisualizationStepProps) {
   const isAr = locale === "ar";
@@ -260,6 +259,10 @@ export function AIVisualizationStep({
     setRoomError(null);
     setRoomUrl(null);
     if (isRegen) setRoomRegen((r) => r + 1);
+    // Tracked on the room render only. The detail render is the same intent
+    // seen from a second angle, and counting both would double every visitor
+    // who used the feature once.
+    track({ t: "ai_visualize", category });
     try {
       const prompt = buildRoomPrompt();
       logSelections("room", prompt);
@@ -293,7 +296,6 @@ export function AIVisualizationStep({
     }
   };
 
-  const anyDone = roomState === "done" || detailState === "done";
 
   const tabError = activeTab === "room" ? roomError : detailError;
 
@@ -398,14 +400,6 @@ export function AIVisualizationStep({
           </motion.button>
         </div>
 
-        <div className="text-center">
-          <button
-            onClick={onNext}
-            className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
-          >
-            {isAr ? "تخطي ←" : "Skip this step →"}
-          </button>
-        </div>
       </div>
     );
   }
@@ -439,25 +433,6 @@ export function AIVisualizationStep({
           isAr={isAr}
         />
 
-        <div className={`flex items-center ${state.inspirationImages.length > 0 ? "justify-between" : "justify-center"} pt-2`}>
-          <button
-            onClick={onNext}
-            className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
-          >
-            {isAr ? "تخطي ←" : "Skip →"}
-          </button>
-          {state.inspirationImages.length > 0 && (
-            <motion.button
-              onClick={onNext}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-sm font-semibold hover:bg-[var(--color-accent-hover)] transition-colors ${isAr ? "flex-row-reverse" : ""}`}
-            >
-              {isAr ? `التالي (${state.inspirationImages.length} صور)` : `Continue (${state.inspirationImages.length} selected)`}
-              {isAr ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
-            </motion.button>
-          )}
-        </div>
       </div>
     );
   }
@@ -659,36 +634,6 @@ export function AIVisualizationStep({
         </div>
       </div>
 
-      {/* Continue / Skip */}
-      <div className={`flex items-center ${anyDone ? "justify-between" : "justify-center"} max-w-2xl mx-auto`}>
-        {!anyDone && (
-          <button
-            onClick={onNext}
-            className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
-          >
-            {isAr ? "متابعة بدون معاينة ←" : "Continue without preview →"}
-          </button>
-        )}
-        {anyDone && (
-          <>
-            <button
-              onClick={onNext}
-              className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
-            >
-              {isAr ? "تخطي ←" : "Skip →"}
-            </button>
-            <motion.button
-              onClick={onNext}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-sm font-semibold hover:bg-[var(--color-accent-hover)] transition-colors ${isAr ? "flex-row-reverse" : ""}`}
-            >
-              {isAr ? "التالي" : "Continue"}
-              {isAr ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
-            </motion.button>
-          </>
-        )}
-      </div>
     </div>
   );
 }

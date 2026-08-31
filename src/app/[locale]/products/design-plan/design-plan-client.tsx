@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -14,12 +15,12 @@ import {
   Ruler,
   Camera,
   Sparkles,
+  ArrowUpRight,
 } from "lucide-react";
 import { FadeIn } from "@/components/motion/FadeIn";
-import { SITE_URL } from "@/lib/metadata";
-import { KEMCON_EMAIL } from "@/lib/config";
 import { InspirationGallery } from "@/components/shared/InspirationGallery";
-import { ContactSubmit } from "@/components/shared/ContactSubmit";
+import { useBriefStore } from "@/lib/brief/store";
+import { MAX_INSPIRATION } from "@/lib/brief/format";
 
 const PROPERTY_TYPES = [
   { value: "apartment", en: "Apartment", ar: "شقة" },
@@ -56,9 +57,6 @@ interface FormState {
   notes: string;
   images: File[];
   inspirationImages: string[];
-  name: string;
-  phone: string;
-  email: string;
 }
 
 type OptionalKey = "style" | "dimensions" | "photos" | "inspiration";
@@ -66,6 +64,17 @@ type OptionalKey = "style" | "dimensions" | "photos" | "inspiration";
 export default function DesignPlanClient() {
   const locale = useLocale();
   const isAr = locale === "ar";
+  const router = useRouter();
+  const setBriefType = useBriefStore((s) => s.setType);
+  const setBriefProject = useBriefStore((s) => s.setProject);
+  const setBriefNotes = useBriefStore((s) => s.setNotes);
+  const setBriefPhotos = useBriefStore((s) => s.setPhotos);
+  const toggleBriefInspiration = useBriefStore((s) => s.toggleInspiration);
+  const briefInspiration = useBriefStore((s) => s.inspirationImages);
+  const briefHydrated = useBriefStore((s) => s.hydrated);
+  const briefProject = useBriefStore((s) => s.project);
+  const briefNotes = useBriefStore((s) => s.notes);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragCounter = useRef(0);
   const [expanded, setExpanded] = useState<Set<OptionalKey>>(new Set());
@@ -80,18 +89,42 @@ export default function DesignPlanClient() {
     notes: "",
     images: [],
     inspirationImages: [],
-    name: "",
-    phone: "",
-    email: "",
   });
 
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  /**
+   * Read the brief back into the form once the store has rehydrated.
+   *
+   * Without this the form always starts empty and its `handleContinue`
+   * overwrites the brief with those empties — so anything the guided intake
+   * seeded was wiped, and coming back from the brief page lost everything the
+   * visitor had already typed. Adjusting state during render rather than in an
+   * effect is React's documented pattern for reacting to changed input.
+   */
+  const [seededFromBrief, setSeededFromBrief] = useState(false);
+  if (briefHydrated && !seededFromBrief) {
+    setSeededFromBrief(true);
+    setForm((prev) => ({
+      ...prev,
+      propertyType: briefProject.propertyType || prev.propertyType,
+      scope: briefProject.scope || prev.scope,
+      numRooms: briefProject.numRooms || prev.numRooms,
+      stylePrefs: briefProject.stylePrefs.length ? briefProject.stylePrefs : prev.stylePrefs,
+      dimensions: briefProject.dimensions || prev.dimensions,
+      notes: briefNotes || prev.notes,
+      inspirationImages: briefInspiration.length ? briefInspiration : prev.inspirationImages,
+    }));
+  }
 
-  useEffect(() => {
-    const urls = form.images.map((f) => URL.createObjectURL(f));
-    setPreviewUrls(urls);
-    return () => urls.forEach((url) => URL.revokeObjectURL(url));
-  }, [form.images]);
+  // Derived rather than set in an effect: object URLs are a pure function of
+  // the selected files, and the effect only handles revoking them.
+  const previewUrls = useMemo(
+    () => form.images.map((f) => URL.createObjectURL(f)),
+    [form.images]
+  );
+  useEffect(
+    () => () => previewUrls.forEach((url) => URL.revokeObjectURL(url)),
+    [previewUrls]
+  );
 
   const toggleSection = (key: OptionalKey) => {
     setExpanded((prev) => {
@@ -152,49 +185,6 @@ export default function DesignPlanClient() {
     }));
   };
 
-  const buildSummary = (photoUrls?: string[]) => {
-    const lines: string[] = ["Design Plan Request"];
-    if (form.propertyType) {
-      const pt = PROPERTY_TYPES.find((p) => p.value === form.propertyType);
-      lines.push(`Property Type: ${pt?.en ?? form.propertyType}`);
-    }
-    if (form.scope) {
-      const sc = SCOPE_OPTIONS.find((s) => s.value === form.scope);
-      lines.push(`Scope: ${sc?.en ?? form.scope}`);
-    }
-    if (form.scope === "multiple" && form.numRooms) {
-      lines.push(`Number of Rooms: ${form.numRooms}`);
-    }
-    if (form.stylePrefs.length) {
-      const labels = form.stylePrefs.map(
-        (v) => STYLE_TAGS.find((t) => t.value === v)?.en ?? v
-      );
-      lines.push(`Style Preferences: ${labels.join(", ")}`);
-    }
-    if (form.dimensions) lines.push(`Dimensions / Room Details: ${form.dimensions}`);
-    if (form.notes) lines.push(`Additional Notes: ${form.notes}`);
-    if (photoUrls && photoUrls.length > 0) {
-      lines.push(`Reference Photos:\n${photoUrls.map((url, i) => `  ${i + 1}. ${url}`).join("\n")}`);
-    } else if (form.images.length) {
-      lines.push(`Photos: ${form.images.length} file(s) attached`);
-    }
-    if (form.inspirationImages.length) {
-      lines.push(`Portfolio Inspiration: ${form.inspirationImages.map((src) => `${SITE_URL}${src}`).join(", ")}`);
-    }
-    return lines.join("\n");
-  };
-
-  const buildWhatsAppMessage = (photoUrls?: string[]) => {
-    const greeting = isAr ? "مرحباً كمكون،" : "Hello Kemcon,";
-    const intro = isAr ? "أود طلب خطة تصميم." : "I'd like to request a design plan.";
-    const nameLabel = isAr ? "الاسم" : "Name";
-    const phoneLabel = isAr ? "الهاتف" : "Phone";
-    const emailLabel = isAr ? "البريد الإلكتروني" : "Email";
-    return encodeURIComponent(
-      `${greeting}\n\n${intro}\n\n${buildSummary(photoUrls)}\n\n${nameLabel}: ${form.name}\n${phoneLabel}: ${form.phone}\n${emailLabel}: ${form.email}`
-    );
-  };
-
   const optionalSections: {
     key: OptionalKey;
     icon: typeof Palette;
@@ -251,6 +241,23 @@ export default function DesignPlanClient() {
       count: form.inspirationImages.length,
     },
   ];
+
+  const handleContinue = () => {
+    setBriefType("design");
+    setBriefProject({
+      propertyType: form.propertyType,
+      scope: form.scope,
+      numRooms: form.numRooms,
+      stylePrefs: form.stylePrefs,
+      dimensions: form.dimensions,
+    });
+    if (form.notes) setBriefNotes(form.notes);
+    if (form.images.length) setBriefPhotos(form.images);
+    for (const src of form.inspirationImages) {
+      if (!briefInspiration.includes(src)) toggleBriefInspiration(src, MAX_INSPIRATION);
+    }
+    router.push(`/${locale}/products/brief`);
+  };
 
   return (
     <div className="min-h-screen bg-[#1A1D24]">
@@ -590,19 +597,21 @@ export default function DesignPlanClient() {
           </div>
         </div>
 
-        <ContactSubmit
-          isAr={isAr}
-          locale={locale}
-          name={form.name}
-          phone={form.phone}
-          email={form.email}
-          onChange={(field, value) => setForm((p) => ({ ...p, [field]: value }))}
-          buildSummary={buildSummary}
-          buildWhatsAppMessage={buildWhatsAppMessage}
-          photos={form.images}
-          successDescEn={`Your brief has been delivered to ${KEMCON_EMAIL}. Our architect will be in touch within 3–5 business days.`}
-          successDescAr={`وصل موجزك إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معك مصممنا المعماري خلال 3–5 أيام عمل.`}
-        />
+        {/* Hands off to the brief, which is where every path now sends. */}
+        <div className="space-y-3">
+          <button
+            onClick={handleContinue}
+            className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-sm font-semibold tracking-wide hover:bg-[var(--color-accent-hover)] transition-colors cursor-pointer ${isAr ? "flex-row-reverse" : ""}`}
+          >
+            {isAr ? "متابعة إلى الموجز" : "Continue to your brief"}
+            <ArrowUpRight size={16} strokeWidth={1.75} />
+          </button>
+          <p className={`text-xs text-[var(--color-text-muted)] ${isAr ? "text-right" : "text-center"}`}>
+            {isAr
+              ? "ستضيف بيانات التواصل وترسل الموجز في الخطوة التالية."
+              : "You'll add your contact details and send the brief on the next step."}
+          </p>
+        </div>
       </div>
     </div>
   );

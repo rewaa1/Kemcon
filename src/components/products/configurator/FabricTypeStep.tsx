@@ -86,6 +86,7 @@ export function FabricTypeStep({ state, onChange, locale }: FabricTypeStepProps)
               <motion.button
                 key={fabric.id}
                 onClick={() => handleFabricClick(fabric.id)}
+                data-testid="step-option"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2, delay: index * 0.04 }}

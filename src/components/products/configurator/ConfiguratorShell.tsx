@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -21,12 +21,16 @@ import { ChairOptionsStep } from "./ChairOptionsStep";
 import { CushionOptionsStep } from "./CushionOptionsStep";
 import { PillowOptionsStep } from "./PillowOptionsStep";
 import { CustomDescriptionStep } from "./CustomDescriptionStep";
-import { InquiryStep } from "./InquiryStep";
+import { ReviewStep } from "./ReviewStep";
 import { AIVisualizationStep } from "./AIVisualizationStep";
-import { SelectionBar } from "../SelectionBar";
+import { ConfiguratorBar, type PickChip } from "./ConfiguratorBar";
 import { fabrics } from "@/data/fabrics";
 import { colors } from "@/data/colors";
 import { patterns } from "@/data/patterns";
+import { useBriefStore } from "@/lib/brief/store";
+import { track } from "@/lib/journey/track";
+import { configuratorStateFromLineItem, lineItemFromConfigurator } from "@/lib/brief/types";
+import { MAX_INSPIRATION } from "@/lib/brief/format";
 
 interface ConfiguratorShellProps {
   category: CategoryType;
@@ -34,6 +38,8 @@ interface ConfiguratorShellProps {
   locale: string;
   initialFabricId?: string;
   initialFabricFamilyId?: string;
+  /** Brief line item being edited, from `?edit=<id>`. */
+  editId?: string;
 }
 
 function canProceed(
@@ -64,7 +70,7 @@ function canProceed(
       return state.customDescription.trim().length > 10;
     case "aiVisualization":
       return true;
-    case "inquiry":
+    case "review":
       return true;
     default:
       return true;
@@ -77,6 +83,7 @@ export function ConfiguratorShell({
   locale,
   initialFabricId,
   initialFabricFamilyId,
+  editId,
 }: ConfiguratorShellProps) {
   const isAr = locale === "ar";
   const router = useRouter();
@@ -92,17 +99,99 @@ export function ConfiguratorShell({
   });
   const [direction, setDirection] = useState<1 | -1>(1);
 
+  // Edit mode: seed from the brief once the persisted store has rehydrated.
+  // The store is empty during SSR and on the first client render, so this
+  // cannot run during initialisation without a hydration mismatch.
+  const briefHydrated = useBriefStore((s) => s.hydrated);
+  const briefItems = useBriefStore((s) => s.items);
+  const [seededFor, setSeededFor] = useState<string | null>(null);
+  /**
+   * Whether the visitor has actually changed anything. Previously this was
+   * `currentStep > 0`, which meant edit mode — which lands on the last step —
+   * warned about unsaved changes before the visitor had touched a thing.
+   */
+  const [touched, setTouched] = useState(false);
+
+  /**
+   * The review step's working state lives here rather than in the step, so the
+   * fixed bottom bar can own the commit action. The step renders the summary;
+   * the bar commits it.
+   */
+  const [reviewQuantity, setReviewQuantity] = useState(1);
+  const [committedId, setCommittedId] = useState<string | null>(editId ?? null);
+
+  const addBriefItem = useBriefStore((s) => s.addItem);
+  const replaceBriefItem = useBriefStore((s) => s.replaceItem);
+  const openBriefDrawer = useBriefStore((s) => s.openDrawer);
+  const toggleBriefInspiration = useBriefStore((s) => s.toggleInspiration);
+  const briefInspiration = useBriefStore((s) => s.inspirationImages);
+
+  // Adjusting state during render — React's documented pattern for reacting to
+  // a changed input — rather than in an effect, which would render once with
+  // the wrong state and then cascade.
+  if (editId && briefHydrated && seededFor !== editId) {
+    const item = briefItems.find((i) => i.id === editId);
+    if (item) {
+      setSeededFor(editId);
+      setState((prev) => configuratorStateFromLineItem(item, prev));
+      // Land on the review step — the visitor came to change one detail, not
+      // to walk the whole flow again. Every earlier step stays reachable.
+      setCurrentStep(steps.length - 1);
+      setReviewQuantity(item.quantity);
+    }
+  }
+
   const currentStepId = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
   const isFirstStep = currentStep === 0;
   const canGoNext = canProceed(currentStepId, state, category);
 
+  /**
+   * Step progress, tracked from an effect on the step itself rather than from
+   * `goNext`. Forward, back, a chip click and edit mode's jump to review all
+   * land here, so there is one call site instead of four.
+   *
+   * The refs are strict-mode guards: development mounts effects twice, which
+   * would otherwise double every step in the funnel.
+   */
+  const openTracked = useRef(false);
+  const lastTrackedStep = useRef<StepType | null>(null);
+
+  useEffect(() => {
+    if (openTracked.current) return;
+    openTracked.current = true;
+    track({ t: "configurator_open", category });
+  }, [category]);
+
+  useEffect(() => {
+    if (lastTrackedStep.current === currentStepId) return;
+    lastTrackedStep.current = currentStepId;
+    track({ t: "configurator_step", category, step: currentStepId });
+  }, [category, currentStepId]);
+
   const handleChange = (updates: Partial<ConfiguratorState>) => {
+    setTouched(true);
     setState((prev) => ({ ...prev, ...updates }));
+
+    /**
+     * Taste, recorded centrally. Every pick in every step funnels through this
+     * one callback, so the three step components stay untouched — and a step
+     * added later is tracked the moment it calls `onChange`.
+     */
+    if (updates.fabricId) {
+      track({
+        t: "fabric_select",
+        fabricId: updates.fabricId,
+        familyId: updates.fabricFamilyId ?? undefined,
+      });
+    }
+    if (updates.colorId) track({ t: "color_select", colorId: updates.colorId });
+    if (updates.patternId) track({ t: "pattern_select", patternId: updates.patternId });
   };
 
   const goNext = () => {
     if (!canGoNext) return;
+    setTouched(true);
     setDirection(1);
     setCurrentStep((s) => Math.min(s + 1, steps.length - 1));
   };
@@ -161,18 +250,21 @@ export function ConfiguratorShell({
             state={state}
             onChange={handleChange}
             locale={locale}
-            onNext={goNext}
             category={category}
           />
         );
-      case "inquiry":
+      case "review":
         return (
-          <InquiryStep
+          <ReviewStep
             state={state}
             onChange={handleChange}
             locale={locale}
             category={category}
             categoryLabel={categoryLabel}
+            editingId={editId ?? null}
+            quantity={reviewQuantity}
+            onQuantityChange={setReviewQuantity}
+            committed={committedId !== null}
           />
         );
       default:
@@ -195,20 +287,45 @@ export function ConfiguratorShell({
   const fabric = fabrics.find((f) => f.id === state.fabricId);
   const color = colors.find((c) => c.id === state.colorId);
   const pattern = patterns.find((p) => p.id === state.patternId);
+
+  // Each chip records the step that set it, so the bar can send the visitor
+  // back to change it.
   const chips = [
-    fabric && { label: isAr ? fabric.nameAr : fabric.name, bg: fabric.gradient, isGradient: true },
-    color && { label: isAr ? color.nameAr : color.name, bg: color.hex, isGradient: false },
-    pattern && pattern.id !== "solid" && { label: isAr ? pattern.nameAr : pattern.name, bg: null, isGradient: false },
-    category === "curtains" && state.curtainControl && {
-      label: state.curtainControl === "manual" ? (isAr ? "يدوي" : "Manual") : isAr ? "ريموت" : "Remote",
+    fabric && {
+      step: "fabric" as const,
+      field: isAr ? "القماش" : "Fabric",
+      label: isAr ? fabric.nameAr : fabric.name,
+      bg: fabric.gradient,
+      isGradient: true,
+    },
+    color && {
+      step: "color" as const,
+      field: isAr ? "اللون" : "Colour",
+      label: isAr ? color.nameAr : color.name,
+      bg: color.hex,
+      isGradient: false,
+    },
+    pattern && pattern.id !== "solid" && {
+      step: "pattern" as const,
+      field: isAr ? "النمط" : "Pattern",
+      label: isAr ? pattern.nameAr : pattern.name,
       bg: null,
       isGradient: false,
     },
-  ].filter(Boolean) as { label: string; bg: string | null; isGradient: boolean }[];
+    category === "curtains" && state.curtainControl && {
+      step: "curtainOptions" as const,
+      field: isAr ? "التحكم" : "Control",
+      label:
+        state.curtainControl === "manual"
+          ? isAr ? "يدوي" : "Manual"
+          : isAr ? "ريموت" : "Remote",
+      bg: null,
+      isGradient: false,
+    },
+  ].filter(Boolean) as PickChip[];
 
-  const showNav = currentStepId !== "inquiry" && currentStepId !== "aiVisualization";
 
-  const isDirty = currentStep > 0;
+  const isDirty = touched;
 
   useEffect(() => {
     if (!isDirty) return;
@@ -217,10 +334,92 @@ export function ConfiguratorShell({
     return () => window.removeEventListener("beforeunload", handler);
   }, [isDirty]);
 
-  const confirmLeave = useCallback(() => {
+  const confirmLeave = () => {
     if (!isDirty) return true;
     return window.confirm(tc("unsavedPrompt"));
-  }, [isDirty, isAr]);
+  };
+
+  /**
+   * Commit the configured piece to the brief. Owns exactly one line item: once
+   * created its id is kept, so pressing the button again updates that item
+   * rather than appending a copy.
+   */
+  const commitLineItem = () => {
+    const draft = lineItemFromConfigurator(
+      state,
+      category,
+      reviewQuantity,
+      committedId ?? undefined
+    );
+    if (committedId) replaceBriefItem({ ...draft, id: committedId });
+    else {
+      addBriefItem(draft);
+      setCommittedId(draft.id);
+      // Only the first commit is a new piece in the brief; pressing the button
+      // again edits that same line item and is not a second add.
+      track({ t: "brief_item_add", category, quantity: reviewQuantity });
+    }
+    // Inspiration is picked per-piece but belongs to the brief as a whole.
+    for (const src of state.inspirationImages) {
+      if (!briefInspiration.includes(src)) toggleBriefInspiration(src, MAX_INSPIRATION);
+    }
+  };
+
+  const handleChipClick = (step: StepType) => {
+    const index = steps.indexOf(step);
+    if (index === -1 || index === currentStep) return;
+    goToStep(index);
+  };
+
+  // Every step hands its actions to the fixed bar instead of rendering its own.
+  const { primary, secondary } = (() => {
+    if (currentStepId === "review") {
+      return {
+        primary: {
+          label: editId
+            ? isAr ? "حفظ التغييرات" : "Save changes"
+            : committedId
+              ? isAr ? "تحديث الموجز" : "Update brief"
+              : isAr ? "أضف إلى الموجز" : "Add to Brief",
+          onClick: () => {
+            commitLineItem();
+            openBriefDrawer();
+          },
+          icon: (committedId && !editId ? "check" : "clipboard") as "check" | "clipboard",
+        },
+        secondary: editId
+          ? null
+          : {
+              label: isAr ? "صمّم قطعة أخرى" : "Configure another",
+              onClick: () => {
+                commitLineItem();
+                router.push(`/${locale}/products`);
+              },
+            },
+      };
+    }
+
+    if (currentStepId === "aiVisualization") {
+      return {
+        primary: {
+          label: tc("next"),
+          onClick: goNext,
+          icon: "arrow" as const,
+        },
+        secondary: { label: isAr ? "تخطي" : "Skip", onClick: goNext },
+      };
+    }
+
+    return {
+      primary: {
+        label: isLastStep ? tc("review") : tc("next"),
+        onClick: goNext,
+        disabled: !canGoNext,
+        icon: "arrow" as const,
+      },
+      secondary: null,
+    };
+  })();
 
   return (
     <div className="relative min-h-screen pt-20 pb-48 bg-[var(--color-bg-secondary)]">
@@ -257,81 +456,18 @@ export function ConfiguratorShell({
         </AnimatePresence>
       </div>
 
-      {/* Unified bottom panel — nav + selection chips in one bar */}
-      {showNav ? (
-        <div className="fixed bottom-0 inset-x-0 z-50 pointer-events-none">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
-            <div className={`glass-card rounded-sm px-4 py-3 flex items-center gap-3 pointer-events-auto ${isAr ? "flex-row-reverse" : ""}`}>
-              {/* Back */}
-              <button
-                onClick={goPrev}
-                disabled={isFirstStep}
-                className={`
-                  flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-medium flex-shrink-0
-                  border transition-all duration-200
-                  ${isFirstStep
-                    ? "opacity-0 pointer-events-none"
-                    : "border-[var(--color-deep-accent)]/30 text-[var(--color-text-muted)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-text)]"
-                  }
-                `}
-              >
-                {isAr ? <ArrowRight size={16} /> : <ArrowLeft size={16} />}
-                {tc("back")}
-              </button>
-
-              {/* Selection chips */}
-              {chips.length > 0 && (
-                <div className={`flex-1 flex items-center gap-2 overflow-x-auto min-w-0 ${isAr ? "flex-row-reverse" : ""}`}>
-                  <span className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-widest flex-shrink-0">
-                    {tc("yourPicks")}
-                  </span>
-                  <div className="flex items-center gap-2 flex-nowrap">
-                    {chips.map((chip, index) => (
-                      <motion.div
-                        key={`${chip.label}-${index}`}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: index * 0.06 }}
-                        className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-deep-accent)]/20 flex-shrink-0"
-                      >
-                        {chip.bg && (
-                          <div
-                            className="w-3 h-3 rounded-full border border-white/15 flex-shrink-0"
-                            style={chip.isGradient ? { background: chip.bg } : { backgroundColor: chip.bg }}
-                          />
-                        )}
-                        <span className="text-xs text-[var(--color-text)]">{chip.label}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Next */}
-              <motion.button
-                onClick={goNext}
-                disabled={!canGoNext}
-                aria-disabled={!canGoNext}
-                whileHover={canGoNext ? { scale: 1.02 } : {}}
-                whileTap={canGoNext ? { scale: 0.98 } : {}}
-                className={`
-                  flex items-center gap-2 px-6 py-2 rounded-sm text-sm font-semibold flex-shrink-0
-                  transition-all duration-200 ms-auto
-                  ${canGoNext
-                    ? "bg-[var(--color-accent)] text-[var(--color-dark)] hover:bg-[var(--color-accent-hover)]"
-                    : "bg-[var(--color-deep-accent)]/20 text-[var(--color-text-muted)] cursor-not-allowed"
-                  }
-                `}
-              >
-                {isLastStep ? tc("review") : tc("next")}
-                {isAr ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
-              </motion.button>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <SelectionBar state={state} category={category} locale={locale} />
-      )}
+      {/* One fixed surface for picks and navigation, on every step */}
+      <ConfiguratorBar
+        locale={locale}
+        chips={chips}
+        onChipClick={handleChipClick}
+        onBack={goPrev}
+        showBack={!isFirstStep}
+        backLabel={tc("back")}
+        picksLabel={tc("yourPicks")}
+        secondary={secondary}
+        primary={primary}
+      />
     </div>
   );
 }

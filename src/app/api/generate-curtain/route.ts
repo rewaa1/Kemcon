@@ -3,6 +3,7 @@ import { checkRateLimit } from "@/lib/rateLimit";
 import {
   QUOTA_COOKIE,
   VISITOR_COOKIE,
+  VISITOR_COOKIE_MAX_AGE,
   consumeQuota,
   cookieOptions,
   issueVisitorId,
@@ -17,7 +18,6 @@ interface ImageRequest {
 }
 
 const LIMITS = { burstMax: 3, burstWindowMs: 60_000, dailyMax: 20 };
-const VISITOR_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 const QUOTA_COOKIE_MAX_AGE = 60 * 60 * 24 * 2;
 
 /**

@@ -1,21 +1,13 @@
-import type { Metadata } from "next";
+import { permanentRedirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
-import dynamic from "next/dynamic";
-import { buildPageMetadata } from "@/lib/metadata";
 
-const ShowroomClient = dynamic(() => import("./showroom-client"));
-
-export async function generateMetadata(): Promise<Metadata> {
+/**
+ * `/products/showroom` has been promoted to `/products` — the fabric catalog
+ * is now the front door to the whole section rather than one card inside it.
+ *
+ * 308 so the existing search equity for this URL transfers to the catalog.
+ */
+export default async function ShowroomRedirect() {
   const locale = await getLocale();
-  return buildPageMetadata({
-    locale,
-    path: "/products/showroom",
-    titleKey: "meta.pages.showroom.title",
-    descriptionKey: "meta.pages.showroom.description",
-    ogImage: "cards/fabrics.jpg",
-  });
-}
-
-export default function ShowroomPage() {
-  return <ShowroomClient />;
+  permanentRedirect(`/${locale}/products`);
 }

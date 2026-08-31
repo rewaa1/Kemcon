@@ -12,7 +12,7 @@ const ConfiguratorShell = dynamic(() =>
 import { JsonLd } from "@/components/seo/JsonLd";
 
 interface PageProps {
-  searchParams: Promise<{ fabric?: string; fabricFamily?: string }>;
+  searchParams: Promise<{ fabric?: string; fabricFamily?: string; edit?: string }>;
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ChairsPage({ searchParams }: PageProps) {
   const locale = await getLocale();
   const isAr = locale === "ar";
-  const { fabric, fabricFamily } = await searchParams;
+  const { fabric, fabricFamily, edit } = await searchParams;
 
   const pageUrl = `${SITE_URL}/${locale}/products/chairs`;
 
@@ -66,6 +66,7 @@ export default async function ChairsPage({ searchParams }: PageProps) {
           locale={locale}
           initialFabricId={fabric}
           initialFabricFamilyId={fabricFamily}
+          editId={edit}
         />
       </ErrorBoundary>
     </>

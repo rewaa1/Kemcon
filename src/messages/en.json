@@ -20,14 +20,6 @@
         "title": "Our Products",
         "description": "From bespoke configuration to mass production — explore Kemcon's full range of curtains, chairs, sofas, bed linen, and custom hospitality furnishings."
       },
-      "configure": {
-        "title": "Configure Your Product",
-        "description": "Design every detail of your fabric or furnishing — choose materials, colours, patterns, and dimensions, then send your brief to Kemcon's team."
-      },
-      "showroom": {
-        "title": "Fabric Showroom",
-        "description": "Browse Kemcon's full fabric library — sheers, blackouts, velvets, linens, and silks across hundreds of colours and patterns from leading mills worldwide."
-      },
       "designPlan": {
         "title": "Design & Plan",
         "description": "Share your project — hotel, resort, or residence — and Kemcon's design team will plan the fabrics, finishes, and furnishings tailored to your space."
@@ -55,6 +47,18 @@
       "custom": {
         "title": "Custom Solutions",
         "description": "Have something unique in mind? Describe your vision and Kemcon's team will craft fabrics, upholstery, or furnishings exactly to your specification."
+      },
+      "brief": {
+        "title": "Your Brief",
+        "description": "Review the pieces you have configured, add project details, and send your brief to Kemcon in one message."
+      },
+      "privacy": {
+        "title": "Privacy Policy",
+        "description": "What personal data Kemcon collects through this website, why, who we share it with, and the rights you have over it."
+      },
+      "terms": {
+        "title": "Terms & Conditions",
+        "description": "The terms governing use of the Kemcon website, including enquiries, uploads and the fabric visualisation tool."
       }
     }
   },
@@ -252,6 +256,243 @@
     "getInTouch": "Get in Touch",
     "followUs": "Follow Us",
     "rights": "All Rights Reserved",
-    "tagline": "Serving luxury since 1985"
+    "tagline": "Serving luxury since 1985",
+    "legal": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
+      "cookieSettings": "Cookie settings"
+    }
+  },
+  "cookies": {
+    "title": "Cookies on this site",
+    "body": "We would like to record which pages and products you look at, so we can see what interests our visitors and improve the site. Nothing is recorded unless you accept, and you can change your mind at any time.",
+    "readMore": "Read our Privacy Policy",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "updated": "Last updated 31 August 2026",
+    "intro": "This policy explains what personal data we collect through this website, why we collect it, who we share it with, and what rights you have over it. It covers this website only, not any separate agreement you may have with us as a client or supplier.",
+    "storageIntro": "Nothing marked as requiring consent is set until you accept it in the banner.",
+    "storageHeaders": [
+      "Name",
+      "What it does",
+      "How long it lasts",
+      "Needs consent"
+    ],
+    "storageRows": [
+      [
+        "kc_vid (cookie)",
+        "Identifies your browser so that analytics events can be grouped into one visit history. It is a random value and holds no name or contact detail.",
+        "1 year",
+        "Yes — analytics"
+      ],
+      [
+        "kc_consent (cookie)",
+        "Remembers the choice you made in the cookie banner, so we do not ask again on every page.",
+        "1 year",
+        "No — it records your choice"
+      ],
+      [
+        "kc_quota (cookie)",
+        "Counts AI visualisations so that one browser cannot generate them without limit.",
+        "About a day",
+        "No — abuse prevention"
+      ],
+      [
+        "kemcon_journey_v1 (session storage)",
+        "Briefly holds analytics events until they can be sent, so they survive a page change.",
+        "Until the tab is closed",
+        "Yes — analytics"
+      ],
+      [
+        "Product brief (local storage)",
+        "Your own selections in the configurator, kept so your brief is still there when you return.",
+        "Until you clear it",
+        "No — it is the feature working"
+      ]
+    ],
+    "sections": [
+      {
+        "heading": "Who we are",
+        "body": [
+          "Kemcon is a fabric and furnishings manufacturer based in Cairo, Egypt. For the purposes of Egypt’s Personal Data Protection Law No. 151 of 2020 and the EU General Data Protection Regulation, we are the controller of the personal data described in this policy.",
+          "Kemcon operates from its factory at Street 151, Industrial Zone 1, Obour, Egypt, and a showroom on Ahmed Fakhry Street, Nasr City, Cairo. For any question about this policy, or to exercise any of the rights below, contact us at kemcon@yahoo.com."
+        ]
+      },
+      {
+        "heading": "What we collect",
+        "body": [
+          "Information you give us. When you use the contact form or the product configurator we receive the name, phone number and email address you enter, the message you write, and any photographs you upload. If you build a product brief, it is saved in your own browser and reaches us only when you submit an enquiry.",
+          "Information collected automatically, only if you accept analytics. A randomly generated identifier stored in a cookie; the pages you view and how long you spend on them; the products, fabrics, colours and patterns you select; galleries you open and filters you apply; whether you began or submitted a form; and whether you clicked through to WhatsApp. We also record the two-letter country your request came from and the language you are reading the site in.",
+          "Information we process regardless. To keep the site working and to prevent abuse, we handle your IP address in passing, a signed counter limiting how many visualisations one browser may generate, and technical error reports when something breaks.",
+          "We do not ask for special category data — information about health, religion, politics or anything similar — and we ask that you do not send it to us."
+        ]
+      },
+      {
+        "heading": "When you send us something",
+        "body": [
+          "There are two moments on this site where you actively hand us information. This is what happens at each.",
+          "The contact form. When you press send, the name, phone number, email address and message you entered are saved to our internal CRM — whose database is hosted in Frankfurt, Germany — and are emailed to our team so that we can reply. Any photographs you attach are uploaded to Cloudinary and kept with the enquiry. Our basis is the steps taken at your request before entering into a contract: you are asking us a question, and we need your details in order to answer it. We do not ask you to consent separately, because consent is not what makes this lawful.",
+          "The fabric visualiser. When you generate an image, we send a written description of the fabric, colour and piece you selected to an automated image service outside Egypt. That description is assembled from your choices in the configurator. No photograph of yours is sent with it, and nothing in it identifies you — the image that comes back is generated from that text alone.",
+          "In either case you can ask us afterwards to delete what you sent. See Your rights below."
+        ]
+      },
+      {
+        "key": "storage",
+        "heading": "Cookies and browser storage",
+        "body": []
+      },
+      {
+        "heading": "Why we use it, and our legal basis",
+        "body": [
+          "To answer your enquiry and prepare a quotation. Our basis is the steps taken at your request before entering into a contract, together with our legitimate interest in responding to business enquiries.",
+          "To generate a visualisation when you ask for one. Our basis is our legitimate interest in providing a feature you asked to use; only a written description of your selections leaves this site.",
+          "To understand how the site is used and to improve it. Our basis is your consent, given through the cookie banner, which you may withdraw at any time.",
+          "To keep the site secure, prevent abuse of the visualisation tool and diagnose faults. Our basis is our legitimate interest in running a functioning service that is not being abused.",
+          "To comply with legal obligations, where any apply to us."
+        ]
+      },
+      {
+        "heading": "Who we share it with",
+        "body": [
+          "We do not sell personal data, and we do not share it for advertising.",
+          "We use service providers who process data on our instructions and under a written agreement: Vercel, which hosts this website and measures its performance; Neon, which hosts the database behind our internal CRM in Frankfurt, Germany; Cloudinary and UploadThing, which store and deliver images including photographs you upload; our automated image provider, which receives a written description assembled from your configurator selections in order to generate an image; our error monitoring provider; and our email provider, which delivers your enquiry to our team.",
+          "If you choose to continue the conversation on WhatsApp, that exchange is governed by WhatsApp’s own terms and privacy policy, not by this one."
+        ]
+      },
+      {
+        "heading": "Where your data goes",
+        "body": [
+          "We are based in Egypt, the database behind our CRM is in the European Union, and some of our providers process data in the United States and elsewhere. Where personal data leaves your country we rely on the transfer mechanisms available under the applicable law — standard contractual clauses under the GDPR, and the conditions for cross-border transfer set out in Egypt’s Personal Data Protection Law."
+        ]
+      },
+      {
+        "heading": "How long we keep it",
+        "body": [
+          "Website analytics are kept for 90 days. After that the events are deleted, and any visitor record left with no events and no associated enquiry is removed with them.",
+          "Enquiries, and the quotations that follow from them, are kept as part of our commercial records for as long as we have a relationship with you, and for as long afterwards as we need or are required to keep them.",
+          "Photographs you upload are kept with the enquiry they belong to and are deleted with it.",
+          "Your product brief stays in your own browser until you clear it."
+        ]
+      },
+      {
+        "heading": "Your rights",
+        "body": [
+          "You may ask us for a copy of your personal data; to correct it; to delete it; to restrict or object to how we use it; to receive it in a portable form; and to withdraw any consent you have given. You can withdraw analytics consent at any time using the Cookie settings link in the footer. Withdrawing consent does not affect anything that was lawful before you withdrew it.",
+          "To exercise any of these, contact us at kemcon@yahoo.com. We will respond within the period the applicable law allows.",
+          "If you believe we have handled your data improperly, you may complain to Egypt’s Personal Data Protection Centre or, if you are in the European Economic Area, to the supervisory authority where you live or work."
+        ]
+      },
+      {
+        "heading": "Security",
+        "body": [
+          "Traffic to this site is encrypted in transit. The visitor identifier is cryptographically signed so that it cannot be altered or guessed, our internal CRM requires a password before any data can be reached, and access is limited to the people who need it. No system is perfectly secure, but we treat these obligations seriously."
+        ]
+      },
+      {
+        "heading": "Children",
+        "body": [
+          "This site is aimed at businesses and is not directed at children. We do not knowingly collect data from anyone under 18. If you believe a child has provided us with data, contact us and we will delete it."
+        ]
+      },
+      {
+        "heading": "Changes to this policy",
+        "body": [
+          "If we change how we use personal data we will update this page and the date shown at the top. Where a change affects something you consented to, we will ask you again rather than assume your previous answer still stands."
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms and Conditions",
+    "updated": "Last updated 31 August 2026",
+    "intro": "These terms govern your use of the Kemcon website. By using the site, you accept them. If you do not accept them, please do not use the site.",
+    "sections": [
+      {
+        "heading": "Who we are",
+        "body": [
+          "This site is operated by Kemcon, a fabric and furnishings manufacturer in Egypt, with its factory at Street 151, Industrial Zone 1, Obour and a showroom on Ahmed Fakhry Street, Nasr City, Cairo. You can reach us at kemcon@yahoo.com."
+        ]
+      },
+      {
+        "heading": "What this site is",
+        "body": [
+          "This website presents our products and capabilities and lets you send us an enquiry. It is not a shop. Nothing on it is an offer to sell, no price shown or quoted here is binding, and browsing creates no contract between us."
+        ]
+      },
+      {
+        "heading": "Enquiries and quotations",
+        "body": [
+          "An enquiry, brief or configuration you submit is a request for us to get in touch. Any quotation we give in response is an indication until it is confirmed in a written agreement signed by both of us. Specifications, lead times and availability may change."
+        ]
+      },
+      {
+        "heading": "The visualisation tool",
+        "body": [
+          "The configurator can generate an image suggesting how a fabric might look in a space, using an automated image service. What it produces is an illustration — not a specification, and not a sample.",
+          "Colour, texture, drape, scale and finish will differ from the real fabric, and screens vary in how they render colour. Please do not rely on a generated image when making a purchasing decision; ask us for a physical sample instead.",
+          "The tool is provided as it is. It may be unavailable, may limit how many images one visitor can generate, and may be withdrawn."
+        ]
+      },
+      {
+        "heading": "What you upload",
+        "body": [
+          "You keep ownership of the photographs and text you send us.",
+          "You give us permission to use them only to handle your enquiry, including passing them to the service providers named in our Privacy Policy for that purpose. We will not use them in marketing, on this website, or in any portfolio without asking you first.",
+          "By uploading, you confirm that you are entitled to do so, that the material infringes nobody else’s rights, and that it contains nothing confidential, unlawful or offensive. Please do not upload photographs of identifiable people."
+        ]
+      },
+      {
+        "heading": "Acceptable use",
+        "body": [
+          "Do not attempt to damage, overload, probe or gain unauthorised access to the site or the systems behind it. Do not scrape it systematically, misuse the forms to send unsolicited or fraudulent material, or use automated means to defeat the limits on the visualisation tool."
+        ]
+      },
+      {
+        "heading": "Our content",
+        "body": [
+          "The text, images, fabric designs, photographs and layout of this site, and the Kemcon name and logo, belong to us or to our licensors. You may view and print pages for your own use in evaluating us as a supplier. Any other copying, republication or commercial use needs our written permission."
+        ]
+      },
+      {
+        "heading": "Links to other services",
+        "body": [
+          "This site links to third-party services including WhatsApp, Google Maps and our social media pages. We do not control them and are not responsible for their content or for how they handle your data."
+        ]
+      },
+      {
+        "heading": "Availability",
+        "body": [
+          "We aim to keep the site available but do not guarantee that it will be. We may change, suspend or withdraw any part of it, including the configurator, without notice."
+        ]
+      },
+      {
+        "heading": "Liability",
+        "body": [
+          "Nothing in these terms excludes any liability that cannot lawfully be excluded, including liability for death or personal injury caused by negligence, or for fraud.",
+          "Beyond that, and so far as the law allows: this site is provided as it is, without warranties of any kind; we are not liable for indirect or consequential loss, or for loss of profit, business or data; and we are not liable for decisions taken in reliance on a generated visualisation rather than on a physical sample."
+        ]
+      },
+      {
+        "heading": "Privacy",
+        "body": [
+          "Our Privacy Policy explains what we do with personal data collected through this site, and forms part of these terms."
+        ]
+      },
+      {
+        "heading": "Changes to these terms",
+        "body": [
+          "We may update these terms from time to time. The version published on this page when you use the site is the version that applies."
+        ]
+      },
+      {
+        "heading": "Governing law",
+        "body": [
+          "These terms are governed by the laws of the Arab Republic of Egypt, and the courts of Cairo have exclusive jurisdiction over any dispute arising from them."
+        ]
+      }
+    ]
   }
 }

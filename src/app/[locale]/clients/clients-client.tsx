@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CTABanner } from "@/components/sections/CTABanner";
 import Image from "next/image";
 import { partnerBrands, regions, type FeaturedClient } from "@/data/clients";
+import { track } from "@/lib/journey/track";
 
 const ALL_TAB = "All Destinations";
 const PAGE_SIZE = 12;
@@ -143,6 +144,16 @@ function ClientCard({ client, index }: { client: FeaturedClient; index: number }
   const isPriority = index < 8;
   const preloadedRef = useRef(false);
 
+  /**
+   * Which images this visitor actually looked at, and since when.
+   *
+   * A Set rather than a counter because arrowing back and forth through a
+   * gallery would otherwise report far more images than were really seen —
+   * "viewed 12 of 30" has to mean twelve distinct photos.
+   */
+  const viewedRef = useRef<Set<number>>(new Set());
+  const openedAtRef = useRef(0);
+
   const handleMouseEnter = () => {
     if (preloadedRef.current) return;
     preloadedRef.current = true;
@@ -152,8 +163,46 @@ function ClientCard({ client, index }: { client: FeaturedClient; index: number }
     });
   };
 
-  const prev = () => setLightboxIndex((i) => (i - 1 + client.rooms.length) % client.rooms.length);
-  const next = () => setLightboxIndex((i) => (i + 1) % client.rooms.length);
+  const openGallery = () => {
+    viewedRef.current = new Set([0]);
+    openedAtRef.current = Date.now();
+    setLightboxIndex(0);
+    setLightboxOpen(true);
+    // Emitted on open as well as close so a visitor who navigates away with the
+    // lightbox still up is recorded as having previewed this property.
+    track({ t: "client_gallery_open", clientId: client.id, region: client.region });
+  };
+
+  const closeGallery = () => {
+    setLightboxOpen(false);
+    const viewed = viewedRef.current;
+    track({
+      t: "client_gallery_close",
+      clientId: client.id,
+      region: client.region,
+      imagesViewed: viewed.size,
+      totalImages: client.rooms.length,
+      maxIndex: viewed.size > 0 ? Math.max(...viewed) : 0,
+      dwellMs: Date.now() - openedAtRef.current,
+    });
+  };
+
+  // `Set.add` is idempotent, so recording from inside the updater is safe even
+  // though React may invoke it twice in development's strict mode.
+  const step = (delta: number) =>
+    setLightboxIndex((i) => {
+      const target = (i + delta + client.rooms.length) % client.rooms.length;
+      viewedRef.current.add(target);
+      return target;
+    });
+
+  const prev = () => step(-1);
+  const next = () => step(1);
+
+  const jump = (i: number) => {
+    viewedRef.current.add(i);
+    setLightboxIndex(i);
+  };
 
   return (
     <>
@@ -163,7 +212,7 @@ function ClientCard({ client, index }: { client: FeaturedClient; index: number }
         transition={{ delay: Math.min(index, 7) * 0.05, duration: 0.4 }}
         className="group relative rounded-sm overflow-hidden border border-accent/10 hover:border-accent/35 bg-surface cursor-pointer transition-all duration-500 hover:shadow-[0_12px_40px_rgba(0,0,0,0.55)]"
         onMouseEnter={handleMouseEnter}
-        onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
+        onClick={openGallery}
       >
         {/* Featured image */}
         <div className="relative aspect-[3/2] overflow-hidden">
@@ -220,10 +269,10 @@ function ClientCard({ client, index }: { client: FeaturedClient; index: number }
             images={client.rooms}
             name={client.name}
             index={lightboxIndex}
-            onClose={() => setLightboxOpen(false)}
+            onClose={closeGallery}
             onPrev={prev}
             onNext={next}
-            onJump={setLightboxIndex}
+            onJump={jump}
           />
         )}
       </AnimatePresence>
@@ -436,6 +485,7 @@ export default function ClientsClient({ featuredClients }: ClientsClientProps) {
     setActiveFilter(filter);
     setVisibleCount(PAGE_SIZE);
     gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    track({ t: "clients_filter", region: filter });
   };
 
   const visibleClients = filteredClients.slice(0, visibleCount);
@@ -511,7 +561,11 @@ export default function ClientsClient({ featuredClients }: ClientsClientProps) {
           {hasMore && (
             <div className="mt-12 text-center">
               <button
-                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                onClick={() => {
+                  const next = visibleCount + PAGE_SIZE;
+                  setVisibleCount(next);
+                  track({ t: "clients_load_more", visibleCount: next });
+                }}
                 className="inline-flex items-center gap-3 px-8 py-3 border border-accent/20 rounded-[2px] text-sm text-heading hover:border-accent/45 hover:bg-surface transition-all duration-300 tracking-wider"
               >
                 <span>{t("loadMore")}</span>

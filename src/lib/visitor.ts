@@ -4,6 +4,14 @@ import type { NextRequest } from "next/server";
 export const VISITOR_COOKIE = "kc_vid";
 export const QUOTA_COOKIE = "kc_quota";
 
+/**
+ * A year. Shared by every caller that issues the cookie — `proxy.ts` on a
+ * visitor's first page view, and the generation route when it needs an id to
+ * sign a quota against. Two different max-ages for one cookie would mean the
+ * later writer silently shortening the earlier one's lifetime.
+ */
+export const VISITOR_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
 const DAY_MS = 86_400_000;
 
 /**

@@ -41,7 +41,7 @@ export default function ContactClient() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, locale }),
+        body: JSON.stringify({ ...form, locale, channel: "email", formType: "contact" }),
       });
 
       const data = (await res.json().catch(() => ({}))) as { error?: string };
@@ -66,11 +66,39 @@ export default function ContactClient() {
     }
   };
 
+  /**
+   * Files the enquiry in the CRM before opening WhatsApp.
+   *
+   * Not awaited, and deliberately so: `window.open` has to run in the same
+   * task as the click or the popup blocker swallows it. Skipped entirely when
+   * there is nothing to file — a visitor who clicks WhatsApp on an untouched
+   * form is starting a conversation, not leaving a lead.
+   */
+  const recordWhatsAppLead = () => {
+    if (!form.name.trim() || !(form.phone.trim() || form.email.trim())) return;
+    void fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...form,
+        message:
+          form.message.trim() ||
+          (isAr ? "بدأ محادثة واتساب من صفحة التواصل." : "Started a WhatsApp chat from the contact page."),
+        locale,
+        channel: "whatsapp",
+        formType: "contact",
+      }),
+    }).catch((e: unknown) => {
+      console.warn("[contact] WhatsApp lead was not recorded:", e);
+    });
+  };
+
   const handleWhatsApp = () => {
     const lines = [
       isAr ? `مرحباً، أنا ${form.name || "مهتم بخدماتكم"}.` : `Hello, I'm ${form.name || "interested in your services"}.`,
       form.message ? (isAr ? `\nرسالتي: ${form.message}` : `\nMessage: ${form.message}`) : "",
     ].join("");
+    recordWhatsAppLead();
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(lines)}`, "_blank");
   };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send,
@@ -20,17 +20,29 @@ interface ContactSubmitProps {
   buildSummary: (photoUrls?: string[]) => string;
   buildWhatsAppMessage: (photoUrls?: string[]) => string;
   photos?: File[];
+  /** Identifies the form in the CRM: "contact" | "brief" | "quick". */
+  formType?: string;
+  /** For briefs: standard | bulk | design. */
+  briefType?: string | null;
+  /**
+   * Structured data to file alongside the prose summary, so a configured order
+   * survives in the CRM as more than a wall of text.
+   */
+  buildMeta?: () => Record<string, unknown>;
   submitLabelEn?: string;
   submitLabelAr?: string;
   successTitleEn?: string;
   successTitleAr?: string;
   successDescEn?: string;
   successDescAr?: string;
+  /** Fired once, after the brief has been accepted by `/api/contact`. */
+  onSuccess?: () => void;
 }
 
 type Status = "idle" | "submitting" | "sent" | "error";
 
-import { KEMCON_EMAIL, KEMCON_WHATSAPP } from "@/lib/config";
+import { KEMCON_EMAIL, KEMCON_WHATSAPP, SHOWROOM_MAP_URL } from "@/lib/config";
+import { track } from "@/lib/journey/track";
 
 async function uploadPhotos(files: File[]): Promise<string[]> {
   return Promise.all(
@@ -58,17 +70,43 @@ export function ContactSubmit({
   buildSummary,
   buildWhatsAppMessage,
   photos = [],
+  formType = "brief",
+  briefType = null,
+  buildMeta,
   submitLabelEn = "Send Brief",
   submitLabelAr = "إرسال الموجز",
   successTitleEn = "Brief Sent!",
   successTitleAr = "تم إرسال موجزك!",
   successDescEn = `Your brief has been delivered to ${KEMCON_EMAIL}. Our team will be in touch within 3–5 business days.`,
   successDescAr = `وصل موجزك إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معك فريقنا خلال 3–5 أيام عمل.`,
+  onSuccess,
 }: ContactSubmitProps) {
   const [status, setStatus] = useState<Status>("idle");
   const [submitStep, setSubmitStep] = useState<"uploading" | "sending" | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [whatsappUploading, setWhatsappUploading] = useState(false);
+  /**
+   * The WhatsApp message is frozen at the moment of a successful send.
+   * `onSuccess` may clear the underlying brief, which would otherwise leave the
+   * success card offering an empty message. Snapshotting also means the link
+   * keeps the uploaded photo URLs, which it previously dropped.
+   */
+  const [sentWhatsAppText, setSentWhatsAppText] = useState("");
+
+  /**
+   * Whether this visitor has started filling the form. The gap between
+   * `form_start` and `form_submit` is the abandonment rate — the number that
+   * says whether the form itself is the thing losing people.
+   */
+  const startedRef = useRef(false);
+
+  const handleFieldChange = (field: "name" | "phone" | "email", value: string) => {
+    if (!startedRef.current && value.trim()) {
+      startedRef.current = true;
+      track({ t: "form_start", formType });
+    }
+    onChange(field, value);
+  };
 
   const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const phoneDigits = phone.replace(/\D/g, "").length;
@@ -78,6 +116,48 @@ export function ContactSubmit({
     phoneDigits >= 7 &&
     phoneDigits <= 15
   );
+
+  /**
+   * Both channels post the same brief to `/api/contact`; only `channel`
+   * differs. The CRM records every submission either way — `channel` says how
+   * the visitor expects to hear back, not whether we kept a copy.
+   */
+  const buildPayload = (channel: "email" | "whatsapp", photoUrls: string[]) => {
+    const fd = new FormData();
+    fd.append("name", name);
+    fd.append("phone", phone);
+    fd.append("email", email);
+    fd.append("message", buildSummary(photoUrls));
+    fd.append("locale", locale);
+    fd.append("channel", channel);
+    fd.append("formType", formType);
+    if (briefType) fd.append("briefType", briefType);
+    if (photoUrls.length > 0) fd.append("attachments", JSON.stringify(photoUrls));
+    const meta = buildMeta?.();
+    if (meta) fd.append("meta", JSON.stringify(meta));
+    return fd;
+  };
+
+  /**
+   * Files a WhatsApp enquiry before the chat opens.
+   *
+   * Deliberately not awaited: `window.open` must stay in the same task as the
+   * click or the popup blocker eats it. The request outlives this call, and a
+   * failure is logged rather than surfaced — the visitor is already on their
+   * way to WhatsApp, where the message reaches us regardless.
+   */
+  const recordWhatsAppLead = (photoUrls: string[]) => {
+    // Tracked before the guard: choosing WhatsApp is the visitor's decision
+    // whether or not they gave us enough to file a lead from it.
+    track({ t: "whatsapp_click", formType });
+    if (!name.trim() || !(phone.trim() || email.trim())) return;
+    void fetch("/api/contact", {
+      method: "POST",
+      body: buildPayload("whatsapp", photoUrls),
+    }).catch((e: unknown) => {
+      console.warn("[ContactSubmit] WhatsApp lead was not recorded:", e);
+    });
+  };
 
   const handleSubmit = async () => {
     if (!isValid || status === "submitting") return;
@@ -102,15 +182,12 @@ export function ContactSubmit({
     }
 
     setSubmitStep("sending");
-    const fd = new FormData();
-    fd.append("name", name);
-    fd.append("phone", phone);
-    fd.append("email", email);
-    fd.append("message", buildSummary(photoUrls));
-    fd.append("locale", locale);
 
     try {
-      const res = await fetch("/api/contact", { method: "POST", body: fd });
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        body: buildPayload("email", photoUrls),
+      });
       const data = (await res.json().catch((e: unknown) => {
         console.warn("[ContactSubmit] Failed to parse response JSON:", e);
         return {};
@@ -125,7 +202,12 @@ export function ContactSubmit({
         setStatus("error");
         return;
       }
+      setSentWhatsAppText(buildWhatsAppMessage(photoUrls));
       setStatus("sent");
+      // The end of the funnel. Recorded only once the server has accepted it,
+      // so a failed send is not counted as a conversion.
+      track({ t: "form_submit", formType, briefType });
+      onSuccess?.();
     } catch {
       setErrorMsg(
         isAr
@@ -165,7 +247,7 @@ export function ContactSubmit({
 
         <div className="flex flex-col items-center gap-3 w-full">
           <a
-            href={`https://wa.me/${KEMCON_WHATSAPP}?text=${buildWhatsAppMessage()}`}
+            href={`https://wa.me/${KEMCON_WHATSAPP}?text=${sentWhatsAppText || buildWhatsAppMessage()}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-[#25D366] hover:underline underline-offset-2 transition-colors"
@@ -201,7 +283,7 @@ export function ContactSubmit({
               id="cs-name"
               type="text"
               value={name}
-              onChange={(e) => onChange("name", e.target.value)}
+              onChange={(e) => handleFieldChange("name", e.target.value)}
               className={`w-full px-3 py-2.5 rounded-sm bg-[var(--color-bg)] border border-[var(--color-deep-accent)]/30 text-[var(--color-text)] text-sm placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:border-[var(--color-accent)] transition-colors ${isAr ? "text-right" : ""}`}
               placeholder={isAr ? "اسمك" : "Your name"}
             />
@@ -214,7 +296,7 @@ export function ContactSubmit({
               id="cs-phone"
               type="tel"
               value={phone}
-              onChange={(e) => onChange("phone", e.target.value)}
+              onChange={(e) => handleFieldChange("phone", e.target.value)}
               className={`w-full px-3 py-2.5 rounded-sm bg-[var(--color-bg)] border border-[var(--color-deep-accent)]/30 text-[var(--color-text)] text-sm placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:border-[var(--color-accent)] transition-colors ${isAr ? "text-right" : ""}`}
               placeholder="+20 xxx xxx xxx"
             />
@@ -227,7 +309,7 @@ export function ContactSubmit({
               id="cs-email"
               type="email"
               value={email}
-              onChange={(e) => onChange("email", e.target.value)}
+              onChange={(e) => handleFieldChange("email", e.target.value)}
               className={`w-full px-3 py-2.5 rounded-sm bg-[var(--color-bg)] border border-[var(--color-deep-accent)]/30 text-[var(--color-text)] text-sm placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:border-[var(--color-accent)] transition-colors ${isAr ? "text-right" : ""}`}
               placeholder="your@email.com"
             />
@@ -294,13 +376,16 @@ export function ContactSubmit({
               setWhatsappUploading(true);
               try {
                 const urls = await uploadPhotos(photos);
+                recordWhatsAppLead(urls);
                 window.open(`https://wa.me/${KEMCON_WHATSAPP}?text=${buildWhatsAppMessage(urls)}`, "_blank");
               } catch {
+                recordWhatsAppLead([]);
                 window.open(`https://wa.me/${KEMCON_WHATSAPP}?text=${buildWhatsAppMessage()}`, "_blank");
               } finally {
                 setWhatsappUploading(false);
               }
             } else {
+              recordWhatsAppLead([]);
               window.open(`https://wa.me/${KEMCON_WHATSAPP}?text=${buildWhatsAppMessage()}`, "_blank");
             }
           }}
@@ -315,7 +400,7 @@ export function ContactSubmit({
         </button>
         <span className="text-[var(--color-deep-accent)]/30 text-xs">·</span>
         <button
-          onClick={() => window.open("https://maps.app.goo.gl/P258pkoaV3g7dLHP7", "_blank")}
+          onClick={() => window.open(SHOWROOM_MAP_URL, "_blank")}
           className="inline-flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
         >
           <MapPin size={13} strokeWidth={1.5} />

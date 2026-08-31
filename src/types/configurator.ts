@@ -9,15 +9,15 @@ export type StepType =
   | "cushionOptions"
   | "pillowOptions"
   | "aiVisualization"
-  | "inquiry"
+  | "review"
   | "customDescription";
 
 export const CATEGORY_STEPS: Record<CategoryType, StepType[]> = {
-  curtains: ["fabric", "color", "pattern", "curtainOptions", "aiVisualization", "inquiry"],
-  chairs: ["fabric", "color", "pattern", "chairOptions", "cushionOptions", "aiVisualization", "inquiry"],
-  sofas: ["fabric", "color", "pattern", "chairOptions", "cushionOptions", "aiVisualization", "inquiry"],
-  "bed-sheets": ["fabric", "color", "pattern", "pillowOptions", "inquiry"],
-  custom: ["customDescription", "inquiry"],
+  curtains: ["fabric", "color", "pattern", "curtainOptions", "aiVisualization", "review"],
+  chairs: ["fabric", "color", "pattern", "chairOptions", "cushionOptions", "aiVisualization", "review"],
+  sofas: ["fabric", "color", "pattern", "chairOptions", "cushionOptions", "aiVisualization", "review"],
+  "bed-sheets": ["fabric", "color", "pattern", "pillowOptions", "review"],
+  custom: ["customDescription", "review"],
 };
 
 export interface ConfiguratorState {

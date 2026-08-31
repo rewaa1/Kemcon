@@ -15,7 +15,7 @@ const csp = [
   // Google Fonts files
   "font-src 'self' https://fonts.gstatic.com",
   // API calls: Cloudinary upload, Pollinations, GlitchTip/Sentry
-  "connect-src 'self' https://api.cloudinary.com https://gen.pollinations.ai https://utfs.io https://2e3n0iobhs.ufs.sh https://*.supabase.co https://*.sentry.io https://*.ingest.sentry.io https://*.ingest.glitchtip.com",
+  "connect-src 'self' https://api.cloudinary.com https://gen.pollinations.ai https://utfs.io https://2e3n0iobhs.ufs.sh https://*.sentry.io https://*.ingest.sentry.io https://*.ingest.glitchtip.com",
   // No iframes
   "frame-ancestors 'none'",
   // No plugins
@@ -25,6 +25,14 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  // The root layout sits under a dynamic `[locale]` segment, so an unmatched
+  // URL has no locale to compose a 404 from and Next falls back to its own
+  // bare error page. `global-not-found.tsx` is the supported way to brand that
+  // case — the alternative, a `[locale]/[...slug]` catch-all, shadows every
+  // nested route (`/en/products/design-plan` and friends 404'd because of it).
+  experimental: {
+    globalNotFound: true,
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "gen.pollinations.ai" },
