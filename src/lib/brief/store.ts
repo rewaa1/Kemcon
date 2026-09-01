@@ -36,7 +36,7 @@ import { track } from "@/lib/journey/track";
 const STORAGE_KEY = "kemcon_brief_v1";
 
 /** Increment whenever the persisted brief shape changes. */
-const BRIEF_SCHEMA_VERSION = 1;
+const BRIEF_SCHEMA_VERSION = 3;
 
 interface BriefState {
   type: BriefType;

@@ -183,7 +183,6 @@ export default function BriefClient() {
       quantity: safeQuantity(item.quantity),
       title: lineItemTitle(item, false),
       notes: item.notes,
-      aiImageUrl: item.aiImageUrl,
       options: Object.fromEntries(
         lineItemChips(item, false).map((chip) => [chip.label, chip.value])
       ),
@@ -325,11 +324,6 @@ export default function BriefClient() {
                     className="rounded-sm border border-[var(--color-deep-accent)]/15 bg-[var(--color-bg)] p-4 space-y-3"
                   >
                     <div className={`flex items-start gap-3 ${isAr ? "flex-row-reverse" : ""}`}>
-                      {item.aiImageUrl && (
-                        <div className="relative w-14 h-20 rounded-sm overflow-hidden border border-[var(--color-deep-accent)]/20 flex-shrink-0">
-                          <Image src={item.aiImageUrl} alt="" fill className="object-cover" sizes="56px" />
-                        </div>
-                      )}
                       <div className={`flex-1 min-w-0 ${isAr ? "text-right" : ""}`}>
                         <p className="text-sm font-semibold text-[var(--color-heading)] leading-snug">
                           {lineItemTitle(item, isAr)}

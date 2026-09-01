@@ -183,7 +183,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/linen/linen-washed.jpg",
     description: "Softened linen with relaxed, lived-in feel",
     descriptionAr: "كتان مُلطَّف بإحساس مريح وعصري",
-    compatibleWith: ["curtains", "sofas", "chairs", "bed-sheets"],
+    compatibleWith: ["curtains", "sofas", "chairs", "bed-covers"],
   },
   {
     id: "linen-blend",
@@ -194,7 +194,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/linen/linen-blend.jpg",
     description: "Breathable linen-cotton for year-round use",
     descriptionAr: "كتان قطن قابل للتنفس لجميع الفصول",
-    compatibleWith: ["curtains", "chairs", "bed-sheets"],
+    compatibleWith: ["curtains", "chairs", "bed-covers"],
   },
   {
     id: "linen-heavy",
@@ -230,7 +230,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/silk/silk-satin.jpg",
     description: "Luminous satin weave for formal interiors",
     descriptionAr: "نسيج ساتان لامع للديكورات الراقية",
-    compatibleWith: ["curtains", "bed-sheets"],
+    compatibleWith: ["curtains", "bed-covers"],
   },
   {
     id: "silk-taffeta",
@@ -252,7 +252,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/silk/silk-charmeuse.jpg",
     description: "Fluid silk with back-satin finish",
     descriptionAr: "حرير سائل بتشطيب ساتان من الخلف",
-    compatibleWith: ["curtains", "bed-sheets"],
+    compatibleWith: ["curtains", "bed-covers"],
   },
   // Cotton
   {
@@ -264,7 +264,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/cotton/cotton-egyptian.jpg",
     description: "Premium long-staple Egyptian cotton",
     descriptionAr: "قطن مصري فاخر طويل الألياف",
-    compatibleWith: ["curtains", "bed-sheets"],
+    compatibleWith: ["curtains", "bed-covers"],
   },
   {
     id: "cotton-percale",
@@ -275,7 +275,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/cotton/cotton-percale.jpg",
     description: "Crisp 200-thread count percale weave",
     descriptionAr: "نسيج بيركال بـ 200 خيط للبوصة",
-    compatibleWith: ["bed-sheets"],
+    compatibleWith: ["bed-covers"],
   },
   {
     id: "cotton-sateen",
@@ -286,7 +286,7 @@ export const fabrics: Fabric[] = [
     image: "/fabrics/cotton/cotton-sateen.jpg",
     description: "Silky smooth sateen-woven cotton",
     descriptionAr: "قطن ناعم منسوج بطريقة الساتان",
-    compatibleWith: ["bed-sheets", "curtains"],
+    compatibleWith: ["bed-covers", "curtains"],
   },
   {
     id: "cotton-twill",

@@ -15,7 +15,7 @@ export type LeadChannel = "email" | "whatsapp";
 export interface CrmLead {
   /** How the visitor asked to be followed up. */
   channel: LeadChannel;
-  /** Which form produced it — "contact" | "brief" | "quick". */
+  /** Which form produced it — "contact" | "brief" | "curtains". Free text; see docs/crm-lead-intake.md. */
   formType: string;
   /** For briefs: standard | bulk | design. */
   briefType?: string | null;

@@ -6,13 +6,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { fabricFamilies, fabrics } from "@/data/fabrics";
 import type { ConfiguratorState } from "@/types/configurator";
 
-interface FabricTypeStepProps {
+interface FabricPickerProps {
   state: ConfiguratorState;
   onChange: (updates: Partial<ConfiguratorState>) => void;
   locale: string;
 }
 
-export function FabricTypeStep({ state, onChange, locale }: FabricTypeStepProps) {
+export function FabricPicker({ state, onChange, locale }: FabricPickerProps) {
   const isAr = locale === "ar";
   const [activeFamilyId, setActiveFamilyId] = useState<string>(
     state.fabricFamilyId ?? fabricFamilies[0].id
@@ -32,18 +32,7 @@ export function FabricTypeStep({ state, onChange, locale }: FabricTypeStepProps)
   };
 
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-heading)]">
-          {isAr ? "اختر نوع القماش" : "Select Fabric Type"}
-        </h2>
-        <p className="text-[var(--color-text-muted)] text-sm">
-          {isAr
-            ? "اختر عائلة القماش ثم النوع المحدد"
-            : "Choose a fabric family, then pick your specific fabric"}
-        </p>
-      </div>
-
+    <div className="space-y-5">
       {/* Family filter strip */}
       <div className="relative">
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
@@ -86,7 +75,7 @@ export function FabricTypeStep({ state, onChange, locale }: FabricTypeStepProps)
               <motion.button
                 key={fabric.id}
                 onClick={() => handleFabricClick(fabric.id)}
-                data-testid="step-option"
+                data-testid="picker-option"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2, delay: index * 0.04 }}

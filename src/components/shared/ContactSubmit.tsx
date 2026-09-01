@@ -37,6 +37,15 @@ interface ContactSubmitProps {
   successDescAr?: string;
   /** Fired once, after the brief has been accepted by `/api/contact`. */
   onSuccess?: () => void;
+  /**
+   * A gate on top of the contact fields, for a form with required questions of
+   * its own. Sending stays disabled until this is true, and `extraHint*`
+   * explains what is still missing — the contact hint would otherwise point at
+   * fields the visitor has already filled in.
+   */
+  extraValid?: boolean;
+  extraHintEn?: string;
+  extraHintAr?: string;
 }
 
 type Status = "idle" | "submitting" | "sent" | "error";
@@ -80,6 +89,9 @@ export function ContactSubmit({
   successDescEn = `Your brief has been delivered to ${KEMCON_EMAIL}. Our team will be in touch within 3–5 business days.`,
   successDescAr = `وصل موجزك إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معك فريقنا خلال 3–5 أيام عمل.`,
   onSuccess,
+  extraValid = true,
+  extraHintEn,
+  extraHintAr,
 }: ContactSubmitProps) {
   const [status, setStatus] = useState<Status>("idle");
   const [submitStep, setSubmitStep] = useState<"uploading" | "sending" | null>(null);
@@ -110,12 +122,13 @@ export function ContactSubmit({
 
   const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const phoneDigits = phone.replace(/\D/g, "").length;
-  const isValid = !!(
+  const contactValid = !!(
     name.trim() &&
     EMAIL_RE.test(email.trim()) &&
     phoneDigits >= 7 &&
     phoneDigits <= 15
   );
+  const isValid = contactValid && extraValid;
 
   /**
    * Both channels post the same brief to `/api/contact`; only `channel`
@@ -344,12 +357,15 @@ export function ContactSubmit({
         )}
       </motion.button>
 
-      {/* Validation hint */}
+      {/* Validation hint — whichever half is actually missing */}
       {!isValid && (
         <p className={`text-xs text-[var(--color-text-muted)] ${isAr ? "text-right" : "text-center"}`}>
-          {isAr
-            ? "* أدخل الاسم والهاتف والبريد الإلكتروني للإرسال"
-            : "* Please fill in your name, phone and email to send"}
+          {!contactValid
+            ? isAr
+              ? "* أدخل الاسم والهاتف والبريد الإلكتروني للإرسال"
+              : "* Please fill in your name, phone and email to send"
+            : (isAr ? extraHintAr : extraHintEn) ??
+              (isAr ? "* أكمل الحقول المطلوبة أعلاه" : "* Please complete the required fields above")}
         </p>
       )}
 

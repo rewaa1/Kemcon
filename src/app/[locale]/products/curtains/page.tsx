@@ -2,14 +2,17 @@ import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
-import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
-
-const ConfiguratorShell = dynamic(() =>
-  import("@/components/products/configurator/ConfiguratorShell").then(
-    (m) => ({ default: m.ConfiguratorShell })
-  )
-);
 import { JsonLd } from "@/components/seo/JsonLd";
+import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
+import { productSeo } from "@/data/productSeo";
+
+const ProductEnquiryForm = dynamic(() =>
+  import("@/components/products/enquiry/ProductEnquiryForm").then((m) => ({
+    default: m.ProductEnquiryForm,
+  }))
+);
+
+const seo = productSeo["curtains"];
 
 interface PageProps {
   searchParams: Promise<{ fabric?: string; fabricFamily?: string; edit?: string }>;
@@ -19,10 +22,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   return buildPageMetadata({
     locale,
-    path: "/products/curtains",
-    titleKey: "meta.pages.curtains.title",
-    descriptionKey: "meta.pages.curtains.description",
-    ogImage: "cards/curtains.jpg",
+    path: `/products/${seo.slug}`,
+    titleKey: `meta.pages.${seo.metaKey}.title`,
+    descriptionKey: `meta.pages.${seo.metaKey}.description`,
+    ogImage: seo.ogImage,
   });
 }
 
@@ -31,7 +34,8 @@ export default async function CurtainsPage({ searchParams }: PageProps) {
   const isAr = locale === "ar";
   const { fabric, fabricFamily, edit } = await searchParams;
 
-  const pageUrl = `${SITE_URL}/${locale}/products/curtains`;
+  const lang = isAr ? "ar" : "en";
+  const pageUrl = `${SITE_URL}/${locale}/products/${seo.slug}`;
 
   const schemas = [
     {
@@ -40,19 +44,22 @@ export default async function CurtainsPage({ searchParams }: PageProps) {
       itemListElement: [
         { "@type": "ListItem", position: 1, name: isAr ? "الرئيسية" : "Home", item: `${SITE_URL}/${locale}` },
         { "@type": "ListItem", position: 2, name: isAr ? "المنتجات" : "Products", item: `${SITE_URL}/${locale}/products` },
-        { "@type": "ListItem", position: 3, name: isAr ? "ستائر" : "Curtains", item: pageUrl },
+        { "@type": "ListItem", position: 3, name: seo.name[lang], item: pageUrl },
       ],
     },
     {
       "@context": "https://schema.org",
       "@type": "Product",
-      name: isAr ? "ستائر مخصصة" : "Bespoke Curtains",
-      description: isAr
-        ? "ستائر مخصصة بمئات الأقمشة — شفافة، وعازلة للضوء، ومخمل، وكتان، والمزيد. يدوية أو متحكم بها عن بُعد، مصنوعة بمقاساتك."
-        : "Bespoke curtains in hundreds of fabrics — sheer, blackout, velvet, linen, and more. Manual or remote-controlled, made to your measurements.",
+      name: seo.schemaName[lang],
+      description: seo.description[lang],
       url: pageUrl,
       brand: { "@type": "Brand", name: "Kemcon" },
-      offers: { "@type": "Offer", url: pageUrl, availability: "https://schema.org/InStoreOnly", seller: { "@type": "Organization", name: "Kemcon" } },
+      offers: {
+        "@type": "Offer",
+        url: pageUrl,
+        availability: "https://schema.org/InStoreOnly",
+        seller: { "@type": "Organization", name: "Kemcon" },
+      },
     },
   ];
 
@@ -60,9 +67,8 @@ export default async function CurtainsPage({ searchParams }: PageProps) {
     <>
       <JsonLd schema={schemas} />
       <ErrorBoundary>
-        <ConfiguratorShell
+        <ProductEnquiryForm
           category="curtains"
-          categoryLabel={isAr ? "ستائر" : "Curtains"}
           locale={locale}
           initialFabricId={fabric}
           initialFabricFamilyId={fabricFamily}

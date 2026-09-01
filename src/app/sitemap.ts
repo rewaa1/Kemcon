@@ -14,7 +14,7 @@ const routes = [
   { path: "/products/curtains", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/products/chairs", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/products/sofas", priority: 0.7, changeFrequency: "monthly" as const },
-  { path: "/products/bed-sheets", priority: 0.7, changeFrequency: "monthly" as const },
+  { path: "/products/bed-covers", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/products/custom", priority: 0.7, changeFrequency: "monthly" as const },
   // Low priority, but they belong here: search engines expect a site to have
   // them, and a policy nobody can find is not much of a policy.

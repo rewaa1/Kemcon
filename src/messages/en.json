@@ -40,9 +40,9 @@
         "title": "Bespoke Sofas",
         "description": "Bespoke sofas built from scratch by Kemcon — select every element from the frame wood to the final fabric and pattern, made for any space."
       },
-      "bedSheets": {
-        "title": "Premium Bed Sheets",
-        "description": "Premium bed linen in Egyptian cotton, silk, satin, and more — in any colour and pattern from Kemcon's curated catalog. Hotel-grade comfort."
+      "bedCovers": {
+        "title": "Premium Bed Covers | Egyptian Cotton, Silk & Satin | Kemcon",
+        "description": "Premium bed covers in Egyptian cotton, silk, satin and more. Cut to any bed size, in any colour and pattern from our catalog, with matching pillows."
       },
       "custom": {
         "title": "Custom Solutions",
@@ -161,9 +161,9 @@
         "name": "Sofas",
         "description": "Bespoke sofas built from scratch. Select every element from the frame wood to the final fabric and pattern."
       },
-      "bedSheets": {
-        "name": "Bed Sheets",
-        "description": "Premium bed linen in Egyptian cotton, silk, satin, and more — in any colour and pattern from our catalog."
+      "bedCovers": {
+        "name": "Bed Covers",
+        "description": "Premium bed covers in Egyptian cotton, silk, satin, and more — cut to any bed size, in any colour and pattern from our catalog."
       },
       "custom": {
         "name": "Custom Solution",

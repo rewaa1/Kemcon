@@ -5,13 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { colors, colorGroups } from "@/data/colors";
 import type { ConfiguratorState } from "@/types/configurator";
 
-interface ColorStepProps {
+interface ColorPickerProps {
   state: ConfiguratorState;
   onChange: (updates: Partial<ConfiguratorState>) => void;
   locale: string;
 }
 
-export function ColorStep({ state, onChange, locale }: ColorStepProps) {
+export function ColorPicker({ state, onChange, locale }: ColorPickerProps) {
   const isAr = locale === "ar";
   const [activeGroupId, setActiveGroupId] = useState<string>(
     state.colorGroupId ?? "neutrals"
@@ -34,18 +34,7 @@ export function ColorStep({ state, onChange, locale }: ColorStepProps) {
   const selectedColor = colors.find((c) => c.id === state.colorId);
 
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-heading)]">
-          {isAr ? "اختر اللون" : "Select Color"}
-        </h2>
-        <p className="text-[var(--color-text-muted)] text-sm">
-          {isAr
-            ? "اختر من مجموعتنا الواسعة من الألوان الفاخرة"
-            : "Choose from our extensive palette of luxury colours"}
-        </p>
-      </div>
-
+    <div className="space-y-5">
       {/* Group filter */}
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
         {colorGroups.map((group) => (
@@ -104,7 +93,7 @@ export function ColorStep({ state, onChange, locale }: ColorStepProps) {
               <motion.button
                 key={color.id}
                 onClick={() => handleColorClick(color.id)}
-                data-testid="step-option"
+                data-testid="picker-option"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2, delay: index * 0.03 }}

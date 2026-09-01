@@ -1,4 +1,4 @@
-import type { CategoryType, ConfiguratorState } from "@/types/configurator";
+import type { CategoryType, ConfiguratorState, CurtainSize } from "@/types/configurator";
 
 /**
  * The brief is the single lead-capture object for the whole services section.
@@ -37,9 +37,14 @@ export interface BriefLineItem {
 
   // Curtains
   curtainControl: "manual" | "remote" | null;
-  curtainWidth: string;
-  curtainHeight: string;
+  /** Layer ids from `@/data/curtainLayers`; the count is the length. */
+  curtainLayerIds: string[];
+  curtainSizes: CurtainSize[];
   requestMeasurement: boolean;
+
+  // Fabric treatments — offered on every textile category
+  treatmentAntimicrobial: boolean;
+  treatmentFireRetardant: boolean;
 
   // Chairs / sofas
   frameMaterialId: string | null;
@@ -49,17 +54,14 @@ export interface BriefLineItem {
   cushionSameFabric: boolean | null;
   cushionQty: number | null;
 
-  // Bed sheets
+  // Bed covers
+  bedSize: string | null;
   pillowAdd: boolean | null;
   pillowFill: string | null;
   pillowSize: string | null;
 
   // Custom
   customDescription: string;
-
-  // Remote URLs only — safe to persist.
-  aiImageUrl: string | null;
-  aiDetailImageUrl: string | null;
 
   notes: string;
 }
@@ -135,21 +137,22 @@ export function emptyLineItem(
     colorId: null,
     patternId: null,
     curtainControl: null,
-    curtainWidth: "",
-    curtainHeight: "",
+    curtainLayerIds: [],
+    curtainSizes: [],
     requestMeasurement: false,
+    treatmentAntimicrobial: false,
+    treatmentFireRetardant: false,
     frameMaterialId: null,
     frameFinishId: null,
     fillingId: null,
     cushionAdd: null,
     cushionSameFabric: null,
     cushionQty: null,
+    bedSize: null,
     pillowAdd: null,
     pillowFill: null,
     pillowSize: null,
     customDescription,
-    aiImageUrl: null,
-    aiDetailImageUrl: null,
     notes: "",
   };
 }
@@ -171,30 +174,29 @@ export function lineItemFromConfigurator(
     colorId: state.colorId,
     patternId: state.patternId,
     curtainControl: state.curtainControl,
-    curtainWidth: state.curtainWidth,
-    curtainHeight: state.curtainHeight,
+    curtainLayerIds: state.curtainLayerIds,
+    curtainSizes: state.curtainSizes,
     requestMeasurement: state.requestMeasurement,
+    treatmentAntimicrobial: state.treatmentAntimicrobial,
+    treatmentFireRetardant: state.treatmentFireRetardant,
     frameMaterialId: state.frameMaterialId,
     frameFinishId: state.frameFinishId,
     fillingId: state.fillingId,
     cushionAdd: state.cushionAdd,
     cushionSameFabric: state.cushionSameFabric,
     cushionQty: state.cushionQty,
+    bedSize: state.bedSize,
     pillowAdd: state.pillowAdd,
     pillowFill: state.pillowFill,
     pillowSize: state.pillowSize,
     customDescription: state.customDescription,
-    aiImageUrl: state.aiImageUrl,
-    aiDetailImageUrl: state.aiDetailImageUrl,
     notes: state.inquiryNotes,
   };
 }
 
 /**
- * Seed configurator state from an existing line item, so "edit" reopens the
- * configurator exactly where the visitor left it. `aiDisplayUrl` is
- * intentionally null — the blob it pointed at is gone; `aiImageUrl` still
- * renders the remote copy.
+ * Seed form state from an existing line item, so "edit" reopens the enquiry
+ * form exactly as the visitor left it.
  */
 export function configuratorStateFromLineItem(
   item: BriefLineItem,
@@ -208,22 +210,22 @@ export function configuratorStateFromLineItem(
     colorId: item.colorId,
     patternId: item.patternId,
     curtainControl: item.curtainControl,
-    curtainWidth: item.curtainWidth,
-    curtainHeight: item.curtainHeight,
+    curtainLayerIds: item.curtainLayerIds ?? [],
+    curtainSizes: item.curtainSizes ?? [],
     requestMeasurement: item.requestMeasurement,
+    treatmentAntimicrobial: item.treatmentAntimicrobial ?? false,
+    treatmentFireRetardant: item.treatmentFireRetardant ?? false,
     frameMaterialId: item.frameMaterialId,
     frameFinishId: item.frameFinishId,
     fillingId: item.fillingId,
     cushionAdd: item.cushionAdd,
     cushionSameFabric: item.cushionSameFabric,
     cushionQty: item.cushionQty,
+    bedSize: item.bedSize ?? null,
     pillowAdd: item.pillowAdd,
     pillowFill: item.pillowFill,
     pillowSize: item.pillowSize,
     customDescription: item.customDescription,
-    aiImageUrl: item.aiImageUrl,
-    aiDetailImageUrl: item.aiDetailImageUrl,
-    aiDisplayUrl: null,
     inquiryNotes: item.notes,
   };
 }

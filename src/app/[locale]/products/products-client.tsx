@@ -89,7 +89,7 @@ export default function ProductsClient() {
     { id: "curtains", name: t("categories.curtains.name"), description: t("categories.curtains.description") },
     { id: "chairs", name: t("categories.chairs.name"), description: t("categories.chairs.description") },
     { id: "sofas", name: t("categories.sofas.name"), description: t("categories.sofas.description") },
-    { id: "bed-sheets", name: t("categories.bedSheets.name"), description: t("categories.bedSheets.description") },
+    { id: "bed-covers", name: t("categories.bedCovers.name"), description: t("categories.bedCovers.description") },
     { id: "custom", name: t("categories.custom.name"), description: t("categories.custom.description") },
   ];
 

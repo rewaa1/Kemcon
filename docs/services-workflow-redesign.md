@@ -1,6 +1,10 @@
 # Services Workflow — Redesign Options
 
-**Status:** Proposal. Nothing here has been implemented.
+**Status:** Historical proposal — superseded. Kept as the record of how the
+services section got its shape; do not read it as current. Every category is a
+single enquiry form now and the step-by-step configurator is gone — see
+[product-enquiry-forms.md](product-enquiry-forms.md). The `/bed-sheets` route in
+the trees below is `/bed-covers` today.
 **Scope:** Everything under `/[locale]/products` — the section the nav labels **"Services"**.
 **Date:** 2026-08-27
 
@@ -664,5 +668,6 @@ Needed before a build plan can be finalised:
 
 ---
 
-*Related: `docs/products-configurator.md` (predates the AI, cushion and pillow
-steps), `docs/design-plan.md`, `REVIEW.md`, `production enhancments.md`.*
+*Related: [product-enquiry-forms.md](product-enquiry-forms.md) (what was
+actually built, and what replaced the configurator this document assumes),
+`docs/design-plan.md`, `REVIEW.md`, `production enhancments.md`.*
