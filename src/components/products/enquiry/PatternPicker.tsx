@@ -5,40 +5,29 @@ import { patterns } from "@/data/patterns";
 import { colors } from "@/data/colors";
 import type { ConfiguratorState } from "@/types/configurator";
 
-interface PatternStepProps {
+interface PatternPickerProps {
   state: ConfiguratorState;
   onChange: (updates: Partial<ConfiguratorState>) => void;
   locale: string;
 }
 
-export function PatternStep({ state, onChange, locale }: PatternStepProps) {
+export function PatternPicker({ state, onChange, locale }: PatternPickerProps) {
   const isAr = locale === "ar";
 
   const baseColor =
     colors.find((c) => c.id === state.colorId)?.hex ?? "#2a2a2a";
 
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-heading)]">
-          {isAr ? "اختر النمط" : "Select Pattern"}
-        </h2>
-        <p className="text-[var(--color-text-muted)] text-sm">
-          {isAr
-            ? "يظهر النمط على لونك المختار"
-            : "Pattern preview reflects your chosen colour"}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <div className="space-y-5">
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
         {patterns.map((pattern, index) => {
           const isSelected = state.patternId === pattern.id;
 
           return (
             <motion.button
               key={pattern.id}
-              onClick={() => onChange({ patternId: pattern.id })}
-              data-testid="step-option"
+              onClick={() => onChange({ patternId: isSelected ? null : pattern.id })}
+              data-testid="picker-option"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.2, delay: index * 0.04 }}

@@ -11,7 +11,7 @@ const CATEGORY_IMAGE: Record<CategoryType, string> = {
   curtains: "/cards/curtains.jpg",
   chairs: "/cards/chairs.jpg",
   sofas: "/cards/sofas.jpg",
-  "bed-sheets": "/cards/bedsheets.jpg",
+  "bed-covers": "/cards/bedsheets.jpg",
   custom: "/cards/customsolution.jpg",
 };
 
@@ -19,7 +19,7 @@ const CATEGORY_ACCENT: Record<CategoryType, string> = {
   curtains: "#b0a4c8",
   chairs: "#c8aa7a",
   sofas: "#7ac8b4",
-  "bed-sheets": "#8a9ece",
+  "bed-covers": "#8a9ece",
   custom: "#ce8a9a",
 };
 

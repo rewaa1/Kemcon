@@ -2,6 +2,9 @@ import { fabrics, fabricFamilies } from "@/data/fabrics";
 import { colors } from "@/data/colors";
 import { patterns } from "@/data/patterns";
 import { frameMaterials, frameFinishes, fillingOptions } from "@/data/frames";
+import { curtainLayerById } from "@/data/curtainLayers";
+import { bedSizeById } from "@/data/bedSizes";
+import { propertyTypeLabel } from "@/data/propertyTypes";
 import { SITE_URL } from "@/lib/metadata";
 import type { CategoryType } from "@/types/configurator";
 import type { BriefContact, BriefLineItem, BriefProject, BriefType } from "./types";
@@ -10,7 +13,7 @@ export const CATEGORY_LABELS: Record<CategoryType, { en: string; ar: string }> =
   curtains: { en: "Curtains", ar: "ستائر" },
   chairs: { en: "Chairs", ar: "كراسي" },
   sofas: { en: "Sofas", ar: "أرائك" },
-  "bed-sheets": { en: "Bed Sheets", ar: "ملاءات سرير" },
+  "bed-covers": { en: "Bed Covers", ar: "مفارش سرير" },
   custom: { en: "Custom", ar: "مخصص" },
 };
 
@@ -32,7 +35,7 @@ export const UNIT_LABELS: Record<CategoryType, { en: string; ar: string }> = {
   curtains: { en: "panels", ar: "لوحة" },
   chairs: { en: "units", ar: "قطعة" },
   sofas: { en: "units", ar: "قطعة" },
-  "bed-sheets": { en: "sets", ar: "طقم" },
+  "bed-covers": { en: "sets", ar: "طقم" },
   custom: { en: "items", ar: "قطعة" },
 };
 
@@ -91,6 +94,18 @@ export function lineItemChips(item: BriefLineItem, isAr: boolean): Chip[] {
   }
 
   if (item.category === "curtains") {
+    const layers = item.curtainLayerIds ?? [];
+    if (layers.length) {
+      chips.push({
+        label: isAr ? "الطبقات" : "Layers",
+        value: `${layers.length} · ${layers
+          .map((id) => {
+            const layer = curtainLayerById(id);
+            return layer ? (isAr ? layer.nameAr : layer.name) : id;
+          })
+          .join(", ")}`,
+      });
+    }
     if (item.curtainControl) {
       chips.push({
         label: isAr ? "التحكم" : "Control",
@@ -105,10 +120,14 @@ export function lineItemChips(item: BriefLineItem, isAr: boolean): Chip[] {
         label: isAr ? "القياس" : "Measurement",
         value: isAr ? "زيارة مطلوبة" : "Visit requested",
       });
-    } else if (item.curtainWidth && item.curtainHeight) {
+    } else if (item.curtainSizes?.length) {
+      const first = item.curtainSizes[0];
+      const extra = item.curtainSizes.length - 1;
       chips.push({
-        label: isAr ? "المقاس" : "Size",
-        value: `${item.curtainWidth} × ${item.curtainHeight} cm`,
+        label: isAr ? "المقاسات" : "Sizes",
+        value:
+          `${first.widthCm} × ${first.heightCm} cm` +
+          (extra > 0 ? (isAr ? ` +${extra} أخرى` : ` +${extra} more`) : ""),
       });
     }
   }
@@ -131,7 +150,14 @@ export function lineItemChips(item: BriefLineItem, isAr: boolean): Chip[] {
     }
   }
 
-  if (item.category === "bed-sheets") {
+  if (item.category === "bed-covers") {
+    const bed = item.bedSize ? bedSizeById(item.bedSize) : undefined;
+    if (bed) {
+      chips.push({
+        label: isAr ? "المقاس" : "Bed size",
+        value: `${isAr ? bed.nameAr : bed.name} · ${bed.dimensions}`,
+      });
+    }
     if (item.pillowAdd === true) {
       chips.push({
         label: isAr ? "المخدات" : "Pillows",
@@ -150,6 +176,17 @@ export function lineItemChips(item: BriefLineItem, isAr: boolean): Chip[] {
           ? `${item.customDescription.slice(0, 80)}…`
           : item.customDescription,
     });
+  }
+
+  // Treatments are a property of the fabric, not of the category, so they are
+  // offered — and rendered — everywhere rather than only on curtains.
+  const treatments = [
+    item.treatmentAntimicrobial &&
+      (isAr ? "مضاد للفطريات والبكتيريا" : "Anti-fungal / antibacterial"),
+    item.treatmentFireRetardant && (isAr ? "مقاوم للحريق" : "Fire-retardant"),
+  ].filter(Boolean) as string[];
+  if (treatments.length) {
+    chips.push({ label: isAr ? "المعالجة" : "Treatment", value: treatments.join(" · ") });
   }
 
   return chips;
@@ -188,10 +225,25 @@ function formatLineItem(item: BriefLineItem, index: number): string {
   if (pattern) push("Pattern", pattern.name);
 
   if (item.category === "curtains") {
+    const layers = item.curtainLayerIds ?? [];
+    if (layers.length) {
+      push(
+        "Layers",
+        `${layers.length} — ${layers
+          .map((id) => curtainLayerById(id)?.name ?? id)
+          .join(", ")}`
+      );
+    }
     if (item.curtainControl) push("Control", item.curtainControl);
     if (item.requestMeasurement) push("Measurement", "Site visit requested");
-    else if (item.curtainWidth && item.curtainHeight)
-      push("Size", `${item.curtainWidth}cm × ${item.curtainHeight}cm`);
+    else if (item.curtainSizes?.length) {
+      lines.push("     Sizes:");
+      for (const size of item.curtainSizes) {
+        const qty = Number(size.quantity) > 1 ? ` × ${size.quantity}` : "";
+        const label = size.label ? `${size.label}: ` : "";
+        lines.push(`       - ${label}${size.widthCm}cm × ${size.heightCm}cm${qty}`);
+      }
+    }
   }
 
   if (item.category === "chairs" || item.category === "sofas") {
@@ -210,7 +262,9 @@ function formatLineItem(item: BriefLineItem, index: number): string {
     }
   }
 
-  if (item.category === "bed-sheets") {
+  if (item.category === "bed-covers") {
+    const bed = item.bedSize ? bedSizeById(item.bedSize) : undefined;
+    if (bed) push("Bed size", `${bed.name} (${bed.dimensions})`);
     if (item.pillowAdd === true) push("Pillows", `${item.pillowSize} size — ${item.pillowFill} fill`);
     else if (item.pillowAdd === false) push("Pillows", "No");
   }
@@ -219,9 +273,10 @@ function formatLineItem(item: BriefLineItem, index: number): string {
     push("Description", item.customDescription);
   }
 
+  if (item.treatmentAntimicrobial) push("Treatment", "Anti-fungal & antibacterial");
+  if (item.treatmentFireRetardant) push("Treatment", "Fire-retardant (burn-treated)");
+
   if (item.notes) push("Item notes", item.notes);
-  if (item.aiImageUrl) push("AI room view", item.aiImageUrl);
-  if (item.aiDetailImageUrl) push("AI fabric detail", item.aiDetailImageUrl);
 
   return lines.join("\n");
 }
@@ -234,15 +289,6 @@ export interface BriefSnapshot {
   inspirationImages: string[];
   contact: BriefContact;
 }
-
-const PROPERTY_TYPE_LABELS: Record<string, string> = {
-  apartment: "Apartment",
-  villa: "Villa",
-  hotel: "Hotel",
-  office: "Office",
-  restaurant: "Restaurant",
-  other: "Other",
-};
 
 const SCOPE_LABELS: Record<string, string> = {
   single: "Single Room",
@@ -289,7 +335,7 @@ export function formatBrief(brief: BriefSnapshot, photoUrls: string[] = []): str
 
   const p = brief.project;
   const projectLines: string[] = [];
-  if (p.propertyType) projectLines.push(`  Property type: ${PROPERTY_TYPE_LABELS[p.propertyType] ?? p.propertyType}`);
+  if (p.propertyType) projectLines.push(`  Property type: ${propertyTypeLabel(p.propertyType)}`);
   if (p.propertyName) projectLines.push(`  Property / hotel name: ${p.propertyName}`);
   if (p.projectType) projectLines.push(`  Project type: ${PROJECT_TYPE_LABELS[p.projectType] ?? p.projectType}`);
   if (p.scope) projectLines.push(`  Scope: ${SCOPE_LABELS[p.scope] ?? p.scope}`);

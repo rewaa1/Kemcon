@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { startLenis, stopLenis } from "@/components/providers/LenisProvider";
@@ -160,17 +159,6 @@ export function BriefDrawer() {
                         className="rounded-sm border border-[var(--color-deep-accent)]/15 bg-[var(--color-surface)] p-4 space-y-3"
                       >
                         <div className={`flex items-start gap-3 ${isAr ? "flex-row-reverse" : ""}`}>
-                          {item.aiImageUrl && (
-                            <div className="relative w-12 h-16 rounded-sm overflow-hidden border border-[var(--color-deep-accent)]/20 flex-shrink-0">
-                              <Image
-                                src={item.aiImageUrl}
-                                alt=""
-                                fill
-                                className="object-cover"
-                                sizes="48px"
-                              />
-                            </div>
-                          )}
                           <div className={`flex-1 min-w-0 ${isAr ? "text-right" : ""}`}>
                             <p className="text-sm font-semibold text-[var(--color-heading)] leading-snug">
                               {lineItemTitle(item, isAr)}

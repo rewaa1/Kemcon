@@ -1,4 +1,4 @@
-import type { CategoryType, StepType } from "@/types/configurator";
+import type { CategoryType } from "@/types/configurator";
 
 /**
  * Everything the site records about how a visitor moved through it.
@@ -27,12 +27,21 @@ export type JourneyEvent =
   // ── products & configurator ─────────────────────────────────────────────
   | { t: "product_view"; category: CategoryType; productId?: string }
   | { t: "intake_answer"; question: string; answer: string }
-  | { t: "configurator_open"; category: CategoryType }
-  | { t: "configurator_step"; category: CategoryType; step: StepType }
+  /**
+   * The visitor has specified enough of a product for it to be quotable.
+   *
+   * This replaced the retired configurator's `configurator_open` /
+   * `configurator_step` pair when every category moved to a single form: there
+   * are no steps left to emit, so without it a visitor would jump straight
+   * from `product_view` to `form_start` and the CRM's "configured" funnel
+   * stage would lose everyone who specified a piece and then left. The CRM
+   * still counts the two retired types toward that stage so historical
+   * journeys keep reading correctly.
+   */
+  | { t: "enquiry_configured"; category: CategoryType }
   | { t: "fabric_select"; fabricId: string; familyId?: string }
   | { t: "color_select"; colorId: string }
   | { t: "pattern_select"; patternId: string }
-  | { t: "ai_visualize"; category: CategoryType }
 
   // ── clients / showcase ──────────────────────────────────────────────────
   | { t: "client_gallery_open"; clientId: string; region: string }
@@ -71,12 +80,10 @@ export const JOURNEY_EVENT_TYPES = [
   "page_dwell",
   "product_view",
   "intake_answer",
-  "configurator_open",
-  "configurator_step",
+  "enquiry_configured",
   "fabric_select",
   "color_select",
   "pattern_select",
-  "ai_visualize",
   "client_gallery_open",
   "client_gallery_close",
   "clients_filter",

@@ -15,7 +15,7 @@ const PRODUCT_CATEGORIES: { id: Exclude<CategoryType, "custom">; en: string; ar:
   { id: "curtains", en: CATEGORY_LABELS.curtains.en, ar: CATEGORY_LABELS.curtains.ar },
   { id: "chairs", en: CATEGORY_LABELS.chairs.en, ar: CATEGORY_LABELS.chairs.ar },
   { id: "sofas", en: CATEGORY_LABELS.sofas.en, ar: CATEGORY_LABELS.sofas.ar },
-  { id: "bed-sheets", en: CATEGORY_LABELS["bed-sheets"].en, ar: CATEGORY_LABELS["bed-sheets"].ar },
+  { id: "bed-covers", en: CATEGORY_LABELS["bed-covers"].en, ar: CATEGORY_LABELS["bed-covers"].ar },
 ];
 
 /**

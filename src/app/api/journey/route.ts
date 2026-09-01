@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { sendJourneyToCrm, type CrmJourneyEvent } from "@/lib/crm";
 import { isKnownEventType } from "@/lib/journey/events";
@@ -96,14 +96,26 @@ export async function POST(request: NextRequest) {
   const locale =
     events.find((e) => typeof e.payload.locale === "string")?.payload.locale ?? "en";
 
-  await sendJourneyToCrm({
-    visitorId,
-    locale: String(locale),
-    referrer: request.headers.get("referer"),
-    // Vercel resolves this at the edge; absent in local development.
-    country: request.headers.get("x-vercel-ip-country"),
-    events,
-  });
+  /**
+   * Forwarded after the response, not before it.
+   *
+   * Nothing is waiting on this 204 — it answers a `sendBeacon` — but the
+   * connection was still being held open for as long as the CRM took to
+   * answer. When the CRM was slow that meant the browser had a beacon in
+   * flight for the whole timeout, and the next flush piled up behind it. The
+   * page views are worth recording; they are not worth holding a request open
+   * for, so `after` hands them off once this handler has already replied.
+   */
+  after(() =>
+    sendJourneyToCrm({
+      visitorId,
+      locale: String(locale),
+      referrer: request.headers.get("referer"),
+      // Vercel resolves this at the edge; absent in local development.
+      country: request.headers.get("x-vercel-ip-country"),
+      events,
+    })
+  );
 
   return NO_CONTENT;
 }

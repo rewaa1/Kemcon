@@ -2,14 +2,17 @@ import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
-import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
-
-const ConfiguratorShell = dynamic(() =>
-  import("@/components/products/configurator/ConfiguratorShell").then(
-    (m) => ({ default: m.ConfiguratorShell })
-  )
-);
 import { JsonLd } from "@/components/seo/JsonLd";
+import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
+import { productSeo } from "@/data/productSeo";
+
+const ProductEnquiryForm = dynamic(() =>
+  import("@/components/products/enquiry/ProductEnquiryForm").then((m) => ({
+    default: m.ProductEnquiryForm,
+  }))
+);
+
+const seo = productSeo["chairs"];
 
 interface PageProps {
   searchParams: Promise<{ fabric?: string; fabricFamily?: string; edit?: string }>;
@@ -19,10 +22,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   return buildPageMetadata({
     locale,
-    path: "/products/chairs",
-    titleKey: "meta.pages.chairs.title",
-    descriptionKey: "meta.pages.chairs.description",
-    ogImage: "cards/chairs.jpg",
+    path: `/products/${seo.slug}`,
+    titleKey: `meta.pages.${seo.metaKey}.title`,
+    descriptionKey: `meta.pages.${seo.metaKey}.description`,
+    ogImage: seo.ogImage,
   });
 }
 
@@ -31,7 +34,8 @@ export default async function ChairsPage({ searchParams }: PageProps) {
   const isAr = locale === "ar";
   const { fabric, fabricFamily, edit } = await searchParams;
 
-  const pageUrl = `${SITE_URL}/${locale}/products/chairs`;
+  const lang = isAr ? "ar" : "en";
+  const pageUrl = `${SITE_URL}/${locale}/products/${seo.slug}`;
 
   const schemas = [
     {
@@ -40,19 +44,22 @@ export default async function ChairsPage({ searchParams }: PageProps) {
       itemListElement: [
         { "@type": "ListItem", position: 1, name: isAr ? "الرئيسية" : "Home", item: `${SITE_URL}/${locale}` },
         { "@type": "ListItem", position: 2, name: isAr ? "المنتجات" : "Products", item: `${SITE_URL}/${locale}/products` },
-        { "@type": "ListItem", position: 3, name: isAr ? "كراسي" : "Chairs", item: pageUrl },
+        { "@type": "ListItem", position: 3, name: seo.name[lang], item: pageUrl },
       ],
     },
     {
       "@context": "https://schema.org",
       "@type": "Product",
-      name: isAr ? "كراسي مخصصة" : "Custom Chairs",
-      description: isAr
-        ? "كراسي مخصصة بالكامل من كيمكون — اختر مادة الإطار والتشطيب وصلابة الحشو وقماش التنجيد لمشاريع الضيافة أو السكنية."
-        : "Fully custom chairs from Kemcon — choose your frame material, finish, filling firmness, and upholstery fabric for hospitality or residential projects.",
+      name: seo.schemaName[lang],
+      description: seo.description[lang],
       url: pageUrl,
       brand: { "@type": "Brand", name: "Kemcon" },
-      offers: { "@type": "Offer", url: pageUrl, availability: "https://schema.org/InStoreOnly", seller: { "@type": "Organization", name: "Kemcon" } },
+      offers: {
+        "@type": "Offer",
+        url: pageUrl,
+        availability: "https://schema.org/InStoreOnly",
+        seller: { "@type": "Organization", name: "Kemcon" },
+      },
     },
   ];
 
@@ -60,9 +67,8 @@ export default async function ChairsPage({ searchParams }: PageProps) {
     <>
       <JsonLd schema={schemas} />
       <ErrorBoundary>
-        <ConfiguratorShell
+        <ProductEnquiryForm
           category="chairs"
-          categoryLabel={isAr ? "كراسي" : "Chairs"}
           locale={locale}
           initialFabricId={fabric}
           initialFabricFamilyId={fabricFamily}

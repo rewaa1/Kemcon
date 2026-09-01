@@ -26,7 +26,7 @@ const PRODUCTS_NEEDED = [
   { value: "curtains",   en: "Curtains",    ar: "ستائر",       unitEn: "panels",  unitAr: "لوحة",  hintEn: "e.g. 300", hintAr: "مثال: 300", isText: false },
   { value: "chairs",     en: "Chairs",      ar: "كراسي",       unitEn: "units",   unitAr: "قطعة", hintEn: "e.g. 150", hintAr: "مثال: 150", isText: false },
   { value: "sofas",      en: "Sofas",       ar: "أرائك",       unitEn: "units",   unitAr: "قطعة", hintEn: "e.g. 50",  hintAr: "مثال: 50",  isText: false },
-  { value: "bed-sheets", en: "Bed Sheets",  ar: "ملاءات سرير", unitEn: "sets",    unitAr: "طقم",  hintEn: "e.g. 200", hintAr: "مثال: 200", isText: false },
+  { value: "bed-covers", en: "Bed Covers",  ar: "مفارش سرير", unitEn: "sets",    unitAr: "طقم",  hintEn: "e.g. 200", hintAr: "مثال: 200", isText: false },
   { value: "other",      en: "Other",       ar: "أخرى",        unitEn: "",        unitAr: "",     hintEn: "Describe what you need", hintAr: "صف ما تحتاجه", isText: true  },
 ] as const;
 
@@ -133,7 +133,7 @@ export default function MassProductionClient() {
       if (value === "other") {
         addBriefItem(emptyLineItem("custom", 1, raw));
       } else {
-        addBriefItem(emptyLineItem(value as "curtains" | "chairs" | "sofas" | "bed-sheets", Number(raw) || 1));
+        addBriefItem(emptyLineItem(value as "curtains" | "chairs" | "sofas" | "bed-covers", Number(raw) || 1));
       }
     }
 

@@ -49,7 +49,7 @@ src/
             ├── curtains/page.tsx    ← generateMetadata (server component, no split needed)
             ├── chairs/page.tsx
             ├── sofas/page.tsx
-            ├── bed-sheets/page.tsx
+            ├── bed-covers/page.tsx
             └── custom/page.tsx
 ```
 
@@ -100,7 +100,7 @@ meta.pages.massProduction.*
 meta.pages.curtains.*
 meta.pages.chairs.*
 meta.pages.sofas.*
-meta.pages.bedSheets.*
+meta.pages.bedCovers.*
 meta.pages.custom.*
 ```
 
@@ -126,7 +126,7 @@ Every route exports `generateMetadata`. Pages that were originally `"use client"
 | `/products/curtains` | Bespoke Curtains \| Kemcon | No |
 | `/products/chairs` | Custom Chairs \| Kemcon | No |
 | `/products/sofas` | Bespoke Sofas \| Kemcon | No |
-| `/products/bed-sheets` | Premium Bed Sheets \| Kemcon | No |
+| `/products/bed-covers` | Premium Bed Covers \| Kemcon | No |
 | `/products/custom` | Custom Solutions \| Kemcon | No |
 
 All titles and descriptions are fully localized in both English and Arabic.
@@ -238,7 +238,7 @@ Added to `src/app/[locale]/products/page.tsx`.
 | Medium | `og:url` not explicit | Add `openGraph.url` field in `buildPageMetadata` |
 | Medium | Sitemap `lastModified` is always today | Set `NEXT_PUBLIC_DEPLOY_DATE` in CI and derive from it |
 | Medium | `Organization` schema missing `logo` and `sameAs` | Add to root layout JSON-LD; `sameAs` lists verified social profiles |
-| Low | No `BreadcrumbList` on product category pages | Add to curtains/chairs/sofas/bed-sheets/custom `page.tsx` |
+| Low | No `BreadcrumbList` on product category pages | Add to curtains/chairs/sofas/bed-covers/custom `page.tsx` |
 | Low | No `twitter:site` handle | Add to locale layout `twitter` object if handle exists |
 | Low | Single favicon, no sized variants, 886KB | Generate 192×192, 512×512, 180×180 variants; consider SVG favicon |
 | Low | OG image font fetched from Google at runtime | Self-host `.woff` in `public/fonts/` and remove `runtime = "edge"` to use `fs.readFile` |

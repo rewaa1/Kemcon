@@ -10,7 +10,7 @@ const productImages = [
   { key: "curtains",  image: "/cards/curtains-home.jpg",  href: "/products/curtains" },
   { key: "sofas",     image: "/cards/sofa.jpg",      href: "/products/sofas" },
   { key: "chairs",    image: "/cards/chair.jpg",     href: "/products/chairs" },
-  { key: "bedSheets", image: "/cards/bedsheets-home.jpg", href: "/products/bed-sheets" },
+  { key: "bedCovers", image: "/cards/bedsheets-home.jpg", href: "/products/bed-covers" },
   { key: "fabrics",   image: "/cards/fabrics.jpg",   href: "/products" },
   { key: "custom",    image: "/cards/custom.jpg",    href: "/products/custom" },
 ];

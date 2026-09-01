@@ -77,9 +77,23 @@ batch would lose the good events either side of it.
 | Group | Events |
 |---|---|
 | Generic | `page_view`, `page_dwell` |
-| Products | `product_view`, `intake_answer`, `configurator_open`, `configurator_step`, `fabric_select`, `color_select`, `pattern_select`, `ai_visualize` |
+| Products | `product_view`, `intake_answer`, `enquiry_configured`, `fabric_select`, `color_select`, `pattern_select` |
 | Clients page | `client_gallery_open`, `client_gallery_close`, `clients_filter`, `clients_load_more` |
 | Conversion | `brief_item_add`, `brief_item_remove`, `brief_open`, `form_start`, `whatsapp_click`, `form_submit` |
+
+`enquiry_configured` is the odd one out and exists for the funnel. Every
+category is a single enquiry form now, so nothing emits `configurator_step` —
+and the CRM's "configured" stage was defined by that event. Without a
+replacement, everyone who specified a piece and then left would be counted no
+further than `product_view`. It fires once, when the form's required block first
+becomes complete. Changing its name means changing `FUNNEL_STAGES` in the CRM's
+`src/domain/journey.ts` too.
+
+**Retired:** `configurator_open`, `configurator_step` and `ai_visualize` went
+with the configurator and the AI room preview. They are gone from this union, so
+nothing emits them and `/api/journey` no longer accepts them — but the CRM still
+counts the first two toward their funnel stages, because journeys recorded
+before the change still carry them.
 
 ### Time on page
 

@@ -37,9 +37,16 @@ flagged `CRM: NOT RECORDED`. An enquiry should never exist in only one place.
 |---|---|---|
 | Contact page | `contact` | [contact-client.tsx](../src/app/[locale]/contact/contact-client.tsx) |
 | Brief (configurator, design plan, mass production) | `brief` | [ContactSubmit.tsx](../src/components/shared/ContactSubmit.tsx) via [brief-client.tsx](../src/app/[locale]/products/brief/brief-client.tsx) |
+| Product enquiry | the category slug — `curtains`, `chairs`, `sofas`, `bed-covers`, `custom` | [ProductEnquiryForm.tsx](../src/components/products/enquiry/ProductEnquiryForm.tsx) |
 
 `ContactSubmit` defaults to `formType="brief"`; pass `formType` explicitly if it is
 ever reused for something else.
+
+**`formType` is free text on the wire**, not an enum — the CRM validates it as
+`z.string().max(60)` and its UI falls back to the raw value when it has no label
+for it. So a new form never breaks ingest, but it *does* show up in the CRM's
+Leads table as a bare slug until `formType.<slug>` is added to the CRM's
+`messages/en.json` and `messages/ar.json`.
 
 ---
 
@@ -51,7 +58,7 @@ ever reused for something else.
 {
   "source": "website",
   "channel": "EMAIL" | "WHATSAPP",
-  "formType": "contact" | "brief" | "quick",
+  "formType": "contact" | "brief" | "<category slug>",  // free text; see the table above
   "briefType": "standard" | "bulk" | "design" | null,
   "name": "Sara Fahmy",
   "phone": "+20 12 3456789",        // phone or email required — at least one

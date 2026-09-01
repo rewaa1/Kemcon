@@ -10,12 +10,14 @@
  * See docs/crm-lead-intake.md and the CRM's `/api/leads/ingest`.
  */
 
+import { randomUUID } from "node:crypto";
+
 export type LeadChannel = "email" | "whatsapp";
 
 export interface CrmLead {
   /** How the visitor asked to be followed up. */
   channel: LeadChannel;
-  /** Which form produced it — "contact" | "brief" | "quick". */
+  /** Which form produced it — "contact" | "brief" | "curtains". Free text; see docs/crm-lead-intake.md. */
   formType: string;
   /** For briefs: standard | bulk | design. */
   briefType?: string | null;
@@ -44,14 +46,37 @@ export type CrmResult =
 const TIMEOUT_MS = 8_000;
 
 /**
+ * How hard to try, per kind of payload.
+ *
+ * A lead is worth waiting for and worth one retry — losing it means losing the
+ * enquiry. A journey batch is worth neither: retrying page views doubles the
+ * load on a CRM that is already too slow to answer, which is precisely the
+ * wrong response to the only condition that triggers it. So journeys get one
+ * short attempt and are dropped on failure, exactly as `sendJourneyToCrm`
+ * documents.
+ */
+interface PostOptions {
+  attempts: number;
+  timeoutMs: number;
+}
+
+const LEAD_POST: PostOptions = { attempts: 2, timeoutMs: TIMEOUT_MS };
+const JOURNEY_POST: PostOptions = { attempts: 1, timeoutMs: 3_000 };
+
+/**
  * POSTs a payload to a CRM ingest endpoint.
  *
  * Never throws and never retries a 4xx: a rejected payload will be rejected
- * again. One retry covers the case worth covering — a cold start or a dropped
- * connection. Callers decide what a failure means for them; this only reports.
+ * again. Callers decide what a failure means for them; this only reports.
  */
-async function postToCrm(url: string, secret: string, body: string, label: string): Promise<CrmResult> {
-  for (let attempt = 1; attempt <= 2; attempt++) {
+async function postToCrm(
+  url: string,
+  secret: string,
+  body: string,
+  label: string,
+  { attempts, timeoutMs }: PostOptions
+): Promise<CrmResult> {
+  for (let attempt = 1; attempt <= attempts; attempt++) {
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -60,7 +85,7 @@ async function postToCrm(url: string, secret: string, body: string, label: strin
           "x-kemcon-ingest-secret": secret,
         },
         body,
-        signal: AbortSignal.timeout(TIMEOUT_MS),
+        signal: AbortSignal.timeout(timeoutMs),
         cache: "no-store",
       });
 
@@ -78,7 +103,9 @@ async function postToCrm(url: string, secret: string, body: string, label: strin
 
       console.error(`[crm] ${label} attempt ${attempt} failed (${response.status}):`, detail.slice(0, 500));
     } catch (error) {
-      console.error(`[crm] ${label} attempt ${attempt} could not reach the CRM:`, error);
+      const reason = error instanceof Error ? error.message : String(error);
+      if (attempts === 1) console.warn(`[crm] ${label} dropped — ${reason}`);
+      else console.error(`[crm] ${label} attempt ${attempt} could not reach the CRM: ${reason}`);
     }
   }
 
@@ -103,6 +130,16 @@ export async function sendLeadToCrm(lead: CrmLead): Promise<CrmResult> {
 
   const body = JSON.stringify({
     source: "website",
+    /**
+     * One key per submission, built here so both attempts of the retry below
+     * carry the same value.
+     *
+     * `postToCrm` retries a lead once, and an 8s abort does not mean the CRM
+     * ignored us — it may have committed the row a moment after we stopped
+     * listening. Without this the retry wrote a second identical lead, which
+     * is exactly what a slow CRM used to produce.
+     */
+    idempotencyKey: randomUUID(),
     channel: lead.channel === "whatsapp" ? "WHATSAPP" : "EMAIL",
     formType: lead.formType,
     briefType: lead.briefType ?? null,
@@ -116,7 +153,7 @@ export async function sendLeadToCrm(lead: CrmLead): Promise<CrmResult> {
     vid: lead.visitorId ?? null,
   });
 
-  return postToCrm(url, secret, body, "Lead");
+  return postToCrm(url, secret, body, "Lead", LEAD_POST);
 }
 
 /** One tracked event, as `/api/journey` forwards it. */
@@ -168,5 +205,5 @@ export async function sendJourneyToCrm(batch: CrmJourneyBatch): Promise<CrmResul
     events: batch.events,
   });
 
-  return postToCrm(journeyUrl(ingestUrl), secret, body, "Journey");
+  return postToCrm(journeyUrl(ingestUrl), secret, body, "Journey", JOURNEY_POST);
 }

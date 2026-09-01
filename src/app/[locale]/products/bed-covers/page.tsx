@@ -2,14 +2,17 @@ import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
-import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
-
-const ConfiguratorShell = dynamic(() =>
-  import("@/components/products/configurator/ConfiguratorShell").then(
-    (m) => ({ default: m.ConfiguratorShell })
-  )
-);
 import { JsonLd } from "@/components/seo/JsonLd";
+import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
+import { productSeo } from "@/data/productSeo";
+
+const ProductEnquiryForm = dynamic(() =>
+  import("@/components/products/enquiry/ProductEnquiryForm").then((m) => ({
+    default: m.ProductEnquiryForm,
+  }))
+);
+
+const seo = productSeo["bed-covers"];
 
 interface PageProps {
   searchParams: Promise<{ fabric?: string; fabricFamily?: string; edit?: string }>;
@@ -19,19 +22,20 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   return buildPageMetadata({
     locale,
-    path: "/products/bed-sheets",
-    titleKey: "meta.pages.bedSheets.title",
-    descriptionKey: "meta.pages.bedSheets.description",
-    ogImage: "cards/bedsheets.jpg",
+    path: `/products/${seo.slug}`,
+    titleKey: `meta.pages.${seo.metaKey}.title`,
+    descriptionKey: `meta.pages.${seo.metaKey}.description`,
+    ogImage: seo.ogImage,
   });
 }
 
-export default async function BedSheetsPage({ searchParams }: PageProps) {
+export default async function BedCoversPage({ searchParams }: PageProps) {
   const locale = await getLocale();
   const isAr = locale === "ar";
   const { fabric, fabricFamily, edit } = await searchParams;
 
-  const pageUrl = `${SITE_URL}/${locale}/products/bed-sheets`;
+  const lang = isAr ? "ar" : "en";
+  const pageUrl = `${SITE_URL}/${locale}/products/${seo.slug}`;
 
   const schemas = [
     {
@@ -40,19 +44,22 @@ export default async function BedSheetsPage({ searchParams }: PageProps) {
       itemListElement: [
         { "@type": "ListItem", position: 1, name: isAr ? "الرئيسية" : "Home", item: `${SITE_URL}/${locale}` },
         { "@type": "ListItem", position: 2, name: isAr ? "المنتجات" : "Products", item: `${SITE_URL}/${locale}/products` },
-        { "@type": "ListItem", position: 3, name: isAr ? "ملاءات سرير" : "Bed Sheets", item: pageUrl },
+        { "@type": "ListItem", position: 3, name: seo.name[lang], item: pageUrl },
       ],
     },
     {
       "@context": "https://schema.org",
       "@type": "Product",
-      name: isAr ? "ملاءات سرير فاخرة" : "Premium Bed Sheets",
-      description: isAr
-        ? "ملاءات سرير فاخرة من القطن المصري والحرير والساتان والمزيد — بأي لون ونمط من كتالوج كيمكون المختار. راحة بمستوى الفنادق."
-        : "Premium bed linen in Egyptian cotton, silk, satin, and more — in any colour and pattern from Kemcon's curated catalog. Hotel-grade comfort.",
+      name: seo.schemaName[lang],
+      description: seo.description[lang],
       url: pageUrl,
       brand: { "@type": "Brand", name: "Kemcon" },
-      offers: { "@type": "Offer", url: pageUrl, availability: "https://schema.org/InStoreOnly", seller: { "@type": "Organization", name: "Kemcon" } },
+      offers: {
+        "@type": "Offer",
+        url: pageUrl,
+        availability: "https://schema.org/InStoreOnly",
+        seller: { "@type": "Organization", name: "Kemcon" },
+      },
     },
   ];
 
@@ -60,9 +67,8 @@ export default async function BedSheetsPage({ searchParams }: PageProps) {
     <>
       <JsonLd schema={schemas} />
       <ErrorBoundary>
-        <ConfiguratorShell
-          category="bed-sheets"
-          categoryLabel={isAr ? "ملاءات سرير" : "Bed Sheets"}
+        <ProductEnquiryForm
+          category="bed-covers"
           locale={locale}
           initialFabricId={fabric}
           initialFabricFamilyId={fabricFamily}
