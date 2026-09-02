@@ -25,11 +25,6 @@ jobs:
       CLOUDINARY_API_KEY: "000000000000000"
       CLOUDINARY_API_SECRET: ci-secret
       NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET: ci-preset
-      NEXT_PUBLIC_SENTRY_DSN: ""
-      SENTRY_DSN: ""
-      SENTRY_ORG: ""
-      SENTRY_PROJECT: ""
-      SENTRY_AUTH_TOKEN: ""
 
     steps:
       - name: Checkout
