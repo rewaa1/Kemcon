@@ -2,84 +2,72 @@ import { test, expect } from "@playwright/test";
 
 /**
  * The brief is the single lead path for the whole services section, so these
- * cover the parts that used to fail silently: the configurator now records a
- * lead instead of opening a `mailto:`, and the brief survives navigation.
+ * cover the parts that used to fail silently: an enquiry records a lead instead
+ * of opening a `mailto:`, and the brief survives navigation.
  */
 
 const BRIEF_KEY = "kemcon_brief_v1";
 
-test.describe("Brief — configurator to brief page", () => {
-  test("configures a piece, adds it to the brief, and reaches the brief page", async ({
+test.describe("Brief — enquiry form to brief page", () => {
+  test("specifies a piece, adds it to the brief, and reaches the brief page", async ({
     page,
   }) => {
-    // Bed sheets has no AI visualization step, so the flow needs no network
-    // image generation: fabric -> colour -> pattern -> pillows -> review.
-    await page.goto("/en/products/bed-sheets");
+    await page.goto("/en/products/bed-covers");
 
-    const next = page.getByRole("button", { name: "Next", exact: true });
+    // The required block: quantity defaults to 1, so only the property and the
+    // one product answer have to be given.
+    await page.getByRole("button", { name: "Hotel / Resort" }).click();
+    await page.getByLabel(/what is it called/i).fill("The Grand Nile Hotel");
+    await page.getByTestId("bed-size").filter({ hasText: "King" }).first().click();
 
-    for (const _step of ["fabric", "colour", "pattern"]) {
-      const option = page.getByTestId("step-option").first();
-      await expect(option).toBeVisible();
-      await option.click();
-      await expect(next).not.toHaveAttribute("aria-disabled", "true");
-      await next.click();
-    }
-
-    // Pillow add-on — decline, which is a valid terminal choice.
-    await page.getByRole("button", { name: /No, thank you/i }).click();
-    await next.click();
-
-    // Review step
-    const addToBrief = page.getByRole("button", { name: /Add to Brief/i });
-    await expect(addToBrief).toBeVisible();
+    const addToBrief = page.getByRole("button", { name: /Add to my brief/i });
+    await expect(addToBrief).toBeEnabled();
     await addToBrief.click();
 
-    // The drawer opens on add and shows the item.
-    const drawer = page.getByRole("dialog", { name: /Your brief/i });
-    await expect(drawer).toBeVisible();
-    await expect(drawer.getByText(/Bed Sheets/i).first()).toBeVisible();
-
-    await drawer.getByRole("link", { name: /Review & Send/i }).click();
     await expect(page).toHaveURL(/\/en\/products\/brief$/);
-    // The drawer must close on navigation, not sit over the brief page.
-    await expect(drawer).toBeHidden();
     await expect(page.locator("h1")).toHaveText("Your Brief");
+    await expect(page.getByText(/Bed Covers/i).first()).toBeVisible();
 
     // The contact form on the brief page is the single submit path.
     await expect(page.getByLabel(/Full Name/i)).toBeVisible();
     await expect(page.getByRole("button", { name: /Send Brief/i })).toBeVisible();
   });
 
-  test("pressing the commit button twice updates the item, never duplicates it", async ({
-    page,
-  }) => {
-    await page.goto("/en/products/bed-sheets");
+  test("editing a line item replaces it rather than appending a copy", async ({ page }) => {
+    await page.goto("/en/products/bed-covers");
     await page.evaluate(() => localStorage.removeItem("kemcon_brief_v1"));
     await page.reload();
 
-    const next = page.getByRole("button", { name: "Next", exact: true });
-    for (const _step of ["fabric", "colour", "pattern"]) {
-      await page.getByTestId("step-option").first().click();
-      await next.click();
-    }
-    await page.getByRole("button", { name: /No, thank you/i }).click();
-    await next.click();
+    await page.getByRole("button", { name: "Apartment" }).click();
+    await page.getByTestId("bed-size").filter({ hasText: "Queen" }).first().click();
 
-    const itemCount = () =>
+    const items = () =>
       page.evaluate(() => {
         const raw = localStorage.getItem("kemcon_brief_v1");
-        return raw ? JSON.parse(raw).state.items.length : 0;
+        return raw
+          ? (JSON.parse(raw).state.items as { bedSize: string | null }[])
+          : [];
       });
 
-    await page.getByRole("button", { name: /Add to Brief/i }).click();
-    expect(await itemCount()).toBe(1);
+    await page.getByRole("button", { name: /Add to my brief/i }).click();
+    await expect(page).toHaveURL(/\/en\/products\/brief$/);
+    expect(await items()).toHaveLength(1);
+    expect((await items())[0].bedSize).toBe("queen");
 
-    // Drawer opens over the step; dismiss it and commit again from the
-    // fixed bar, which now owns the action on every step.
-    await page.keyboard.press("Escape");
-    await page.getByRole("button", { name: /Update brief/i }).click();
-    expect(await itemCount()).toBe(1);
+    // The pencil reopens that item in its own form, seeded from the brief.
+    await page.getByRole("link", { name: /^Edit$/i }).click();
+    await expect(page).toHaveURL(/\/en\/products\/bed-covers\?edit=/);
+
+    // Edit mode collects no contact details — the brief page already has them.
+    await expect(page.getByRole("button", { name: /send enquiry/i })).toHaveCount(0);
+
+    await page.getByTestId("bed-size").filter({ hasText: "Single" }).first().click();
+    await page.getByRole("button", { name: /save changes/i }).click();
+    await expect(page).toHaveURL(/\/en\/products\/brief$/);
+
+    // One item, changed — not two.
+    expect(await items()).toHaveLength(1);
+    expect((await items())[0].bedSize).toBe("single");
   });
 
   test("after sending, the page shows only the confirmation", async ({ page }) => {
@@ -122,15 +110,18 @@ test.describe("Brief — configurator to brief page", () => {
                   colorId: null,
                   patternId: null,
                   curtainControl: null,
-                  curtainWidth: "",
-                  curtainHeight: "",
+                  curtainLayerIds: [],
+                  curtainSizes: [],
                   requestMeasurement: false,
+                  treatmentAntimicrobial: false,
+                  treatmentFireRetardant: false,
                   frameMaterialId: null,
                   frameFinishId: null,
                   fillingId: null,
                   cushionAdd: null,
                   cushionSameFabric: null,
                   cushionQty: null,
+                  bedSize: null,
                   pillowAdd: null,
                   pillowFill: null,
                   pillowSize: null,
@@ -156,7 +147,7 @@ test.describe("Brief — configurator to brief page", () => {
             },
             // Must match BRIEF_SCHEMA_VERSION — the store's `migrate` discards
             // any persisted brief written by a different schema version.
-            version: 1,
+            version: 3,
           })
         );
       },
@@ -171,6 +162,26 @@ test.describe("Brief — configurator to brief page", () => {
     await expect(briefButton).toBeVisible();
 
     await page.goto("/en/products/curtains");
+    await expect(page.getByRole("button", { name: /Brief — 1 item/i })).toBeVisible();
+  });
+});
+
+test.describe("Brief button visibility", () => {
+  test("stays out of the header until the brief holds something", async ({ page }) => {
+    await page.goto("/en/products");
+    await page.evaluate(() => localStorage.removeItem("kemcon_brief_v1"));
+    await page.reload();
+
+    // An empty brief has nothing to open, so the header does not offer it.
+    await expect(page.getByRole("button", { name: /^Brief/i })).toHaveCount(0);
+
+    // Specify a piece and add it; the header picks it up.
+    await page.goto("/en/products/bed-covers");
+    await page.getByRole("button", { name: "Apartment" }).click();
+    await page.getByTestId("bed-size").filter({ hasText: "King" }).first().click();
+    await page.getByRole("button", { name: /Add to my brief/i }).click();
+    await expect(page).toHaveURL(/\/en\/products\/brief$/);
+
     await expect(page.getByRole("button", { name: /Brief — 1 item/i })).toBeVisible();
   });
 });

@@ -7,8 +7,6 @@ import { ArrowRight, ArrowLeft, PenTool, Building2 } from "lucide-react";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { CategoryGrid } from "@/components/products/CategoryGrid";
-import { FabricCatalog } from "@/components/products/FabricCatalog";
-import { GuidedIntake } from "@/components/products/GuidedIntake";
 import type { CategoryType } from "@/types/configurator";
 
 /**
@@ -17,18 +15,13 @@ import type { CategoryType } from "@/types/configurator";
  * The page opens editorially — it states what Kemcon is before it shows a
  * filter — because this is the section's front page, not a category listing.
  *
- * Below that, `GuidedIntake` — two questions that route people who do not yet
- * know whether they want a configured piece, a design plan, or a bulk quote.
- * It only routes; skipping it costs the visitor nothing.
- *
- * Then the ways in, led by the ones where Kemcon does the work:
+ * Then two ways in, led by the one where Kemcon does the work:
  *   1. The service cards — hand the whole job over (design plan, bulk order).
  *   2. The category cards — for someone who knows the product.
- *   3. The fabric catalog — for someone who knows the material.
  *
- * All of them converge on the same brief. The divider labels read as a
- * sequence ("Let us take it on" → "Or start with a product" → "Or start with
- * a fabric"), so reordering the sections means rewording them too.
+ * Both converge on the same brief. The divider labels read as a sequence
+ * ("Let us take it on" → "Or start with a product"), so reordering the
+ * sections means rewording them too.
  */
 
 const SERVICES = [
@@ -125,11 +118,6 @@ export default function ProductsClient() {
         </div>
       </section>
 
-      {/* ── Two questions that route the visitor ── */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
-        <GuidedIntake categoriesAnchor="#product-categories" />
-      </section>
-
       {/* ── Let us take it on ── */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-5">
         <Divider label={isAr ? "دعنا نتولى الأمر" : "Let us take it on"} isAr={isAr} />
@@ -216,7 +204,7 @@ export default function ProductsClient() {
       {/* ── Or start from a product ── */}
       <section
         id="product-categories"
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-5 scroll-mt-32"
+        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 space-y-5 scroll-mt-32"
       >
         <Divider label={isAr ? "أو ابدأ من المنتج" : "Or start with a product"} isAr={isAr} />
         <CategoryGrid
@@ -224,21 +212,6 @@ export default function ProductsClient() {
           locale={locale}
           basePath={`/${locale}/products`}
         />
-      </section>
-
-      {/* ── Or start from a fabric ── */}
-      <section className="pb-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-          <Divider label={isAr ? "أو ابدأ من القماش" : "Or start with a fabric"} isAr={isAr} />
-          <p
-            className={`text-sm text-[var(--color-text-muted)] leading-relaxed mt-4 max-w-xl ${isAr ? "text-right ms-auto" : ""}`}
-          >
-            {isAr
-              ? "اختر المنتج لتصفية الأقمشة المتوافقة، ثم صمّم مباشرة من القماش الذي أعجبك."
-              : "Filter by what you're making, then configure straight from the fabric you like."}
-          </p>
-        </div>
-        <FabricCatalog />
       </section>
 
       <CTABanner />
