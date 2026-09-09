@@ -57,6 +57,7 @@ Leads table as a bare slug until `formType.<slug>` is added to the CRM's
 ```jsonc
 {
   "source": "website",
+  "idempotencyKey": "9f1c…",           // one per submission; same on every retry
   "channel": "EMAIL" | "WHATSAPP",
   "formType": "contact" | "brief" | "<category slug>",  // free text; see the table above
   "briefType": "standard" | "bulk" | "design" | null,
@@ -71,6 +72,21 @@ Leads table as a bare slug until `formType.<slug>` is added to the CRM's
 }
 ```
 
+### Exactly once, across a retry
+
+`sendLeadToCrm` builds one `idempotencyKey` per submission and `postToCrm`
+repeats it on the retry. The CRM stores it on `Lead.idempotencyKey` behind a
+unique index; a second insert with the same key is caught and the existing lead
+is returned instead.
+
+This is not theoretical. A lead is posted with an 8s timeout and retried once,
+and an abort does not mean the CRM ignored us — it may commit the row a moment
+after we stop listening. Before the key existed, two local submissions against a
+slow CRM produced **three** leads.
+
+Journey batches need none of this: they are never retried (see the `attempts`
+split in `lib/crm.ts`), so there is no second write to collapse.
+
 `vid` links the enquiry to everything the person browsed before sending it — see
 [journey-tracking.md](journey-tracking.md). It is read server-side from the signed
 `kc_vid` cookie on the same request that carried the form, so no form has to send
@@ -82,7 +98,8 @@ outside this codebase, and a lead you can only read by re-parsing a paragraph is
 not much of a record.
 
 Responses: `201 { ok, id }` · `401` bad secret · `422 { issues }` invalid payload ·
-`503` the CRM has no `LEADS_INGEST_SECRET` set.
+`503` the CRM has no `LEADS_INGEST_SECRET` set. A retry carrying an
+`idempotencyKey` already stored also returns `201` with the **original** `id`.
 
 ---
 

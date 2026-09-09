@@ -175,7 +175,7 @@ export const featuredClients = [
     name: "Concorde El Salam Hotel",
     region: "Cairo, Egypt",
     stars: 5,
-    logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoS0QLNV3y8qcB6ekDnxL7t2AaHzC9ITRVMs1g",
+    logo: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoN3W3npDeCuVHQg4Tcfrw1os2zbhIyJB7KExm",
     featured: "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKogw3cZTtYOp3EzU4ZnwhGQeDvAoaFf6CP5d2r",
     rooms: [
       "https://2e3n0iobhs.ufs.sh/f/ijFqTGBRjXKoDynOTCKtTGSY50nBevl9JkXw2hLZPHzxc1IR",

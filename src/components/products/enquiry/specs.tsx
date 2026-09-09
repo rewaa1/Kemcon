@@ -590,6 +590,22 @@ const SPECS: Record<CategoryType, CategorySpec> = {
  * shared ones. Fabric is skipped for custom, where nothing has been chosen to
  * put a fabric on yet.
  */
+/**
+ * The curtain questions, for a page that asks them outside a category form.
+ *
+ * Mass production offers these once curtains are among the products selected,
+ * so a hotel ordering 300 panels in bulk can answer the same things a hotel
+ * ordering them on the curtains page can. Fabric is left out on purpose: a bulk
+ * order settles fabric with the team rather than picking a swatch per line, and
+ * notes are already a field on that page.
+ */
+export const curtainDetailSections: EnquirySection[] = [
+  curtainMeasurementsSection,
+  curtainControlSection,
+  treatmentsSection,
+  photosSection,
+];
+
 export function sectionsFor(spec: CategorySpec): EnquirySection[] {
   return [
     ...spec.optional,

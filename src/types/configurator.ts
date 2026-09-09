@@ -58,6 +58,8 @@ export interface ConfiguratorState {
   treatmentAntimicrobial: boolean;
   /** Fire-retardant (burn-treated) fabric. */
   treatmentFireRetardant: boolean;
+  /** Stain-resistant fabric treatment. */
+  treatmentStainResistant: boolean;
 
   // ── Custom ────────────────────────────────────────────────────────────────
   customDescription: string;
@@ -94,6 +96,7 @@ export const initialConfiguratorState: ConfiguratorState = {
   pillowSize: null,
   treatmentAntimicrobial: false,
   treatmentFireRetardant: false,
+  treatmentStainResistant: false,
   customDescription: "",
   inspirationImages: [],
   inquiryName: "",
