@@ -5,13 +5,33 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, Check, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ClipboardList } from "lucide-react";
 
 import { FadeIn } from "@/components/motion/FadeIn";
 import { useBriefStore } from "@/lib/brief/store";
-import { MAX_INSPIRATION } from "@/lib/brief/format";
-import { emptyLineItem } from "@/lib/brief/types";
+import {
+  MAX_INSPIRATION,
+  buildBriefWhatsAppText,
+  formatBrief,
+  lineItemTitle,
+  type BriefSnapshot,
+} from "@/lib/brief/format";
+import {
+  emptyLineItem,
+  emptyProject,
+  lineItemFromConfigurator,
+  type BriefLineItem,
+} from "@/lib/brief/types";
 import { InspirationGallery } from "@/components/shared/InspirationGallery";
+import { ContactSubmit } from "@/components/shared/ContactSubmit";
+import { KEMCON_EMAIL } from "@/lib/config";
+import { curtainDetailSections, specFor } from "@/components/products/enquiry/specs";
+import {
+  OptionalSections,
+  useOptionalSections,
+} from "@/components/products/enquiry/OptionalSections";
+import { usableSizes } from "@/components/products/enquiry/CurtainSizeRows";
+import { initialConfiguratorState, type ConfiguratorState } from "@/types/configurator";
 
 const PROJECT_TYPES = [
   { value: "hotel", en: "Hotel", ar: "فندق" },
@@ -110,6 +130,114 @@ export default function MassProductionClient() {
     setForm((prev) => ({ ...prev, quantities: { ...prev.quantities, [value]: qty } }));
   };
 
+  const [contact, setContact] = useState({ name: "", phone: "", email: "" });
+
+  // ── Curtain detail ────────────────────────────────────────────────────────
+  // Selecting curtains here opens the same questions the curtains page asks —
+  // layers, measurements, how they open, treatments, photos — because a bulk
+  // order of 300 panels needs answering in exactly the same terms as one of 3.
+  const [curtainConfig, setCurtainConfig] = useState<ConfiguratorState>(initialConfiguratorState);
+  const [curtainImages, setCurtainImages] = useState<File[]>([]);
+
+  const updateCurtains = (updates: Partial<ConfiguratorState>) =>
+    setCurtainConfig((prev) => ({ ...prev, ...updates }));
+
+  const curtainCtx = {
+    config: curtainConfig,
+    update: updateCurtains,
+    locale,
+    isAr,
+    images: curtainImages,
+    setImages: setCurtainImages,
+    notes: form.notes,
+    setNotes: (next: string) => setForm((prev) => ({ ...prev, notes: next })),
+  };
+
+  const curtainSections = useOptionalSections(
+    curtainDetailSections,
+    curtainCtx,
+    updateCurtains
+  );
+
+  /**
+   * The selected products as brief line items.
+   *
+   * Shared by both ways out of this page, which is the point: sending directly
+   * and handing off to the brief describe the same order, so they must not
+   * describe it differently.
+   */
+  const buildLineItems = (): BriefLineItem[] =>
+    form.productsNeeded.map((value) => {
+      const raw = form.quantities[value] ?? "";
+      if (value === "other") return emptyLineItem("custom", 1, raw);
+
+      // Curtains carry whatever detail was filled in above; the rest are still
+      // a category and a quantity.
+      if (value === "curtains") {
+        return lineItemFromConfigurator(
+          // Half-filled measurement rows are someone who started typing and
+          // moved on, not a window anyone can cost.
+          { ...curtainConfig, curtainSizes: usableSizes(curtainConfig.curtainSizes) },
+          "curtains",
+          Number(raw) || 1
+        );
+      }
+
+      return emptyLineItem(value as "chairs" | "sofas" | "bed-covers", Number(raw) || 1);
+    });
+
+  /**
+   * This enquiry shaped as a brief, so it reaches the inbox and the CRM in the
+   * same format a bulk brief does. Sending from here rather than routing
+   * through the brief page changes who does the typing, not what is recorded —
+   * `formType: "brief"` with `briefType: "bulk"` is exactly how a
+   * mass-production lead is already classified.
+   */
+  const snapshot = (): BriefSnapshot => ({
+    type: "bulk",
+    items: buildLineItems(),
+    project: {
+      ...emptyProject,
+      projectType: form.projectType,
+      propertyName: form.propertyName,
+      timeline: form.timeline,
+    },
+    notes: form.notes,
+    inspirationImages: form.inspirationImages,
+    contact,
+  });
+
+  const buildSummary = (photoUrls?: string[]) => formatBrief(snapshot(), photoUrls ?? []);
+  const buildWhatsAppMessage = (photoUrls?: string[]) =>
+    buildBriefWhatsAppText(snapshot(), isAr, photoUrls ?? []);
+
+  const buildMeta = () => {
+    const items = buildLineItems();
+    return {
+      briefType: "bulk",
+      totalPieces: items.reduce((sum, item) => sum + item.quantity, 0),
+      notes: form.notes,
+      inspirationImages: form.inspirationImages,
+      project: Object.fromEntries(
+        Object.entries({
+          projectType: form.projectType,
+          propertyName: form.propertyName,
+          timeline: form.timeline,
+        }).filter(([, value]) => Boolean(value))
+      ),
+      items: items.map((item) => ({
+        category: item.category,
+        quantity: item.quantity,
+        title: lineItemTitle(item, false),
+        notes: item.notes,
+      })),
+    };
+  };
+
+  // The page's own required question, on top of the contact fields: an enquiry
+  // with no products in it is not an enquiry.
+  const hasProducts = form.productsNeeded.length > 0;
+
   /**
    * Each selected product becomes a real line item with its quantity, instead
    * of being flattened into a sentence. That is what lets a hotel refine
@@ -128,14 +256,7 @@ export default function MassProductionClient() {
     });
     if (form.notes) setBriefNotes(form.notes);
 
-    for (const value of form.productsNeeded) {
-      const raw = form.quantities[value] ?? "";
-      if (value === "other") {
-        addBriefItem(emptyLineItem("custom", 1, raw));
-      } else {
-        addBriefItem(emptyLineItem(value as "curtains" | "chairs" | "sofas" | "bed-covers", Number(raw) || 1));
-      }
-    }
+    for (const item of buildLineItems()) addBriefItem(item);
 
     for (const src of form.inspirationImages) {
       if (!briefInspiration.includes(src)) toggleBriefInspiration(src, MAX_INSPIRATION);
@@ -310,6 +431,27 @@ export default function MassProductionClient() {
                             </>
                           )}
                         </div>
+
+                        {/* This product's own questions, under this product.
+                            Chairs, sofas and bed covers get theirs the same
+                            way — each below the line it belongs to, so a long
+                            order stays readable as a list of products rather
+                            than a list followed by unattached detail. */}
+                        {prod.value === "curtains" && (
+                          <div className="space-y-5 pt-4 pb-2 ps-6 pe-1">
+                            {specFor("curtains").required.render(curtainCtx)}
+
+                            <OptionalSections
+                              sections={curtainDetailSections}
+                              ctx={curtainCtx}
+                              isAr={isAr}
+                              expanded={curtainSections.expanded}
+                              onToggle={curtainSections.toggle}
+                              headingEn="Add curtain detail (optional)"
+                              headingAr="أضف تفاصيل الستائر (اختياري)"
+                            />
+                          </div>
+                        )}
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -382,14 +524,48 @@ export default function MassProductionClient() {
           />
         </div>
 
-        {/* Hands off to the brief, which is where every path now sends. */}
-        <div className="space-y-3">
+        {/* Two ways out, as on the product enquiry forms: send it from here, or
+            carry it into the brief to add other categories to it first. */}
+        <ContactSubmit
+          isAr={isAr}
+          locale={locale}
+          name={contact.name}
+          phone={contact.phone}
+          email={contact.email}
+          onChange={(field, value) => setContact((prev) => ({ ...prev, [field]: value }))}
+          buildSummary={buildSummary}
+          buildWhatsAppMessage={buildWhatsAppMessage}
+          buildMeta={buildMeta}
+          photos={curtainImages}
+          formType="brief"
+          briefType="bulk"
+          extraValid={hasProducts}
+          extraHintEn="Pick at least one product to send"
+          extraHintAr="اختر منتجًا واحدًا على الأقل للإرسال"
+          submitLabelEn="Send Enquiry"
+          submitLabelAr="إرسال الطلب"
+          successTitleEn="Enquiry Sent!"
+          successTitleAr="تم إرسال طلبك!"
+          successDescEn={`Your enquiry has been delivered to ${KEMCON_EMAIL}. Our team will be in touch within 3–5 business days.`}
+          successDescAr={`وصل طلبك إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معك فريقنا خلال 3–5 أيام عمل.`}
+        />
+
+        <div className={`flex items-center gap-3 ${isAr ? "flex-row-reverse" : ""}`}>
+          <div className="h-px flex-1 bg-[var(--color-deep-accent)]/15" />
+          <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-muted)] flex-shrink-0">
+            {isAr ? "أو" : "Or"}
+          </span>
+          <div className="h-px flex-1 bg-[var(--color-deep-accent)]/15" />
+        </div>
+
+        <div className="space-y-2">
           <button
+            type="button"
             onClick={handleContinue}
-            className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-sm font-semibold tracking-wide hover:bg-[var(--color-accent-hover)] transition-colors cursor-pointer ${isAr ? "flex-row-reverse" : ""}`}
+            className={`w-full flex items-center justify-center gap-2.5 py-3.5 rounded-sm border border-[var(--color-accent)]/40 text-[var(--color-accent)] text-sm font-medium tracking-wide hover:bg-[var(--color-accent)]/[0.06] transition-all duration-200 cursor-pointer ${isAr ? "flex-row-reverse" : ""}`}
           >
+            <ClipboardList size={15} strokeWidth={1.6} />
             {isAr ? "متابعة إلى الموجز" : "Continue to your brief"}
-            <ArrowUpRight size={16} strokeWidth={1.75} />
           </button>
           <p className={`text-xs text-[var(--color-text-muted)] ${isAr ? "text-right" : "text-center"}`}>
             {isAr

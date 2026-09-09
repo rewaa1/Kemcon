@@ -184,6 +184,7 @@ export function lineItemChips(item: BriefLineItem, isAr: boolean): Chip[] {
     item.treatmentAntimicrobial &&
       (isAr ? "مضاد للفطريات والبكتيريا" : "Anti-fungal / antibacterial"),
     item.treatmentFireRetardant && (isAr ? "مقاوم للحريق" : "Fire-retardant"),
+    item.treatmentStainResistant && (isAr ? "مقاوم للبقع" : "Stain-resistant"),
   ].filter(Boolean) as string[];
   if (treatments.length) {
     chips.push({ label: isAr ? "المعالجة" : "Treatment", value: treatments.join(" · ") });
@@ -275,6 +276,7 @@ function formatLineItem(item: BriefLineItem, index: number): string {
 
   if (item.treatmentAntimicrobial) push("Treatment", "Anti-fungal & antibacterial");
   if (item.treatmentFireRetardant) push("Treatment", "Fire-retardant (burn-treated)");
+  if (item.treatmentStainResistant) push("Treatment", "Stain-resistant");
 
   if (item.notes) push("Item notes", item.notes);
 

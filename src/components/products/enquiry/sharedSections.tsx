@@ -25,16 +25,19 @@ export const treatmentsSection: EnquirySection = {
   icon: ShieldCheck,
   title: { en: "Fabric treatments", ar: "معالجة القماش" },
   description: {
-    en: "Anti-fungal, antibacterial, fire-retardant",
-    ar: "مضاد للفطريات والبكتيريا، ومقاوم للحريق",
+    en: "Anti-fungal, antibacterial, fire-retardant, stain-resistant",
+    ar: "مضاد للفطريات والبكتيريا، ومقاوم للحريق، ومقاوم للبقع",
   },
   summary: ({ config }) => {
-    const count = [config.treatmentAntimicrobial, config.treatmentFireRetardant].filter(
-      Boolean
-    ).length;
+    const count = [
+      config.treatmentAntimicrobial,
+      config.treatmentFireRetardant,
+      config.treatmentStainResistant,
+    ].filter(Boolean).length;
     return count ? { en: `${count} selected`, ar: `${count} مختار` } : null;
   },
-  hasData: (item) => !!(item.treatmentAntimicrobial || item.treatmentFireRetardant),
+  hasData: (item) =>
+    !!(item.treatmentAntimicrobial || item.treatmentFireRetardant || item.treatmentStainResistant),
   render: ({ config, update, isAr }) => (
     <div className="space-y-2.5">
       <SelectableRow
@@ -57,6 +60,18 @@ export const treatmentsSection: EnquirySection = {
           isAr
             ? "معالجة مقاومة للهب، تشترطها معظم أكواد الفنادق والأماكن العامة."
             : "Flame-resistant treatment, required by most hotel and public-venue codes."
+        }
+        isAr={isAr}
+        testId="treatment-option"
+      />
+      <SelectableRow
+        selected={config.treatmentStainResistant}
+        onToggle={() => update({ treatmentStainResistant: !config.treatmentStainResistant })}
+        title={isAr ? "مقاوم للبقع" : "Stain-resistant treatment"}
+        description={
+          isAr
+            ? "طبقة تصد الانسكابات وتسهّل التنظيف — مناسبة للمطاعم والردهات والأماكن كثيفة الاستخدام."
+            : "A finish that repels spills and wipes clean — suited to restaurants, lobbies and high-traffic areas."
         }
         isAr={isAr}
         testId="treatment-option"

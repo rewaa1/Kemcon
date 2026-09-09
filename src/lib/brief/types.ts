@@ -45,6 +45,7 @@ export interface BriefLineItem {
   // Fabric treatments — offered on every textile category
   treatmentAntimicrobial: boolean;
   treatmentFireRetardant: boolean;
+  treatmentStainResistant: boolean;
 
   // Chairs / sofas
   frameMaterialId: string | null;
@@ -142,6 +143,7 @@ export function emptyLineItem(
     requestMeasurement: false,
     treatmentAntimicrobial: false,
     treatmentFireRetardant: false,
+    treatmentStainResistant: false,
     frameMaterialId: null,
     frameFinishId: null,
     fillingId: null,
@@ -179,6 +181,7 @@ export function lineItemFromConfigurator(
     requestMeasurement: state.requestMeasurement,
     treatmentAntimicrobial: state.treatmentAntimicrobial,
     treatmentFireRetardant: state.treatmentFireRetardant,
+    treatmentStainResistant: state.treatmentStainResistant,
     frameMaterialId: state.frameMaterialId,
     frameFinishId: state.frameFinishId,
     fillingId: state.fillingId,
@@ -215,6 +218,7 @@ export function configuratorStateFromLineItem(
     requestMeasurement: item.requestMeasurement,
     treatmentAntimicrobial: item.treatmentAntimicrobial ?? false,
     treatmentFireRetardant: item.treatmentFireRetardant ?? false,
+    treatmentStainResistant: item.treatmentStainResistant ?? false,
     frameMaterialId: item.frameMaterialId,
     frameFinishId: item.frameFinishId,
     fillingId: item.fillingId,

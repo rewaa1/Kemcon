@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, ArrowUpRight, ClipboardList, Plus, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, ClipboardList } from "lucide-react";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { ContactSubmit } from "@/components/shared/ContactSubmit";
 import { propertyTypes, propertyTypeIsNamed } from "@/data/propertyTypes";
@@ -32,6 +32,7 @@ import { KEMCON_EMAIL } from "@/lib/config";
 import { usableSizes } from "./CurtainSizeRows";
 import { ChipGroup, FieldLabel, Stepper, inputClass } from "./fields";
 import { sectionsFor, specFor } from "./specs";
+import { OptionalSections } from "./OptionalSections";
 import type { EnquiryContext } from "./types";
 
 /**
@@ -110,6 +111,7 @@ export function ProductEnquiryForm({
     () => new Set(initialFabricId ? ["fabric"] : [])
   );
 
+
   /** Set once this enquiry exists as a brief line item, so re-adding updates it. */
   const [committedId, setCommittedId] = useState<string | null>(editId ?? null);
 
@@ -182,6 +184,7 @@ export function ProductEnquiryForm({
       if (next.has(key)) next.delete(key);
       else {
         next.add(key);
+        // Opening a section onto nothing is a dead end — measurements seed a row.
         const seed = section?.onOpen?.(ctx);
         if (seed) update(seed);
       }
@@ -438,99 +441,13 @@ export function ProductEnquiryForm({
         </div>
 
         {/* ── Optional sections ── */}
-        <div className="space-y-3">
-          <div className={`flex items-center gap-3 ${isAr ? "flex-row-reverse" : ""}`}>
-            <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-muted)] flex-shrink-0">
-              {isAr ? "أضف ما تعرفه (اختياري)" : "Add what you know (optional)"}
-            </span>
-            <div className="h-px flex-1 bg-[var(--color-deep-accent)]/15" />
-          </div>
-
-          <div className="space-y-2.5">
-            {sections.map((section) => {
-              const Icon = section.icon;
-              const isOpen = expanded.has(section.key);
-              const summary = section.summary(ctx);
-              return (
-                <div key={section.key}>
-                  <AnimatePresence mode="wait" initial={false}>
-                    {isOpen ? (
-                      <motion.div
-                        key="open"
-                        id={`cq-section-${section.key}`}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                        className="glass-card rounded-sm p-6 space-y-4"
-                      >
-                        <div
-                          className={`flex items-center justify-between ${isAr ? "flex-row-reverse" : ""}`}
-                        >
-                          <div
-                            className={`flex items-center gap-2.5 ${isAr ? "flex-row-reverse" : ""}`}
-                          >
-                            <Icon
-                              size={15}
-                              strokeWidth={1.5}
-                              className="text-[var(--color-accent)]"
-                            />
-                            <h3 className="text-sm font-semibold uppercase tracking-widest text-[var(--color-text-muted)]">
-                              {say(section.title)}
-                            </h3>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => toggleSection(section.key)}
-                            aria-label={isAr ? "إخفاء" : "Hide"}
-                            aria-expanded
-                            aria-controls={`cq-section-${section.key}`}
-                            className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors p-1 -m-1"
-                          >
-                            <X size={16} strokeWidth={1.5} />
-                          </button>
-                        </div>
-
-                        {section.render(ctx)}
-                      </motion.div>
-                    ) : (
-                      <motion.button
-                        key="closed"
-                        type="button"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                        onClick={() => toggleSection(section.key)}
-                        aria-expanded={false}
-                        aria-controls={`cq-section-${section.key}`}
-                        className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-sm border border-dashed border-[var(--color-deep-accent)]/30 text-[var(--color-text-muted)] hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-accent)]/[0.03] hover:text-[var(--color-text)] transition-all duration-200 group ${isAr ? "flex-row-reverse text-right" : "text-left"}`}
-                      >
-                        <Icon size={16} strokeWidth={1.5} className="flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium leading-tight">{say(section.title)}</p>
-                          <p className="text-[11px] text-[var(--color-text-muted)]/80 mt-0.5 leading-tight">
-                            {say(section.description)}
-                          </p>
-                        </div>
-                        {summary && (
-                          <span className="text-[10px] uppercase tracking-wider text-[var(--color-accent)] font-semibold flex-shrink-0">
-                            {say(summary)}
-                          </span>
-                        )}
-                        <Plus
-                          size={14}
-                          strokeWidth={1.75}
-                          className="flex-shrink-0 transition-transform duration-200 group-hover:rotate-90 text-[var(--color-text-muted)]/60 group-hover:text-[var(--color-accent)]"
-                        />
-                      </motion.button>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <OptionalSections
+          sections={sections}
+          ctx={ctx}
+          isAr={isAr}
+          expanded={expanded}
+          onToggle={toggleSection}
+        />
 
         {/* ── Finish ── */}
         {editId ? (

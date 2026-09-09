@@ -4,27 +4,44 @@
 
 ## Key pages
 
-- [Home](https://kemcon.com/en): Overview of Kemcon's products and services
-- [Products](https://kemcon.com/en/products): Full product catalog hub
-- [Configure Product](https://kemcon.com/en/products/configure): Custom product configurator for curtains, sofas, chairs, and bed sheets
-- [Showroom](https://kemcon.com/en/products/showroom): Browse curated product collections
-- [Design Plan](https://kemcon.com/en/products/design-plan): End-to-end design planning for hospitality projects
-- [Mass Production](https://kemcon.com/en/products/mass-production): Large-scale manufacturing for hotel outfitting
-- [About](https://kemcon.com/en/about): Company history, values, and manufacturing capabilities
-- [Clients](https://kemcon.com/en/clients): Portfolio of completed hotel and hospitality projects
-- [Contact](https://kemcon.com/en/contact): Contact information and inquiry form
+- [Home](https://kemcon.site/en): Overview of Kemcon's products and services
+- [Products](https://kemcon.site/en/products): Product catalog and fabric showroom — the front door to every category
+- [Curtains](https://kemcon.site/en/products/curtains): Bespoke curtains — layers, measurements, opening method, fabric treatments
+- [Chairs](https://kemcon.site/en/products/chairs): Hospitality-grade seating, configurable frame and upholstery
+- [Sofas](https://kemcon.site/en/products/sofas): Custom sofas with choice of fabric and frame finish
+- [Bed Covers](https://kemcon.site/en/products/bed-covers): Bed covers and matching pillows in Egyptian cotton and luxury blends
+- [Custom Pieces](https://kemcon.site/en/products/custom): Anything outside the standard categories, made to a description
+- [Design Plan](https://kemcon.site/en/products/design-plan): End-to-end design planning for hospitality projects
+- [Mass Production](https://kemcon.site/en/products/mass-production): Large-scale manufacturing for hotel outfitting
+- [About](https://kemcon.site/en/about): Company history, values, and manufacturing capabilities
+- [Clients](https://kemcon.site/en/clients): Hotels and resorts Kemcon has supplied
+- [Contact](https://kemcon.site/en/contact): Contact details, showroom location, and enquiry form
+
+Every page is also published in Arabic at the same path under `/ar`.
 
 ## Product lines
 
-Kemcon manufactures fully customizable home textiles and furniture for the hospitality industry:
+Kemcon manufactures fully customisable textiles and furniture for the hospitality industry:
 
-- **Curtains** — blackout, sheer, linen, velvet, and custom fabric options
+- **Curtains** — sheer, decorative and blackout layers, manual or remote-controlled
+- **Chairs** — hospitality-grade seating with configurable frame material and finish
 - **Sofas** — custom upholstery with choice of fabric and frame finish
-- **Chairs** — hospitality-grade seating with configurable materials
-- **Bed Sheets** — Egyptian cotton, percale, sateen, and luxury blends
+- **Bed Covers** — Egyptian cotton, percale, sateen and luxury blends, with matching pillows
+- **Custom** — pieces described by the client and quoted individually
 
-All products are configurable by fabric type, color, frame material, and finish.
+Fabric treatments available across textile categories: anti-fungal and
+antibacterial, fire-retardant (burn-treated), and stain-resistant.
+
+## How to order
+
+There is no online checkout. Each category page carries a short enquiry form —
+quantity, the kind of property being furnished, one product question, and
+contact details — which reaches the Kemcon team directly. Orders spanning
+several categories can be combined into a single brief, and hotels ordering at
+volume can use the mass-production page instead.
 
 ## About
 
-Kemcon has been manufacturing since 1985, headquartered in Cairo, Egypt. The company serves major hotel brands across Egypt, Saudi Arabia, UAE, and Jordan, delivering complete room outfitting from design through mass production.
+Kemcon has been manufacturing since 1985, headquartered in Cairo, Egypt. The
+company serves major hotel brands across Egypt, Saudi Arabia, the UAE and
+Jordan, delivering complete room outfitting from design through mass production.
