@@ -42,6 +42,37 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "utfs.io", pathname: "/f/**" },
     ],
   },
+  // The Open Graph routes read fonts and background photos off the filesystem
+  // at request time. File tracing does not always follow a `process.cwd()`
+  // join, and `public/` is CDN-served rather than guaranteed to sit next to the
+  // function — so pin what they read into the bundle explicitly. Without the
+  // fonts the render throws; without the photos the cards lose their imagery.
+  // Only the two directories the OG routes actually read are listed: `fabrics/`
+  // is several megabytes and none of it is used here.
+  outputFileTracingIncludes: {
+    "/api/og": ["assets/**/*", "public/cards/**/*", "public/images/**/*"],
+    "/[locale]/opengraph-image": ["assets/**/*"],
+  },
+  async redirects() {
+    return [
+      // The section moved from `/products` to `/services`: it advertises what
+      // Kemcon does rather than listing stock, which is what the nav has
+      // always called it ("Services" / "الخدمات") and what the page's own h1
+      // says. One rule covers the whole subtree — `:path*` matches zero or
+      // more segments, so `/en/products` and `/en/products/curtains` both
+      // land on their `/services` counterpart.
+      //
+      // 308 rather than 307: these URLs are indexed and in the published
+      // sitemap, so the equity has to transfer permanently. Redirects are
+      // checked before the filesystem, so nothing under `/services` is
+      // shadowed by this.
+      {
+        source: "/:locale(en|ar)/products/:path*",
+        destination: "/:locale/services/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

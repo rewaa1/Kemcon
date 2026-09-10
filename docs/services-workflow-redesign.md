@@ -5,7 +5,7 @@ services section got its shape; do not read it as current. Every category is a
 single enquiry form now and the step-by-step configurator is gone — see
 [product-enquiry-forms.md](product-enquiry-forms.md). The `/bed-sheets` route in
 the trees below is `/bed-covers` today.
-**Scope:** Everything under `/[locale]/products` — the section the nav labels **"Services"**.
+**Scope:** Everything under `/[locale]/services` — the section the nav labels **"Services"**.
 **Date:** 2026-08-27
 
 Three candidate architectures for the services section, documented in full so the
@@ -36,12 +36,12 @@ problems, all verified against the code:
 
 | # | Problem | Evidence |
 |---|---------|----------|
-| 1 | **Two entrances silently converge.** "Configure a Product" and "Browse Our Showroom" are presented as unrelated services but both end at `/products/{category}`. The showroom route is strictly better — it deep-links with the fabric preselected. | `showroom-client.tsx` → `?fabric=X&fabricFamily=Y`; `ConfiguratorShell` reads it as `initialFabricId` |
-| 2 | **A chooser leading to a chooser.** `/products/configure` has its own route, metadata and OG image, and exists only to render five category cards plus three static labels. No state, no logic. | `configure-client.tsx` |
+| 1 | **Two entrances silently converge.** "Configure a Product" and "Browse Our Showroom" are presented as unrelated services but both end at `/services/{category}`. The showroom route is strictly better — it deep-links with the fabric preselected. | `showroom-client.tsx` → `?fabric=X&fabricFamily=Y`; `ConfiguratorShell` reads it as `initialFabricId` |
+| 2 | **A chooser leading to a chooser.** `/services/configure` has its own route, metadata and OG image, and exists only to render five category cards plus three static labels. No state, no logic. | `configure-client.tsx` |
 | 3 | **The terminal step is inconsistent.** Design Plan and Mass Production really submit — photos to `/api/upload`, brief to `/api/contact`, success state. The configurator has **no `fetch()` at all**; it builds a `mailto:` and hands off to the OS. | `InquiryStep.tsx` — verified no network call |
-| 4 | **"Custom Solutions" and "Request a Design Plan" overlap.** Both mean "describe what you want in words." Nothing tells a user which is for them. | `/products/custom` vs `/products/design-plan` |
-| 5 | **Exiting the configurator loses your place.** The exit always goes to `/products`, so arriving from the showroom and backing out drops you two levels up with your filter gone. | `ConfiguratorShell.tsx:231` |
-| 6 | **The page's schema disagrees with the page.** `/products` emits `ItemList` JSON-LD with **9 entries** built from `productCategories.ts`, while the page renders **4 cards**. | `products/page.tsx` + `data/productCategories.ts` |
+| 4 | **"Custom Solutions" and "Request a Design Plan" overlap.** Both mean "describe what you want in words." Nothing tells a user which is for them. | `/services/custom` vs `/services/design-plan` |
+| 5 | **Exiting the configurator loses your place.** The exit always goes to `/services`, so arriving from the showroom and backing out drops you two levels up with your filter gone. | `ConfiguratorShell.tsx:231` |
+| 6 | **The page's schema disagrees with the page.** `/services` emits `ItemList` JSON-LD with **9 entries** built from `productCategories.ts`, while the page renders **4 cards**. | `products/page.tsx` + `data/productCategories.ts` |
 
 ### The gap nobody has named yet
 
@@ -60,7 +60,7 @@ capability gap rather than a polish problem.
 ### Route inventory
 
 ```
-/[locale]/products                    ← nav "Services", 4 bento cards
+/[locale]/services                    ← nav "Services", 4 bento cards
 ├── /configure                        ← interstitial: 5 category cards
 ├── /showroom                         ← fabric catalog + filters + drawer
 ├── /design-plan                      ← long form  → ContactSubmit  → POST
@@ -75,7 +75,7 @@ capability gap rather than a polish problem.
 ### Flow today
 
 ```
-                    /products  ── "How Can We Help You?"
+                    /services  ── "How Can We Help You?"
                              │
         ┌────────────┬───────┴────────┬──────────────────┐
         │            │                │                  │
@@ -84,13 +84,13 @@ capability gap rather than a polish problem.
    a Product"        │                │                  │
         │            │                │                  │
         ▼            │                ▼                  │
-  /products/         │        filter by product          │
+  /services/         │        filter by product          │
    configure         │        + fabric family tabs       │
    ← 2nd chooser     │        → drawer → "Configure"     │
         │            │                │                  │
         └────────────┼────────────────┘                  │
                      │      ▼                            │
-                     │  /products/{category}             │
+                     │  /services/{category}             │
                      │   ?fabric=X&fabricFamily=Y        │
                      │      │                            │
                      │  ConfiguratorShell steps          │
@@ -150,7 +150,7 @@ domain language throughout `ContactSubmit` ("Send Brief", "Brief Sent!",
 ### Route map
 
 ```
-/products                    ← CATALOG. absorbs the showroom entirely.
+/services                    ← CATALOG. absorbs the showroom entirely.
 ├── /curtains                ← PDP-equivalent. configure → Add to Brief
 ├── /chairs                     keeps its own metadata, OG image,
 ├── /sofas                      Product + BreadcrumbList JSON-LD
@@ -159,7 +159,7 @@ domain language throughout `ContactSubmit` ("Send Brief", "Brief Sent!",
 └── /brief                   ← "checkout". one form, ONE POST.
 
   DELETED:  /configure       ← interstitial, no longer needed
-  ABSORBED: /showroom        ← becomes the /products catalog itself
+  ABSORBED: /showroom        ← becomes the /services catalog itself
   FOLDED:   /design-plan     ┐ become brief TYPES,
             /mass-production ┘ not separate doors
 ```
@@ -167,7 +167,7 @@ domain language throughout `ContactSubmit` ("Send Brief", "Brief Sent!",
 ### Desktop
 
 ```
-/products ── catalog ──────────────────────────────────────────┐
+/services ── catalog ──────────────────────────────────────────┐
 ┌──────────────┬────────────────────────────────────┐          │
 │  FILTERS     │   ▣ Velvet     ▣ Linen    ▣ Sheer │   [ Brief ③ ] ← persistent,
 │              │   Sage         Ivory      Pearl    │    every page
@@ -183,7 +183,7 @@ domain language throughout `ContactSubmit` ("Send Brief", "Brief Sent!",
 └──────────────┴────────────────────────────────────┘          │
         │                                                       │
         ▼ click a fabric                                        │
-/products/curtains ── configure ────────────────────────────────┤
+/services/curtains ── configure ────────────────────────────────┤
 ┌────────────────────────────────────────────────────┐          │
 │  ●━━━━●━━━━●━━━━○━━━━○   fabric · colour · pattern │          │
 │                          · options · preview       │          │
@@ -193,7 +193,7 @@ domain language throughout `ContactSubmit` ("Send Brief", "Brief Sent!",
 └────────────────────────────────────────────────────┘
         │
         ▼
-/products/brief ── review ──────────────────────────┐
+/services/brief ── review ──────────────────────────┐
 ┌────────────────────────────────────────────────────┐
 │  YOUR BRIEF                                        │
 │  ┌──────────────────────────────────────────────┐  │
@@ -283,15 +283,15 @@ interface BriefStore {
 
 | Area | Change |
 |------|--------|
-| `/products` | Rebuilt as catalog. Showroom's filter rail + fabric grid + drawer move here. |
-| `/products/configure` | **Deleted.** Its five category cards move into the catalog. |
-| `/products/showroom` | **Deleted as a route**; redirect to `/products`. |
-| `/products/{category}` | Kept. `InquiryStep` replaced by an "Add to Brief" action. |
-| `/products/design-plan` | Becomes `type: "design"` on the brief. Route kept as an SEO landing page that seeds the store. |
-| `/products/mass-production` | Becomes `type: "bulk"`. Same treatment. |
-| `/products/brief` | **New.** The single submit path. |
+| `/services` | Rebuilt as catalog. Showroom's filter rail + fabric grid + drawer move here. |
+| `/services/configure` | **Deleted.** Its five category cards move into the catalog. |
+| `/services/showroom` | **Deleted as a route**; redirect to `/services`. |
+| `/services/{category}` | Kept. `InquiryStep` replaced by an "Add to Brief" action. |
+| `/services/design-plan` | Becomes `type: "design"` on the brief. Route kept as an SEO landing page that seeds the store. |
+| `/services/mass-production` | Becomes `type: "bulk"`. Same treatment. |
+| `/services/brief` | **New.** The single submit path. |
 | `ConfiguratorShell` | Rebuilt from "owns the session" to "configures one line item". |
-| `InquiryStep` | Dissolves into `/products/brief`. |
+| `InquiryStep` | Dissolves into `/services/brief`. |
 | `ContactSubmit` | Reused as-is on the brief page. Already does upload + POST + success. |
 
 ### Submit flow
@@ -317,7 +317,7 @@ interface BriefStore {
 
 | Dimension | Assessment |
 |-----------|------------|
-| **SEO** | ✅ Fully preserved. All category routes keep `Product` + `BreadcrumbList` JSON-LD, per-page OG, sitemap entries. `ItemList` on `/products` becomes *accurate* for the first time. |
+| **SEO** | ✅ Fully preserved. All category routes keep `Product` + `BreadcrumbList` JSON-LD, per-page OG, sitemap entries. `ItemList` on `/services` becomes *accurate* for the first time. |
 | **Mobile** | ✅ Good. Sticky bottom brief bar is a well-understood pattern; `SelectionBar` already occupies the slot. |
 | **Multi-item** | ✅ Native. The core win. |
 | **Familiarity** | ✅ Zero learning curve. Everyone has used a cart. |
@@ -343,7 +343,7 @@ is the option that matches the luxury positioning: it reads as a studio tool.
 ### Route map
 
 ```
-/products                    ← THE WORKBENCH. all interaction lives here.
+/services                    ← THE WORKBENCH. all interaction lives here.
 ├── /curtains                ← SSR landing shells. Server-render real
 ├── /chairs                     content for crawlers + first paint,
 ├── /sofas                      then hydrate into the workbench with
@@ -357,7 +357,7 @@ is the option that matches the luxury positioning: it reads as a studio tool.
 ### Desktop
 
 ```
-/products ── one route, never navigates ────────────────────────────────┐
+/services ── one route, never navigates ────────────────────────────────┐
 ┌────────────┬──────────────────────────────┬──────────────────────────┐
 │  FILTER    │        FABRIC GRID           │      YOUR BRIEF          │
 │            │                              │                          │
@@ -451,7 +451,7 @@ biggest cost of the option, and Egypt is a mobile-heavy market.
 
 ### Concept
 
-The root problem is that `/products` asks the visitor to sort themselves into
+The root problem is that `/services` asks the visitor to sort themselves into
 Kemcon's internal service taxonomy before they can move. A hotel buyer with 300
 curtain panels and a villa owner with one living room both arrive thinking
 *"I need curtains."*
@@ -462,7 +462,7 @@ shape of brief to collect.
 ### Flow
 
 ```
-/products
+/services
   ┌────────────────────────────────────────────┐
   │                                            │
   │        What are you furnishing?            │

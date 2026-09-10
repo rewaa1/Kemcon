@@ -94,7 +94,7 @@ export function Hero() {
             className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5"
           >
             <Link
-              href={`/${locale}/products`}
+              href={`/${locale}/services`}
               className="group relative inline-flex items-center justify-center h-13 px-10 text-sm font-medium tracking-[0.15em] uppercase bg-accent text-dark hover:bg-accent-hover shadow-gold hover:shadow-lg transition-all duration-500 overflow-hidden rounded-sm w-full sm:w-auto"
             >
               <span className="relative z-10">{t("cta")}</span>

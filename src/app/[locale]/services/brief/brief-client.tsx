@@ -83,7 +83,7 @@ const chipClass = (active: boolean) =>
   }`;
 
 /**
- * `/products/brief` — the single send point for the whole services section.
+ * `/services/brief` — the single send point for the whole services section.
  *
  * Everything that used to submit separately (the configurator's `mailto:`, the
  * Design Plan form, the Mass Production form) converges here and POSTs once
@@ -234,7 +234,7 @@ export default function BriefClient() {
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn direction="up">
             <Link
-              href={`/${locale}/products`}
+              href={`/${locale}/services`}
               className={`inline-flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors mb-8 ${isAr ? "flex-row-reverse" : ""}`}
             >
               {isAr ? <ArrowRight size={13} /> : <ArrowLeft size={13} />}
@@ -289,14 +289,14 @@ export default function BriefClient() {
             </p>
             <div className={`flex flex-wrap items-center justify-center gap-3 ${isAr ? "flex-row-reverse" : ""}`}>
               <Link
-                href={`/${locale}/products`}
+                href={`/${locale}/services`}
                 className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-xs font-semibold uppercase tracking-widest hover:bg-[var(--color-accent-hover)] transition-colors ${isAr ? "flex-row-reverse" : ""}`}
               >
                 {isAr ? "تصفّح الأقمشة" : "Browse fabrics"}
                 <Arrow size={13} />
               </Link>
               <Link
-                href={`/${locale}/products/custom`}
+                href={`/${locale}/services/custom`}
                 className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] underline underline-offset-2 transition-colors"
               >
                 {isAr ? "صف ما تحتاجه" : "Describe what you need"}
@@ -379,7 +379,7 @@ export default function BriefClient() {
 
                       <div className={`flex items-center gap-1 ${isAr ? "flex-row-reverse" : ""}`}>
                         <Link
-                          href={`/${locale}/products/${item.category}?edit=${item.id}`}
+                          href={`/${locale}/services/${item.category}?edit=${item.id}`}
                           className="inline-flex items-center gap-1 px-2 py-1.5 rounded-sm text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors"
                         >
                           <Pencil size={11} />
@@ -400,7 +400,7 @@ export default function BriefClient() {
 
               <div className={`flex items-center justify-between gap-4 flex-wrap ${isAr ? "flex-row-reverse" : ""}`}>
                 <Link
-                  href={`/${locale}/products`}
+                  href={`/${locale}/services`}
                   className={`inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-accent)] hover:underline underline-offset-4 ${isAr ? "flex-row-reverse" : ""}`}
                 >
                   <Plus size={13} />

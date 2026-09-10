@@ -262,7 +262,7 @@ export default function MassProductionClient() {
       if (!briefInspiration.includes(src)) toggleBriefInspiration(src, MAX_INSPIRATION);
     }
 
-    router.push(`/${locale}/products/brief`);
+    router.push(`/${locale}/services/brief`);
   };
 
   return (
@@ -275,7 +275,7 @@ export default function MassProductionClient() {
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn direction="up">
             <Link
-              href={`/${locale}/products`}
+              href={`/${locale}/services`}
               className={`inline-flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors mb-8 ${isAr ? "flex-row-reverse" : ""}`}
             >
               {isAr ? <ArrowRight size={13} /> : <ArrowLeft size={13} />}

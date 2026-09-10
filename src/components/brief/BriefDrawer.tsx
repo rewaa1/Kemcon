@@ -141,7 +141,7 @@ export function BriefDrawer() {
                       : "Pick a fabric from the catalog and configure a product, then add it to your brief."}
                   </p>
                   <Link
-                    href={`/${locale}/products`}
+                    href={`/${locale}/services`}
                     onClick={close}
                     className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-accent)] hover:underline underline-offset-4"
                   >
@@ -210,7 +210,7 @@ export function BriefDrawer() {
 
                           <div className={`flex items-center gap-1 ${isAr ? "flex-row-reverse" : ""}`}>
                             <Link
-                              href={`/${locale}/products/${item.category}?edit=${item.id}`}
+                              href={`/${locale}/services/${item.category}?edit=${item.id}`}
                               onClick={close}
                               aria-label={isAr ? "تعديل" : "Edit"}
                               className="inline-flex items-center gap-1 px-2 py-1.5 rounded-sm text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors"
@@ -238,7 +238,7 @@ export function BriefDrawer() {
             {visibleItems.length > 0 && (
               <div className="border-t border-[var(--color-deep-accent)]/15 px-6 py-5 space-y-3">
                 <Link
-                  href={`/${locale}/products/brief`}
+                  href={`/${locale}/services/brief`}
                   onClick={close}
                   className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-sm bg-[var(--color-accent)] text-[var(--color-dark)] text-sm font-semibold tracking-wide hover:bg-[var(--color-accent-hover)] transition-colors ${isAr ? "flex-row-reverse" : ""}`}
                 >
@@ -246,7 +246,7 @@ export function BriefDrawer() {
                   <Arrow size={15} />
                 </Link>
                 <Link
-                  href={`/${locale}/products`}
+                  href={`/${locale}/services`}
                   onClick={close}
                   className="block text-center text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
                 >

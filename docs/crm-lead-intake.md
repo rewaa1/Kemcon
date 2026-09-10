@@ -36,7 +36,7 @@ flagged `CRM: NOT RECORDED`. An enquiry should never exist in only one place.
 | Form | `formType` | Entry point |
 |---|---|---|
 | Contact page | `contact` | [contact-client.tsx](../src/app/[locale]/contact/contact-client.tsx) |
-| Brief (configurator, design plan, mass production) | `brief` | [ContactSubmit.tsx](../src/components/shared/ContactSubmit.tsx) via [brief-client.tsx](../src/app/[locale]/products/brief/brief-client.tsx) |
+| Brief (configurator, design plan, mass production) | `brief` | [ContactSubmit.tsx](../src/components/shared/ContactSubmit.tsx) via [brief-client.tsx](../src/app/[locale]/services/brief/brief-client.tsx) |
 | Product enquiry | the category slug — `curtains`, `chairs`, `sofas`, `bed-covers`, `custom` | [ProductEnquiryForm.tsx](../src/components/products/enquiry/ProductEnquiryForm.tsx) |
 
 `ContactSubmit` defaults to `formType="brief"`; pass `formType` explicitly if it is

@@ -1,11 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, ArrowUpRight, ClipboardList } from "lucide-react";
-import { FadeIn } from "@/components/motion/FadeIn";
+import { ArrowUpRight, ClipboardList } from "lucide-react";
 import { ContactSubmit } from "@/components/shared/ContactSubmit";
 import { propertyTypes, propertyTypeIsNamed } from "@/data/propertyTypes";
 import { useBriefStore } from "@/lib/brief/store";
@@ -283,7 +281,7 @@ export function ProductEnquiryForm({
     });
     if (notes) setBriefNotes(notes);
     if (images.length) setBriefPhotos(images);
-    router.push(`/${locale}/products/brief`);
+    router.push(`/${locale}/services/brief`);
   };
 
   // ── Validation ────────────────────────────────────────────────────────────
@@ -311,230 +309,186 @@ export function ProductEnquiryForm({
     track({ t: "enquiry_configured", category });
   }, [detailsValid, category]);
 
-  // Until the persisted brief has been read back, render the neutral shell the
-  // server produced — anything else is a hydration mismatch.
+  // Until the persisted brief has been read back, render a neutral placeholder
+  // for the form — anything else is a hydration mismatch.
+  //
+  // Only the form waits. The eyebrow, `<h1>` and intro are rendered above this
+  // by `ServiceIntroHeader`, a Server Component, so what the page is *about*
+  // is in the initial HTML no matter what the store is doing.
   if (!hydrated) {
     return (
-      <div className="min-h-screen bg-[#1A1D24] pt-28 pb-24">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <div className="h-8 w-40 rounded-sm bg-[var(--color-surface)] animate-pulse" />
-          <div className="h-24 rounded-sm bg-[var(--color-surface)] animate-pulse" />
-          <div className="h-56 rounded-sm bg-[var(--color-surface)] animate-pulse" />
-        </div>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 space-y-4">
+        <div className="h-24 rounded-sm bg-[var(--color-surface)] animate-pulse" />
+        <div className="h-56 rounded-sm bg-[var(--color-surface)] animate-pulse" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#1A1D24]">
-      {/* ── Header ── */}
-      <section className="relative py-20 md:py-24 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[260px] rounded-full blur-[100px] opacity-[0.08] bg-[#c8a45a]" />
-        </div>
-        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn direction="up">
-            <Link
-              href={editId ? `/${locale}/products/brief` : `/${locale}/products`}
-              className={`inline-flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors mb-8 ${isAr ? "flex-row-reverse" : ""}`}
-            >
-              {isAr ? <ArrowRight size={13} /> : <ArrowLeft size={13} />}
-              {editId
-                ? isAr
-                  ? "العودة إلى الموجز"
-                  : "Back to your brief"
-                : isAr
-                  ? "العودة"
-                  : "Back"}
-            </Link>
-          </FadeIn>
-          <FadeIn direction="up" delay={0.05}>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#c8a45a] mb-4">
-              {say(spec.eyebrow)}
-            </p>
-          </FadeIn>
-          <FadeIn direction="up" delay={0.1}>
-            <h1
-              className={`text-4xl md:text-5xl font-bold text-[var(--color-heading)] leading-tight mb-4 ${isAr ? "text-right" : ""}`}
-            >
-              {say(editId ? spec.editTitle : spec.title)}
-            </h1>
-          </FadeIn>
-          <FadeIn direction="up" delay={0.15}>
-            <p
-              className={`text-[var(--color-text-muted)] text-base leading-relaxed ${isAr ? "text-right" : ""}`}
-            >
-              {say(spec.intro)}
-            </p>
-          </FadeIn>
-        </div>
-      </section>
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 space-y-8">
+      {/* ── Required: the answers that make a quote possible ── */}
+      <div className="glass-card rounded-sm p-6 space-y-7">
+        <h2
+          className={`text-sm font-semibold uppercase tracking-widest text-[var(--color-text-muted)] ${isAr ? "text-right" : ""}`}
+        >
+          {`${say(spec.requiredHeading)} *`}
+        </h2>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 space-y-8">
-        {/* ── Required: the answers that make a quote possible ── */}
-        <div className="glass-card rounded-sm p-6 space-y-7">
-          <h2
-            className={`text-sm font-semibold uppercase tracking-widest text-[var(--color-text-muted)] ${isAr ? "text-right" : ""}`}
+        {/* How many */}
+        <div className="space-y-2">
+          <FieldLabel isAr={isAr} htmlFor="cq-quantity">
+            {say(spec.quantityLabel)}
+          </FieldLabel>
+          <Stepper
+            id="cq-quantity"
+            isAr={isAr}
+            value={quantity}
+            onChange={setQuantity}
+            unitLabel={say(quantity === 1 ? spec.unit.one : spec.unit.many)}
+            decreaseLabel={isAr ? "أنقص العدد" : "Decrease quantity"}
+            increaseLabel={isAr ? "زد العدد" : "Increase quantity"}
+          />
+        </div>
+
+        {/* Property type */}
+        <div className="space-y-2">
+          <FieldLabel isAr={isAr}>
+            {isAr ? "ما الذي تقوم بتأثيثه؟" : "What are you furnishing?"}
+          </FieldLabel>
+          <ChipGroup
+            isAr={isAr}
+            testId="property-type"
+            value={propertyType || null}
+            onChange={(v) => setPropertyType(v ?? "")}
+            options={propertyTypes.map((pt) => ({
+              value: pt.value,
+              label: isAr ? pt.ar : pt.en,
+            }))}
+          />
+        </div>
+
+        {/* A named institution is worth knowing by name */}
+        <AnimatePresence>
+          {needsPropertyName && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="space-y-2 overflow-hidden"
+            >
+              <FieldLabel isAr={isAr} htmlFor="cq-property-name">
+                {isAr ? "ما اسمه؟" : "What is it called?"}
+              </FieldLabel>
+              <input
+                id="cq-property-name"
+                type="text"
+                value={propertyName}
+                onChange={(e) => setPropertyName(e.target.value)}
+                className={inputClass(isAr)}
+                placeholder={isAr ? "مثال: فندق النيل الكبير" : "e.g. The Grand Nile Hotel"}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* The one product answer this category needs */}
+        {spec.required.render(ctx)}
+      </div>
+
+      {/* ── Optional sections ── */}
+      <OptionalSections
+        sections={sections}
+        ctx={ctx}
+        isAr={isAr}
+        expanded={expanded}
+        onToggle={toggleSection}
+      />
+
+      {/* ── Finish ── */}
+      {editId ? (
+        /* Edit mode arrives from the brief, where contact details already
+           live — asking for them again here would be a second, competing form. */
+        <div className="space-y-3">
+          <button
+            type="button"
+            onClick={commitToBrief}
+            disabled={!detailsValid}
+            className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-sm text-sm font-semibold tracking-wide transition-colors ${
+              detailsValid
+                ? "bg-[var(--color-accent)] text-[var(--color-dark)] hover:bg-[var(--color-accent-hover)] cursor-pointer"
+                : "bg-[var(--color-deep-accent)]/15 text-[var(--color-text-muted)] cursor-not-allowed"
+            } ${isAr ? "flex-row-reverse" : ""}`}
           >
-            {`${say(spec.requiredHeading)} *`}
-          </h2>
-
-          {/* How many */}
-          <div className="space-y-2">
-            <FieldLabel isAr={isAr} htmlFor="cq-quantity">
-              {say(spec.quantityLabel)}
-            </FieldLabel>
-            <Stepper
-              id="cq-quantity"
-              isAr={isAr}
-              value={quantity}
-              onChange={setQuantity}
-              unitLabel={say(quantity === 1 ? spec.unit.one : spec.unit.many)}
-              decreaseLabel={isAr ? "أنقص العدد" : "Decrease quantity"}
-              increaseLabel={isAr ? "زد العدد" : "Increase quantity"}
-            />
-          </div>
-
-          {/* Property type */}
-          <div className="space-y-2">
-            <FieldLabel isAr={isAr}>
-              {isAr ? "ما الذي تقوم بتأثيثه؟" : "What are you furnishing?"}
-            </FieldLabel>
-            <ChipGroup
-              isAr={isAr}
-              testId="property-type"
-              value={propertyType || null}
-              onChange={(v) => setPropertyType(v ?? "")}
-              options={propertyTypes.map((pt) => ({
-                value: pt.value,
-                label: isAr ? pt.ar : pt.en,
-              }))}
-            />
-          </div>
-
-          {/* A named institution is worth knowing by name */}
-          <AnimatePresence>
-            {needsPropertyName && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="space-y-2 overflow-hidden"
-              >
-                <FieldLabel isAr={isAr} htmlFor="cq-property-name">
-                  {isAr ? "ما اسمه؟" : "What is it called?"}
-                </FieldLabel>
-                <input
-                  id="cq-property-name"
-                  type="text"
-                  value={propertyName}
-                  onChange={(e) => setPropertyName(e.target.value)}
-                  className={inputClass(isAr)}
-                  placeholder={isAr ? "مثال: فندق النيل الكبير" : "e.g. The Grand Nile Hotel"}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* The one product answer this category needs */}
-          {spec.required.render(ctx)}
+            {isAr ? "حفظ التغييرات" : "Save changes"}
+            <ArrowUpRight size={16} strokeWidth={1.75} />
+          </button>
+          {missing && (
+            <p
+              className={`text-xs text-[var(--color-text-muted)] ${isAr ? "text-right" : "text-center"}`}
+            >
+              {say(missing)}
+            </p>
+          )}
         </div>
+      ) : (
+        <>
+          <ContactSubmit
+            isAr={isAr}
+            locale={locale}
+            name={contact.name}
+            phone={contact.phone}
+            email={contact.email}
+            onChange={(field, value) => setContact({ [field]: value })}
+            buildSummary={buildSummary}
+            buildWhatsAppMessage={buildWhatsAppMessage}
+            buildMeta={buildMeta}
+            photos={images}
+            formType={category}
+            briefType="standard"
+            extraValid={detailsValid}
+            extraHintEn={missing?.en}
+            extraHintAr={missing?.ar}
+            submitLabelEn="Send Enquiry"
+            submitLabelAr="إرسال الطلب"
+            successTitleEn="Enquiry Sent!"
+            successTitleAr="تم إرسال طلبك!"
+            successDescEn={`Your enquiry has been delivered to ${KEMCON_EMAIL}. Our team will be in touch within 3–5 business days.`}
+            successDescAr={`وصل طلبك إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معك فريقنا خلال 3–5 أيام عمل.`}
+          />
 
-        {/* ── Optional sections ── */}
-        <OptionalSections
-          sections={sections}
-          ctx={ctx}
-          isAr={isAr}
-          expanded={expanded}
-          onToggle={toggleSection}
-        />
+          {/* The other real path: someone ordering across categories. */}
+          <div className={`flex items-center gap-3 ${isAr ? "flex-row-reverse" : ""}`}>
+            <div className="h-px flex-1 bg-[var(--color-deep-accent)]/15" />
+            <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-muted)] flex-shrink-0">
+              {isAr ? "أو" : "Or"}
+            </span>
+            <div className="h-px flex-1 bg-[var(--color-deep-accent)]/15" />
+          </div>
 
-        {/* ── Finish ── */}
-        {editId ? (
-          /* Edit mode arrives from the brief, where contact details already
-             live — asking for them again here would be a second, competing form. */
-          <div className="space-y-3">
+          <div className="space-y-2">
             <button
               type="button"
               onClick={commitToBrief}
               disabled={!detailsValid}
-              className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-sm text-sm font-semibold tracking-wide transition-colors ${
+              className={`w-full flex items-center justify-center gap-2.5 py-3.5 rounded-sm border text-sm font-medium tracking-wide transition-all duration-200 ${
                 detailsValid
-                  ? "bg-[var(--color-accent)] text-[var(--color-dark)] hover:bg-[var(--color-accent-hover)] cursor-pointer"
-                  : "bg-[var(--color-deep-accent)]/15 text-[var(--color-text-muted)] cursor-not-allowed"
+                  ? "border-[var(--color-accent)]/40 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/[0.06] cursor-pointer"
+                  : "border-[var(--color-deep-accent)]/20 text-[var(--color-text-muted)]/60 cursor-not-allowed"
               } ${isAr ? "flex-row-reverse" : ""}`}
             >
-              {isAr ? "حفظ التغييرات" : "Save changes"}
-              <ArrowUpRight size={16} strokeWidth={1.75} />
+              <ClipboardList size={15} strokeWidth={1.6} />
+              {isAr ? "أضفها إلى موجزي" : "Add to my brief"}
             </button>
-            {missing && (
-              <p
-                className={`text-xs text-[var(--color-text-muted)] ${isAr ? "text-right" : "text-center"}`}
-              >
-                {say(missing)}
-              </p>
-            )}
+            <p
+              className={`text-xs text-[var(--color-text-muted)] ${isAr ? "text-right" : "text-center"}`}
+            >
+              {isAr
+                ? "لطلب أكثر من نوع من المفروشات في رسالة واحدة."
+                : "To order more than one kind of furnishing in a single enquiry."}
+            </p>
           </div>
-        ) : (
-          <>
-            <ContactSubmit
-              isAr={isAr}
-              locale={locale}
-              name={contact.name}
-              phone={contact.phone}
-              email={contact.email}
-              onChange={(field, value) => setContact({ [field]: value })}
-              buildSummary={buildSummary}
-              buildWhatsAppMessage={buildWhatsAppMessage}
-              buildMeta={buildMeta}
-              photos={images}
-              formType={category}
-              briefType="standard"
-              extraValid={detailsValid}
-              extraHintEn={missing?.en}
-              extraHintAr={missing?.ar}
-              submitLabelEn="Send Enquiry"
-              submitLabelAr="إرسال الطلب"
-              successTitleEn="Enquiry Sent!"
-              successTitleAr="تم إرسال طلبك!"
-              successDescEn={`Your enquiry has been delivered to ${KEMCON_EMAIL}. Our team will be in touch within 3–5 business days.`}
-              successDescAr={`وصل طلبك إلى فريقنا على ${KEMCON_EMAIL}. سيتواصل معك فريقنا خلال 3–5 أيام عمل.`}
-            />
-
-            {/* The other real path: someone ordering across categories. */}
-            <div className={`flex items-center gap-3 ${isAr ? "flex-row-reverse" : ""}`}>
-              <div className="h-px flex-1 bg-[var(--color-deep-accent)]/15" />
-              <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-muted)] flex-shrink-0">
-                {isAr ? "أو" : "Or"}
-              </span>
-              <div className="h-px flex-1 bg-[var(--color-deep-accent)]/15" />
-            </div>
-
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={commitToBrief}
-                disabled={!detailsValid}
-                className={`w-full flex items-center justify-center gap-2.5 py-3.5 rounded-sm border text-sm font-medium tracking-wide transition-all duration-200 ${
-                  detailsValid
-                    ? "border-[var(--color-accent)]/40 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/[0.06] cursor-pointer"
-                    : "border-[var(--color-deep-accent)]/20 text-[var(--color-text-muted)]/60 cursor-not-allowed"
-                } ${isAr ? "flex-row-reverse" : ""}`}
-              >
-                <ClipboardList size={15} strokeWidth={1.6} />
-                {isAr ? "أضفها إلى موجزي" : "Add to my brief"}
-              </button>
-              <p
-                className={`text-xs text-[var(--color-text-muted)] ${isAr ? "text-right" : "text-center"}`}
-              >
-                {isAr
-                  ? "لطلب أكثر من نوع من المفروشات في رسالة واحدة."
-                  : "To order more than one kind of furnishing in a single enquiry."}
-              </p>
-            </div>
-          </>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 }

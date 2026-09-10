@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const base = await buildPageMetadata({
     locale,
-    path: "/products/brief",
+    path: "/services/brief",
     titleKey: "meta.pages.brief.title",
     descriptionKey: "meta.pages.brief.description",
   });

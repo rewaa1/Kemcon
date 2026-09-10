@@ -10,7 +10,7 @@ import { KEMCON_WHATSAPP, KEMCON_PHONE_DISPLAY } from "@/lib/config";
 const navLinks = [
   { key: "home", href: "" },
   { key: "about", href: "/about" },
-  { key: "products", href: "/products" },
+  { key: "products", href: "/services" },
   { key: "clients", href: "/clients" },
   { key: "contact", href: "/contact" },
 ];
