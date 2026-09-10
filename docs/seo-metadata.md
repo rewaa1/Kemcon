@@ -118,16 +118,16 @@ Every route exports `generateMetadata`. Pages that were originally `"use client"
 | `/about` | About Us \| Kemcon | Yes |
 | `/contact` | Contact Us \| Kemcon | Yes |
 | `/clients` | Our Clients & Partners \| Kemcon | Yes |
-| `/products` | Our Products \| Kemcon | Yes |
-| `/products/configure` | Configure Your Product \| Kemcon | Yes |
-| `/products/showroom` | Fabric Showroom \| Kemcon | Yes |
-| `/products/design-plan` | Design & Plan \| Kemcon | Yes |
-| `/products/mass-production` | Mass Production \| Kemcon | Yes |
-| `/products/curtains` | Bespoke Curtains \| Kemcon | No |
-| `/products/chairs` | Custom Chairs \| Kemcon | No |
-| `/products/sofas` | Bespoke Sofas \| Kemcon | No |
-| `/products/bed-covers` | Premium Bed Covers \| Kemcon | No |
-| `/products/custom` | Custom Solutions \| Kemcon | No |
+| `/services` | Our Products \| Kemcon | Yes |
+| `/services/configure` | Configure Your Product \| Kemcon | Yes |
+| `/services/showroom` | Fabric Showroom \| Kemcon | Yes |
+| `/services/design-plan` | Design & Plan \| Kemcon | Yes |
+| `/services/mass-production` | Mass Production \| Kemcon | Yes |
+| `/services/curtains` | Bespoke Curtains \| Kemcon | No |
+| `/services/chairs` | Custom Chairs \| Kemcon | No |
+| `/services/sofas` | Bespoke Sofas \| Kemcon | No |
+| `/services/bed-covers` | Premium Bed Covers \| Kemcon | No |
+| `/services/custom` | Custom Solutions \| Kemcon | No |
 
 All titles and descriptions are fully localized in both English and Arabic.
 
@@ -212,10 +212,10 @@ Added to `src/app/[locale]/contact/page.tsx`.
 
 Includes phone, email, Cairo address, and Sunday–Thursday 09:00–18:00 opening hours.
 
-### ItemList — `/products`
-Added to `src/app/[locale]/products/page.tsx`.
+### ItemList — `/services`
+Added to `src/app/[locale]/services/page.tsx`.
 
-9 product category entries with locale-correct URLs (e.g. `/ar/products/curtains` for Arabic).
+9 product category entries with locale-correct URLs (e.g. `/ar/services/curtains` for Arabic).
 
 ---
 

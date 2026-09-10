@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   return buildPageMetadata({
     locale,
-    path: "/products/mass-production",
+    path: "/services/mass-production",
     titleKey: "meta.pages.massProduction.title",
     descriptionKey: "meta.pages.massProduction.description",
     ogImage: "cards/configure-product-card.jpg",

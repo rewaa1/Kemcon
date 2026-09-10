@@ -15,6 +15,7 @@ import {
   inputClass,
 } from "./fields";
 import { fabricSection, notesSection, photosSection, treatmentsSection } from "./sharedSections";
+import { serviceIntroCopy } from "./introCopy";
 import type { CategorySpec, EnquirySection } from "./types";
 import type { CategoryType } from "@/types/configurator";
 
@@ -99,14 +100,8 @@ const curtainControlSection: EnquirySection = {
 const curtainsSpec: CategorySpec = {
   category: "curtains",
   slug: "curtains",
-  eyebrow: { en: "Curtains", ar: "ستائر" },
+  ...serviceIntroCopy.curtains,
   requiredHeading: { en: "Your Curtains", ar: "ستائرك" },
-  title: { en: "Request a curtain quote", ar: "اطلب عرض سعر للستائر" },
-  editTitle: { en: "Edit your curtains", ar: "عدّل ستائرك" },
-  intro: {
-    en: "Three questions about your project and how to reach you — that's all we need. Add measurements, fabric and treatments if you know them, or leave them to us.",
-    ar: "ثلاثة أسئلة عن مشروعك وبيانات التواصل — هذا كل المطلوب. أضف المقاسات والقماش والمعالجات إن كنت تعرفها، أو اتركها لنا.",
-  },
   unit: { one: { en: "panel", ar: "لوحة" }, many: { en: "panels", ar: "لوحة" } },
   quantityLabel: {
     en: "How many curtains do you need?",
@@ -317,30 +312,14 @@ const cushionsSection: EnquirySection = {
  */
 function seatingSpec(category: Extract<CategoryType, "chairs" | "sofas">): CategorySpec {
   const isChairs = category === "chairs";
-  const noun = {
-    en: isChairs ? "chairs" : "sofas",
-    ar: isChairs ? "الكراسي" : "الأرائك",
-  };
 
   return {
     category,
     slug: category,
-    eyebrow: { en: isChairs ? "Chairs" : "Sofas", ar: isChairs ? "كراسي" : "أرائك" },
+    ...serviceIntroCopy[category],
     requiredHeading: {
       en: isChairs ? "Your Chairs" : "Your Sofas",
       ar: isChairs ? "كراسيك" : "أرائكك",
-    },
-    title: {
-      en: isChairs ? "Request a chair quote" : "Request a sofa quote",
-      ar: isChairs ? "اطلب عرض سعر للكراسي" : "اطلب عرض سعر للأرائك",
-    },
-    editTitle: {
-      en: isChairs ? "Edit your chairs" : "Edit your sofas",
-      ar: isChairs ? "عدّل كراسيك" : "عدّل أرائكك",
-    },
-    intro: {
-      en: `Tell us how many ${noun.en} you need, what you're furnishing, and the frame. Finish, filling, fabric and cushions are yours to add now or settle with our team later.`,
-      ar: `أخبرنا بعدد ${noun.ar} المطلوبة، وما الذي تؤثثه، ونوع الهيكل. أما التشطيب والحشو والقماش والوسائد فيمكنك تحديدها الآن أو مع فريقنا لاحقًا.`,
     },
     unit: { one: { en: "piece", ar: "قطعة" }, many: { en: "pieces", ar: "قطعة" } },
     quantityLabel: {
@@ -462,14 +441,8 @@ const pillowsSection: EnquirySection = {
 const bedCoversSpec: CategorySpec = {
   category: "bed-covers",
   slug: "bed-covers",
-  eyebrow: { en: "Bed Covers", ar: "مفارش سرير" },
+  ...serviceIntroCopy["bed-covers"],
   requiredHeading: { en: "Your Bed Covers", ar: "مفارشك" },
-  title: { en: "Request a bed cover quote", ar: "اطلب عرض سعر لمفارش السرير" },
-  editTitle: { en: "Edit your bed covers", ar: "عدّل مفارش سريرك" },
-  intro: {
-    en: "Tell us how many sets you need, what you're furnishing, and the bed size. Fabric, treatments and matching pillows are yours to add now or settle with our team later.",
-    ar: "أخبرنا بعدد الأطقم المطلوبة، وما الذي تؤثثه، ومقاس السرير. أما القماش والمعالجات والمخدات المطابقة فيمكنك تحديدها الآن أو مع فريقنا لاحقًا.",
-  },
   unit: { one: { en: "set", ar: "طقم" }, many: { en: "sets", ar: "طقم" } },
   quantityLabel: {
     en: "How many bed cover sets do you need?",
@@ -525,14 +498,8 @@ const bedCoversSpec: CategorySpec = {
 const customSpec: CategorySpec = {
   category: "custom",
   slug: "custom",
-  eyebrow: { en: "Something else", ar: "شيء آخر" },
+  ...serviceIntroCopy.custom,
   requiredHeading: { en: "What You Need", ar: "ما تحتاجه" },
-  title: { en: "Tell us what you need", ar: "أخبرنا بما تحتاجه" },
-  editTitle: { en: "Edit your request", ar: "عدّل طلبك" },
-  intro: {
-    en: "Tablecloths, cushions, headboards, wall panels — if it is made of fabric, our workshop has probably made it. Describe it and we'll come back with what's possible.",
-    ar: "مفارش طاولات، وسائد، ظهور أسرّة، ألواح جدارية — إن كان مصنوعًا من القماش فغالبًا صنعته ورشتنا. صف ما تريد وسنعود إليك بما يمكن تنفيذه.",
-  },
   unit: { one: { en: "piece", ar: "قطعة" }, many: { en: "pieces", ar: "قطعة" } },
   quantityLabel: { en: "How many do you need?", ar: "كم العدد المطلوب؟" },
   required: {

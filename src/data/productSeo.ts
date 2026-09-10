@@ -3,19 +3,27 @@ import type { CategoryType } from "@/types/configurator";
 /**
  * Per-category SEO copy, in one place.
  *
- * The five category pages are otherwise identical — metadata, breadcrumb,
- * Product schema, then the enquiry form — so the only thing worth keeping in
- * each `page.tsx` is which category it is. Everything a crawler reads lives
- * here instead of being copy-pasted five times and drifting.
+ * The five service pages share a spine — metadata, breadcrumb, `Service`
+ * schema, editorial copy, then the enquiry form — so what each `page.tsx`
+ * really carries is which category it is. Keeping the metadata strings here
+ * stops them being copy-pasted five times and drifting apart.
+ *
+ * The schema was a `Product` with an `Offer` until the services pass: Kemcon
+ * commissions work, it does not sell stock at a listed price, so every page
+ * now declares a `Service` provided by the Organization in the root layout.
+ * The visible page copy lives next to the components that render it —
+ * `introCopy.ts` for the headings, `serviceContentData.ts` and the Curtains
+ * page's own file for the body.
  */
 export interface ProductSeo {
-  /** URL segment under `/products`. */
+  /** URL segment under `/services`. */
   slug: string;
   /** Suffix of the `meta.pages.*` translation keys. */
   metaKey: string;
   ogImage: string;
-  /** Breadcrumb leaf, and the Product schema's name. */
+  /** Breadcrumb leaf. */
   name: { en: string; ar: string };
+  /** The `Service` schema's name. */
   schemaName: { en: string; ar: string };
   description: { en: string; ar: string };
 }

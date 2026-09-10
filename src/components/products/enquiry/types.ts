@@ -60,7 +60,7 @@ export interface EnquirySection {
 
 export interface CategorySpec {
   category: CategoryType;
-  /** URL segment under `/products`. */
+  /** URL segment under `/services`. */
   slug: string;
   eyebrow: Bilingual;
   /** Heading over the required block — the eyebrow does not always read as a noun. */

@@ -10,7 +10,7 @@ import { CategoryGrid } from "@/components/products/CategoryGrid";
 import type { CategoryType } from "@/types/configurator";
 
 /**
- * `/products` — the section the nav labels "Services".
+ * `/services` — the section the nav labels "Services".
  *
  * The page opens editorially — it states what Kemcon is before it shows a
  * filter — because this is the section's front page, not a category listing.
@@ -135,7 +135,7 @@ export default function ProductsClient() {
                 transition={{ duration: 0.45, delay: i * 0.08 }}
               >
                 <Link
-                  href={`/${locale}/products/${card.slug}`}
+                  href={`/${locale}/services/${card.slug}`}
                   className="group block h-full"
                   aria-label={content.title}
                 >
@@ -210,7 +210,7 @@ export default function ProductsClient() {
         <CategoryGrid
           categories={categories}
           locale={locale}
-          basePath={`/${locale}/products`}
+          basePath={`/${locale}/services`}
         />
       </section>
 

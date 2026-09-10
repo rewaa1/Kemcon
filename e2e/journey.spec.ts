@@ -146,7 +146,7 @@ test.describe("Journey tracking", () => {
   }) => {
     const events = await captureEvents(page);
 
-    await page.goto("/en/products/chairs");
+    await page.goto("/en/services/chairs");
     // The form is a dynamic import, so nothing is tracked until it is on screen.
     await expect(page.getByRole("button", { name: "Hotel / Resort" })).toBeVisible({
       timeout: 60_000,

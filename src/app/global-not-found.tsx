@@ -108,7 +108,7 @@ export default async function GlobalNotFound() {
                 {isAr ? "العودة للرئيسية" : "Back to home"}
               </a>
               <a
-                href={`/${locale}/products`}
+                href={`/${locale}/services`}
                 className="px-6 py-2.5 rounded-sm text-sm font-medium border border-[var(--color-deep-accent)]/30 text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-deep-accent)]/50 transition-colors"
               >
                 {isAr ? "تصفح المنتجات" : "Browse products"}

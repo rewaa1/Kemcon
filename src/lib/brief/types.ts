@@ -10,8 +10,8 @@ import type { CategoryType, ConfiguratorState, CurtainSize } from "@/types/confi
  * `type` selects which project-level fields the brief page collects. It is
  * derived from where the visitor entered, never asked directly:
  *   standard — configured line items (from the catalog / configurator)
- *   bulk     — hospitality volume order (entered via /products/mass-production)
- *   design   — architect brief, usually with no line items (via /products/design-plan)
+ *   bulk     — hospitality volume order (entered via /services/mass-production)
+ *   design   — architect brief, usually with no line items (via /services/design-plan)
  */
 export type BriefType = "standard" | "bulk" | "design";
 

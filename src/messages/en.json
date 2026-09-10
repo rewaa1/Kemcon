@@ -16,8 +16,8 @@
         "title": "Our Clients & Partners",
         "description": "Discover the luxury hotels and resorts across Egypt, KSA, UAE, and Jordan that trust Kemcon for premium fabrics, upholstery, and custom furnishings."
       },
-      "products": {
-        "title": "Our Products",
+      "services": {
+        "title": "Our Services",
         "description": "From bespoke configuration to mass production — explore Kemcon's full range of curtains, chairs, sofas, bed linen, and custom hospitality furnishings."
       },
       "designPlan": {
@@ -41,7 +41,7 @@
         "description": "Bespoke sofas built from scratch by Kemcon — select every element from the frame wood to the final fabric and pattern, made for any space."
       },
       "bedCovers": {
-        "title": "Premium Bed Covers | Egyptian Cotton, Silk & Satin | Kemcon",
+        "title": "Premium Bed Covers | Egyptian Cotton, Silk & Satin",
         "description": "Premium bed covers in Egyptian cotton, silk, satin and more. Cut to any bed size, in any colour and pattern from our catalog, with matching pillows."
       },
       "custom": {

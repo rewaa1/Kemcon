@@ -53,7 +53,7 @@ async function fillContact(page: Page) {
 for (const category of CATEGORIES) {
   test.describe(`${category.slug} enquiry form`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(`/en/products/${category.slug}`);
+      await page.goto(`/en/services/${category.slug}`);
     });
 
     test("opens as a form, not a wizard", async ({ page }) => {
@@ -111,7 +111,7 @@ for (const category of CATEGORIES) {
 
 test.describe("Optional sections", () => {
   test("stay shut until asked for", async ({ page }) => {
-    await page.goto("/en/products/curtains");
+    await page.goto("/en/services/curtains");
 
     // Treatments are offered on every category, not just curtains.
     await expect(page.getByTestId("treatment-option")).toHaveCount(0);
@@ -120,7 +120,7 @@ test.describe("Optional sections", () => {
   });
 
   test("curtain measurements open with a row and can add more", async ({ page }) => {
-    await page.goto("/en/products/curtains");
+    await page.goto("/en/services/curtains");
     await expect(page.getByLabel("Width (cm)")).toHaveCount(0);
 
     await page.getByRole("button", { name: /measurements/i }).click();
@@ -135,17 +135,17 @@ test.describe("Optional sections", () => {
   });
 
   test("custom is not asked to choose a fabric it has no product for", async ({ page }) => {
-    await page.goto("/en/products/custom");
+    await page.goto("/en/services/custom");
     await expect(page.getByRole("button", { name: /fabric, colour & pattern/i })).toHaveCount(0);
     // …but every other category is.
-    await page.goto("/en/products/sofas");
+    await page.goto("/en/services/sofas");
     await expect(page.getByRole("button", { name: /fabric, colour & pattern/i })).toBeVisible();
   });
 
   test("a fabric deep link lands on the form with that section already open", async ({
     page,
   }) => {
-    await page.goto("/en/products/curtains?fabric=velvet-royal&fabricFamily=velvet");
+    await page.goto("/en/services/curtains?fabric=velvet-royal&fabricFamily=velvet");
     await expect(
       page.getByRole("heading", { name: /fabric, colour & pattern/i })
     ).toBeVisible();
@@ -155,7 +155,7 @@ test.describe("Optional sections", () => {
 test.describe("Enquiry forms — Arabic", () => {
   for (const category of CATEGORIES) {
     test(`${category.slug} renders RTL without crashing`, async ({ page }) => {
-      await page.goto(`/ar/products/${category.slug}`);
+      await page.goto(`/ar/services/${category.slug}`);
       await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
       await expect(page.getByText("حدث خطأ")).not.toBeVisible();
     });
@@ -164,7 +164,7 @@ test.describe("Enquiry forms — Arabic", () => {
 
 test.describe("Retired configurator routes", () => {
   test("bed-sheets is gone — the category is bed-covers now", async ({ page }) => {
-    const response = await page.goto("/en/products/bed-sheets");
+    const response = await page.goto("/en/services/bed-sheets");
     expect(response?.status()).toBe(404);
   });
 });

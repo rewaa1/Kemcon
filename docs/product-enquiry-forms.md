@@ -16,17 +16,17 @@ that stay shut until someone wants them.
 
 | Route | Category | Required product answer |
 |---|---|---|
-| `/[locale]/products/curtains` | `curtains` | Layers (≥1 of sheer / drapery / blackout) |
-| `/[locale]/products/chairs` | `chairs` | Frame material |
-| `/[locale]/products/sofas` | `sofas` | Frame material |
-| `/[locale]/products/bed-covers` | `bed-covers` | Bed size |
-| `/[locale]/products/custom` | `custom` | A description over 10 characters |
+| `/[locale]/services/curtains` | `curtains` | Layers (≥1 of sheer / drapery / blackout) |
+| `/[locale]/services/chairs` | `chairs` | Frame material |
+| `/[locale]/services/sofas` | `sofas` | Frame material |
+| `/[locale]/services/bed-covers` | `bed-covers` | Bed size |
+| `/[locale]/services/custom` | `custom` | A description over 10 characters |
 
 All five accept `?fabric=&fabricFamily=` (the fabric catalog deep-links into
 them, and the fabric section opens pre-expanded) and `?edit=<lineItemId>` (the
 brief page's pencil).
 
-> `/products/bed-sheets` was renamed to `/products/bed-covers` with **no
+> `/services/bed-sheets` was renamed to `/services/bed-covers` with **no
 > redirect**, by decision. The old URL 404s.
 
 ---
@@ -70,7 +70,7 @@ of the fabric, not the product, so it is offered everywhere), **fabric, colour
 
 - **Send Enquiry** — straight to `/api/contact` via the shared `ContactSubmit`.
 - **Add to my brief** — for someone ordering across categories; lands on
-  `/products/brief`, which is still the multi-item send point.
+  `/services/brief`, which is still the multi-item send point.
 
 `formType` on the lead is the **category slug**, so leads arrive in the CRM as
 `curtains` / `chairs` / `sofas` / `bed-covers` / `custom`. Each needs a

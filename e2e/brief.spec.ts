@@ -12,7 +12,7 @@ test.describe("Brief — enquiry form to brief page", () => {
   test("specifies a piece, adds it to the brief, and reaches the brief page", async ({
     page,
   }) => {
-    await page.goto("/en/products/bed-covers");
+    await page.goto("/en/services/bed-covers");
 
     // The required block: quantity defaults to 1, so only the property and the
     // one product answer have to be given.
@@ -24,7 +24,7 @@ test.describe("Brief — enquiry form to brief page", () => {
     await expect(addToBrief).toBeEnabled();
     await addToBrief.click();
 
-    await expect(page).toHaveURL(/\/en\/products\/brief$/);
+    await expect(page).toHaveURL(/\/en\/services\/brief$/);
     await expect(page.locator("h1")).toHaveText("Your Brief");
     await expect(page.getByText(/Bed Covers/i).first()).toBeVisible();
 
@@ -34,7 +34,7 @@ test.describe("Brief — enquiry form to brief page", () => {
   });
 
   test("editing a line item replaces it rather than appending a copy", async ({ page }) => {
-    await page.goto("/en/products/bed-covers");
+    await page.goto("/en/services/bed-covers");
     await page.evaluate(() => localStorage.removeItem("kemcon_brief_v1"));
     await page.reload();
 
@@ -50,20 +50,20 @@ test.describe("Brief — enquiry form to brief page", () => {
       });
 
     await page.getByRole("button", { name: /Add to my brief/i }).click();
-    await expect(page).toHaveURL(/\/en\/products\/brief$/);
+    await expect(page).toHaveURL(/\/en\/services\/brief$/);
     expect(await items()).toHaveLength(1);
     expect((await items())[0].bedSize).toBe("queen");
 
     // The pencil reopens that item in its own form, seeded from the brief.
     await page.getByRole("link", { name: /^Edit$/i }).click();
-    await expect(page).toHaveURL(/\/en\/products\/bed-covers\?edit=/);
+    await expect(page).toHaveURL(/\/en\/services\/bed-covers\?edit=/);
 
     // Edit mode collects no contact details — the brief page already has them.
     await expect(page.getByRole("button", { name: /send enquiry/i })).toHaveCount(0);
 
     await page.getByTestId("bed-size").filter({ hasText: "Single" }).first().click();
     await page.getByRole("button", { name: /save changes/i }).click();
-    await expect(page).toHaveURL(/\/en\/products\/brief$/);
+    await expect(page).toHaveURL(/\/en\/services\/brief$/);
 
     // One item, changed — not two.
     expect(await items()).toHaveLength(1);
@@ -75,7 +75,7 @@ test.describe("Brief — enquiry form to brief page", () => {
       route.fulfill({ status: 200, body: JSON.stringify({ ok: true }) })
     );
 
-    await page.goto("/en/products/brief");
+    await page.goto("/en/services/brief");
     await page.getByLabel(/Full Name/i).fill("Test User");
     await page.getByLabel(/Phone Number/i).fill("01223122276");
     await page.getByLabel(/Email Address/i).fill("t@example.com");
@@ -89,7 +89,7 @@ test.describe("Brief — enquiry form to brief page", () => {
   });
 
   test("brief survives navigation between catalog and configurator", async ({ page }) => {
-    await page.goto("/en/products");
+    await page.goto("/en/services");
 
     // Seed a brief the way the store persists it, then reload.
     await page.evaluate(
@@ -161,14 +161,14 @@ test.describe("Brief — enquiry form to brief page", () => {
     const briefButton = page.getByRole("button", { name: /Brief — 1 item/i });
     await expect(briefButton).toBeVisible();
 
-    await page.goto("/en/products/curtains");
+    await page.goto("/en/services/curtains");
     await expect(page.getByRole("button", { name: /Brief — 1 item/i })).toBeVisible();
   });
 });
 
 test.describe("Brief button visibility", () => {
   test("stays out of the header until the brief holds something", async ({ page }) => {
-    await page.goto("/en/products");
+    await page.goto("/en/services");
     await page.evaluate(() => localStorage.removeItem("kemcon_brief_v1"));
     await page.reload();
 
@@ -176,11 +176,11 @@ test.describe("Brief button visibility", () => {
     await expect(page.getByRole("button", { name: /^Brief/i })).toHaveCount(0);
 
     // Specify a piece and add it; the header picks it up.
-    await page.goto("/en/products/bed-covers");
+    await page.goto("/en/services/bed-covers");
     await page.getByRole("button", { name: "Apartment" }).click();
     await page.getByTestId("bed-size").filter({ hasText: "King" }).first().click();
     await page.getByRole("button", { name: /Add to my brief/i }).click();
-    await expect(page).toHaveURL(/\/en\/products\/brief$/);
+    await expect(page).toHaveURL(/\/en\/services\/brief$/);
 
     await expect(page.getByRole("button", { name: /Brief — 1 item/i })).toBeVisible();
   });
@@ -188,9 +188,34 @@ test.describe("Brief button visibility", () => {
 
 test.describe("Retired routes", () => {
   for (const [from, to] of [
-    ["/en/products/configure", "/en/products"],
-    ["/en/products/showroom", "/en/products"],
-    ["/ar/products/showroom", "/ar/products"],
+    ["/en/services/configure", "/en/services"],
+    ["/en/services/showroom", "/en/services"],
+    ["/ar/services/showroom", "/ar/services"],
+  ]) {
+    test(`${from} redirects to ${to}`, async ({ page }) => {
+      await page.goto(from);
+      await expect(page).toHaveURL(new RegExp(`${to.replace(/\//g, "\\/")}$`));
+    });
+  }
+});
+
+/**
+ * The section moved from `/products` to `/services`. Those URLs are indexed
+ * and were in the published sitemap, so the 308s in next.config.ts are load
+ * bearing — this pins them so the rule cannot be dropped silently.
+ */
+test.describe("Legacy /products URLs", () => {
+  for (const [from, to] of [
+    ["/en/products", "/en/services"],
+    ["/ar/products", "/ar/services"],
+    ["/en/products/curtains", "/en/services/curtains"],
+    ["/en/products/bed-covers", "/en/services/bed-covers"],
+    ["/en/products/design-plan", "/en/services/design-plan"],
+    ["/en/products/brief", "/en/services/brief"],
+    ["/ar/products/sofas", "/ar/services/sofas"],
+    // Two hops: the config rule rewrites the prefix, then the stub that has
+    // always retired this URL sends it on to the section root.
+    ["/en/products/showroom", "/en/services"],
   ]) {
     test(`${from} redirects to ${to}`, async ({ page }) => {
       await page.goto(from);
@@ -201,7 +226,7 @@ test.describe("Retired routes", () => {
 
 test.describe("Brief — Arabic", () => {
   test("brief page renders RTL without crashing", async ({ page }) => {
-    await page.goto("/ar/products/brief");
+    await page.goto("/ar/services/brief");
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
     await expect(page.getByRole("heading", { name: "موجزك" })).toBeVisible();
   });

@@ -92,7 +92,7 @@ A luxury presentation website for **Kemcon**, a leading provider of premium fabr
 - Team section
 - Full-width parallax image break
 
-### 3. Products (`/products`)
+### 3. Products (`/services`)
 
 - Category grid: Fabrics, Cushions, Pillows, Sofas, Custom Solutions
 - Category hero images + descriptions + feature lists

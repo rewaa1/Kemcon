@@ -2,18 +2,57 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://kemcon.site");
+/**
+ * The live site. `kemcon.site` 308s here, so this is the only origin that
+ * should ever appear in a canonical, an hreflang alternate, an Open Graph URL
+ * or the sitemap.
+ */
+const PRODUCTION_ORIGIN = "https://www.kemcon.site";
+
+/**
+ * Where this deployment thinks it lives.
+ *
+ * `NEXT_PUBLIC_SITE_URL` wins, as it always did — but with two guards that the
+ * old one-liner lacked.
+ *
+ * The first is `VERCEL_URL`. Vercel sets it to the *per-deployment* hostname
+ * (`kemcon-a1b2c3.vercel.app`), so using it as a production fallback published
+ * canonicals for a throwaway URL and split ranking across two domains. It is
+ * now consulted only on preview builds, where a self-referencing preview URL
+ * is the correct answer.
+ *
+ * The second is the vercel.app check. A production build that has somehow been
+ * handed a vercel.app origin is misconfigured, and quietly emitting it is far
+ * worse than ignoring it: every canonical on the site would disown the real
+ * domain. In production we fall back to the domain we know is real.
+ */
+function resolveSiteUrl(): string {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "");
+  const isProduction =
+    process.env.VERCEL_ENV === "production" ||
+    (!process.env.VERCEL_ENV && process.env.NODE_ENV === "production");
+
+  if (configured && !(isProduction && configured.includes(".vercel.app"))) {
+    return configured;
+  }
+  if (!isProduction && process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return PRODUCTION_ORIGIN;
+}
+
+export const SITE_URL = resolveSiteUrl();
 
 function buildLanguageAlternates(path: string) {
   const languages: Record<string, string> = {};
   for (const locale of routing.locales) {
     languages[locale] = `/${locale}${path}`;
   }
-  // x-default must be a locale-neutral URL; using the root lets next-intl
-  // middleware redirect each visitor to their preferred locale automatically.
-  languages["x-default"] = path === "" ? "/" : `/${routing.defaultLocale}${path}`;
+  // x-default is the English URL, matching what `sitemap.ts` emits for the
+  // same page. It used to be the bare root for the homepage only, which meant
+  // the HTML and the sitemap disagreed about that one page — and pointed
+  // x-default at a URL that 307s rather than one that answers 200.
+  languages["x-default"] = `/${routing.defaultLocale}${path}`;
   return languages;
 }
 
