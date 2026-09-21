@@ -266,7 +266,7 @@ export default function DesignPlanClient() {
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[260px] rounded-full blur-[100px] opacity-[0.08] bg-[#c8a45a]" />
         </div>
-        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn direction="up">
             <Link
               href={`/${locale}/services`}
@@ -297,7 +297,7 @@ export default function DesignPlanClient() {
       </section>
 
       {/* Form */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 space-y-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 space-y-8">
 
         {/* Project Basics — always visible */}
         <div className="glass-card rounded-sm p-6 space-y-6">

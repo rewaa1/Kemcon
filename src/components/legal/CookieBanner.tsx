@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import {
+  CONSENT_DENIED_EVENT,
   CONSENT_GRANTED_EVENT,
   CONSENT_REOPEN_EVENT,
   readConsentClient,
@@ -54,8 +55,12 @@ export function CookieBanner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ decision }),
       });
-      if (decision === "denied") discardQueue();
-      else window.dispatchEvent(new Event(CONSENT_GRANTED_EVENT));
+      if (decision === "denied") {
+        discardQueue();
+        window.dispatchEvent(new Event(CONSENT_DENIED_EVENT));
+      } else {
+        window.dispatchEvent(new Event(CONSENT_GRANTED_EVENT));
+      }
     } catch {
       // A failed request must not trap the visitor behind the banner. Hiding it
       // is safe: without the cookie nothing is tracked, so a failure lands in

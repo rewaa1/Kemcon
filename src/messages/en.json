@@ -2,7 +2,7 @@
   "meta": {
     "brand": "Kemcon",
     "title": "Kemcon — Premium Fabrics & Furnishings",
-    "description": "Discover Kemcon's premium collection of fabrics, cushions, pillows, and sofas — trusted by luxury hotels across the Middle East.",
+    "description": "Kemcon designs, manufactures and installs curtains, upholstery and bed covers for hotels, businesses and homes across Egypt. Our own factory since 1985.",
     "pages": {
       "about": {
         "title": "About Us",
@@ -31,6 +31,10 @@
       "curtains": {
         "title": "Bespoke Curtains",
         "description": "Bespoke curtains in hundreds of fabrics — sheer, blackout, velvet, linen, and more. Manual or remote-controlled, made to your measurements."
+      },
+      "hospitalityCurtains": {
+        "title": "Hotel Curtain Supplier in Egypt",
+        "description": "Hotel and hospitality curtains made to measure in Egypt — sheer, drapery and blackout layers, fire-retardant finishing, manufactured and installed by Kemcon's own team."
       },
       "chairs": {
         "title": "Custom Chairs",
@@ -100,7 +104,7 @@
       "body": "To craft exceptional fabrics and furnishings that transform spaces into havens of comfort and elegance, while maintaining the artisanal quality that has defined us for over four decades."
     },
     "stats": {
-      "hotels": "500+",
+      "hotels": "100+",
       "hotelsLabel": "Hotels Served",
       "countries": "4",
       "countriesLabel": "Countries",
@@ -125,7 +129,7 @@
       "bio2": "He personally oversaw the development of Egytex, the group's manufacturing arm, and led its regional expansion — driven by the belief that true quality is born in the details no one else notices.",
       "years": "40+",
       "yearsLabel": "Years of Experience",
-      "hotels": "500+",
+      "hotels": "100+",
       "hotelsLabel": "Hotels Furnished",
       "markets": "4",
       "marketsLabel": "Regional Markets"

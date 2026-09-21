@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
+import { breadcrumbSchema } from "@/lib/breadcrumbs";
 import { KEMCON_EMAIL, KEMCON_PHONE_TEL } from "@/lib/config";
 import { JsonLd } from "@/components/seo/JsonLd";
 import ContactClient from "./contact-client";
@@ -40,10 +41,17 @@ const localBusinessSchema = {
   ],
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  // The business record above is locale-independent and stays at module scope.
+  // The breadcrumb is not — its labels are translated — so it is built here.
+  const locale = await getLocale();
+  const crumbs = breadcrumbSchema(locale, [
+    { name: { en: "Contact Us", ar: "تواصل معنا" }, path: "/contact" },
+  ]);
+
   return (
     <>
-      <JsonLd schema={localBusinessSchema} />
+      <JsonLd schema={[crumbs, localBusinessSchema]} />
       <ContactClient />
     </>
   );

@@ -4,18 +4,18 @@
 
 ## Key pages
 
-- [Home](https://kemcon.site/en): Overview of Kemcon's products and services
-- [Services](https://kemcon.site/en/services): What Kemcon offers — fabric catalog and the front door to every category
-- [Curtains](https://kemcon.site/en/services/curtains): Bespoke curtains — layers, measurements, opening method, fabric treatments
-- [Chairs](https://kemcon.site/en/services/chairs): Hospitality-grade seating, configurable frame and upholstery
-- [Sofas](https://kemcon.site/en/services/sofas): Custom sofas with choice of fabric and frame finish
-- [Bed Covers](https://kemcon.site/en/services/bed-covers): Bed covers and matching pillows in Egyptian cotton and luxury blends
-- [Custom Pieces](https://kemcon.site/en/services/custom): Anything outside the standard categories, made to a description
-- [Design Plan](https://kemcon.site/en/services/design-plan): End-to-end design planning for hospitality projects
-- [Mass Production](https://kemcon.site/en/services/mass-production): Large-scale manufacturing for hotel outfitting
-- [About](https://kemcon.site/en/about): Company history, values, and manufacturing capabilities
-- [Clients](https://kemcon.site/en/clients): Hotels and resorts Kemcon has supplied
-- [Contact](https://kemcon.site/en/contact): Contact details, showroom location, and enquiry form
+- [Home](https://www.kemcon.site/en): Overview of Kemcon's products and services
+- [Services](https://www.kemcon.site/en/services): What Kemcon offers — fabric catalog and the front door to every category
+- [Curtains](https://www.kemcon.site/en/services/curtains): Bespoke curtains — layers, measurements, opening method, fabric treatments
+- [Chairs](https://www.kemcon.site/en/services/chairs): Hospitality-grade seating, configurable frame and upholstery
+- [Sofas](https://www.kemcon.site/en/services/sofas): Custom sofas with choice of fabric and frame finish
+- [Bed Covers](https://www.kemcon.site/en/services/bed-covers): Bed covers and matching pillows in Egyptian cotton and luxury blends
+- [Custom Pieces](https://www.kemcon.site/en/services/custom): Anything outside the standard categories, made to a description
+- [Design Plan](https://www.kemcon.site/en/services/design-plan): End-to-end design planning for hospitality projects
+- [Mass Production](https://www.kemcon.site/en/services/mass-production): Large-scale manufacturing for hotel outfitting
+- [About](https://www.kemcon.site/en/about): Company history, values, and manufacturing capabilities
+- [Clients](https://www.kemcon.site/en/clients): Hotels and resorts Kemcon has supplied
+- [Contact](https://www.kemcon.site/en/contact): Contact details, showroom location, and enquiry form
 
 Every page is also published in Arabic at the same path under `/ar`.
 

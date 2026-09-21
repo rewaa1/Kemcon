@@ -3,6 +3,7 @@ import { getLocale } from "next-intl/server";
 import dynamic from "next/dynamic";
 import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
 import { getFeaturedClients } from "@/lib/showcaseClients";
+import { breadcrumbSchema } from "@/lib/breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 
 const ClientsClient = dynamic(() => import("./clients-client"));
@@ -63,9 +64,13 @@ export default async function ClientsPage() {
     },
   };
 
+  const crumbs = breadcrumbSchema(locale, [
+    { name: { en: "Clients", ar: "عملاؤنا" }, path: "/clients" },
+  ]);
+
   return (
     <>
-      <JsonLd schema={rosterSchema} />
+      <JsonLd schema={[crumbs, rosterSchema]} />
       <ClientsClient featuredClients={featuredClients} />
     </>
   );

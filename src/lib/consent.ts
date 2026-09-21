@@ -81,3 +81,11 @@ export const CONSENT_REOPEN_EVENT = "kc-consent-reopen";
  * only begin at the next navigation and every first landing page would be lost.
  */
 export const CONSENT_GRANTED_EVENT = "kc-consent-granted";
+
+/**
+ * Announces a withdrawal. The journey queue does not need this — it re-reads
+ * the cookie on every `track()` — but Google Analytics does: once `gtag.js` is
+ * on the page it cannot be unloaded, so something has to actively switch it off
+ * the moment consent is taken back rather than waiting for the next reload.
+ */
+export const CONSENT_DENIED_EVENT = "kc-consent-denied";

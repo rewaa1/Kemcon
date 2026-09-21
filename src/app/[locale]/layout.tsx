@@ -7,6 +7,7 @@ import { CookieBanner } from "@/components/legal/CookieBanner";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { BriefDrawer } from "@/components/brief/BriefDrawer";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { SITE_URL, pageAlternates } from "@/lib/metadata";
 
 export async function generateMetadata({
@@ -72,6 +73,8 @@ export default async function LocaleLayout({
         <BriefDrawer />
         {/* Records page views and time on page; renders nothing. */}
         <JourneyProvider />
+        {/* GA4, on the same consent gate — nothing loads until accepted. */}
+        <GoogleAnalytics />
         <CookieBanner />
       </LenisProvider>
     </NextIntlClientProvider>

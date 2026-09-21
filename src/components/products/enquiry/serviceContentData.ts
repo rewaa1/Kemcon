@@ -270,7 +270,7 @@ export const serviceContent: Record<
     serviceBody: [
       {
         en: "Bed covers made to the size of the bed they will dress, in fabric from our catalogue — Egyptian cotton, silk, satin, linen and more — with pillows in the same cloth where you want them. Cut, sewn and finished in our own workshop.",
-        ar: "مفارش سرير تُصنع بمقاس السرير الذي ستُفرش عليه، بأقمشة من كتالوجنا — قطن مصري وحرير وساتان وكتان وغيرها — مع مخدات بالقماش نفسه عند الرغبة. تُقص وتُخاط وتُنهى في ورشتنا.",
+        ar: "نصنع مفارش فندقية ومفارش للمنازل بمقاس السرير الذي ستُفرش عليه، بأقمشة من كتالوجنا — قطن مصري وحرير وساتان وكتان وغيرها — مع مخدات بالقماش نفسه عند الرغبة. تُقص وتُخاط وتُنهى في ورشتنا.",
       },
       {
         en: "The sizes below are the mattress. Drop and tuck are added in the workshop and vary with the height of the bed, which is what lets one specification be repeated across a hotel floor without measuring every room again.",
@@ -287,7 +287,10 @@ export const serviceContent: Record<
       title: { en: size.name, ar: size.nameAr },
       meta: { en: size.dimensions, ar: size.dimensions },
     })),
-    audienceHeading: { en: "Guest rooms, wards and bedrooms", ar: "غرف النزلاء والأجنحة وغرف النوم" },
+    audienceHeading: {
+      en: "Guest rooms, wards and bedrooms",
+      ar: "مفارش لغرف النزلاء والأجنحة وغرف النوم",
+    },
     audiences: [
       {
         title: { en: "Hotels & hospitality", ar: "الفنادق والضيافة" },
