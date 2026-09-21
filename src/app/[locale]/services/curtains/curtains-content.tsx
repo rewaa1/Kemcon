@@ -94,7 +94,7 @@ export function CurtainsContent({ locale }: { locale: string }) {
   const align = isAr ? "text-right" : "";
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 space-y-14">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 space-y-14">
       {/* ── What the service actually is ── */}
       <FadeIn direction="up">
         <section className="space-y-5">
@@ -105,7 +105,7 @@ export function CurtainsContent({ locale }: { locale: string }) {
             {t("From specification to installation", "من تحديد المواصفات حتى التركيب")}
           </h2>
           <div
-            className={`space-y-4 text-[var(--color-text-muted)] text-base leading-relaxed ${align}`}
+            className={`space-y-4 text-[var(--color-text-muted)] text-base leading-relaxed max-w-3xl ${align}`}
           >
             <p>
               {t(
@@ -116,7 +116,7 @@ export function CurtainsContent({ locale }: { locale: string }) {
             <p>
               {t(
                 "Curtains are made to measure. We can work from your own dimensions or come and measure the windows ourselves, then build the set to open by hand or on a motorised track run from a remote or a wall switch. Where a project calls for it, fabric can be finished with stain protection, fire-retardant or anti-fungal treatments to international standards.",
-                "تُصنع الستائر بالمقاس. يمكننا العمل بمقاساتكم أو الحضور لقياس النوافذ بأنفسنا، ثم تنفيذ المجموعة لتُفتح يدويًا أو عبر سكة بمحرك تعمل بريموت أو مفتاح حائط. وعند الحاجة، يمكن تشطيب القماش بمعالجات الحماية من البقع أو مقاومة الحريق أو مقاومة الفطريات وفق المعايير الدولية."
+                "كل ما ننفّذه هو تفصيل ستائر بالمقاس: نعمل بمقاساتكم أو نحضر لقياس النوافذ بأنفسنا، ثم نصنع المجموعة لتُفتح يدويًا أو عبر سكة بمحرك تعمل بريموت أو مفتاح حائط، ونتولّى تركيبها في الموقع. وعند الحاجة، يمكن تشطيب القماش بمعالجات الحماية من البقع أو مقاومة الحريق أو مقاومة الفطريات وفق المعايير الدولية."
               )}
             </p>
           </div>
@@ -132,7 +132,7 @@ export function CurtainsContent({ locale }: { locale: string }) {
           >
             {t("Three layers, chosen per room", "ثلاث طبقات تُختار لكل غرفة")}
           </h2>
-          <p className={`text-[var(--color-text-muted)] text-base leading-relaxed ${align}`}>
+          <p className={`text-[var(--color-text-muted)] text-base leading-relaxed max-w-3xl ${align}`}>
             {t(
               "A curtain is rarely one piece of fabric. Hotels usually specify all three layers; a flat often takes one or two.",
               "نادرًا ما تكون الستارة قطعة قماش واحدة. تطلب الفنادق عادةً الطبقات الثلاث، بينما تكتفي الشقة غالبًا بطبقة أو اثنتين."
@@ -154,7 +154,7 @@ export function CurtainsContent({ locale }: { locale: string }) {
                     {isAr ? layer.positionAr : layer.position}
                   </span>
                 </div>
-                <p className="text-sm text-[var(--color-text-muted)] leading-relaxed mt-1.5">
+                <p className="text-sm text-[var(--color-text-muted)] leading-relaxed max-w-3xl mt-1.5">
                   {isAr ? layer.descriptionAr : layer.description}
                 </p>
               </li>
@@ -201,7 +201,11 @@ export function CurtainsContent({ locale }: { locale: string }) {
           >
             {isAr ? (
               <>
-                تخطّط لعقار كامل؟ اطّلع على{" "}
+                تعمل على فندق أو منتجع؟ تتناول صفحة{" "}
+                <ContentLink href={`/${locale}/services/curtains/hospitality`}>
+                  ستائر الفنادق والضيافة
+                </ContentLink>{" "}
+                غرف النزلاء والأجنحة والبهو والمطاعم بالتفصيل. وتخطّط لعقار كامل؟ اطّلع على{" "}
                 <ContentLink href={`/${locale}/services/design-plan`}>
                   التصميم والتخطيط
                 </ContentLink>
@@ -219,7 +223,12 @@ export function CurtainsContent({ locale }: { locale: string }) {
               </>
             ) : (
               <>
-                Planning a whole property? See{" "}
+                Working on a hotel or resort?{" "}
+                <ContentLink href={`/${locale}/services/curtains/hospitality`}>
+                  Hotel &amp; hospitality curtains
+                </ContentLink>{" "}
+                covers guest rooms, suites, lobbies and restaurants in detail. Planning a
+                whole property? See{" "}
                 <ContentLink href={`/${locale}/services/design-plan`}>
                   design &amp; planning
                 </ContentLink>

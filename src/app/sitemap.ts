@@ -12,6 +12,9 @@ const routes = [
   { path: "/services/design-plan", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/services/mass-production", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/services/curtains", priority: 0.7, changeFrequency: "monthly" as const },
+  // Hospitality is the highest-value curtain intent, so it outranks the sibling
+  // category pages here even though it sits a level deeper in the URL.
+  { path: "/services/curtains/hospitality", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "/services/chairs", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/services/sofas", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/services/bed-covers", priority: 0.7, changeFrequency: "monthly" as const },

@@ -106,14 +106,14 @@ export default async function CurtainsPage({ searchParams }: PageProps) {
         {!edit && (
           <>
             <CurtainsContent locale={locale} />
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-8">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-8">
               <h2
                 className={`text-2xl md:text-3xl font-bold text-[var(--color-heading)] leading-snug ${isAr ? "text-right" : ""}`}
               >
                 {isAr ? "اطلب عرض سعر للستائر" : "Request a curtain quote"}
               </h2>
               <p
-                className={`text-[var(--color-text-muted)] text-base leading-relaxed mt-3 ${isAr ? "text-right" : ""}`}
+                className={`text-[var(--color-text-muted)] text-base leading-relaxed max-w-3xl mt-3 ${isAr ? "text-right" : ""}`}
               >
                 {isAr
                   ? "ثلاثة أسئلة عن مشروعك وبيانات التواصل — هذا كل المطلوب. أضف المقاسات والقماش والمعالجات إن كنت تعرفها، أو اتركها لنا."

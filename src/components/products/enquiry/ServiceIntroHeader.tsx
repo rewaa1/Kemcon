@@ -42,7 +42,7 @@ export function ServiceIntroHeader({
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[260px] rounded-full blur-[100px] opacity-[0.08] bg-[#c8a45a]" />
       </div>
-      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn direction="up">
           <Link
             href={editId ? `/${locale}/services/brief` : `/${locale}/services`}
@@ -65,14 +65,14 @@ export function ServiceIntroHeader({
         </FadeIn>
         <FadeIn direction="up" delay={0.1}>
           <h1
-            className={`text-4xl md:text-5xl font-bold text-[var(--color-heading)] leading-tight mb-4 ${isAr ? "text-right" : ""}`}
+            className={`text-4xl md:text-5xl font-bold text-[var(--color-heading)] leading-tight mb-4 max-w-3xl ${isAr ? "text-right" : ""}`}
           >
             {say(editId ? copy.editTitle : copy.title)}
           </h1>
         </FadeIn>
         <FadeIn direction="up" delay={0.15}>
           <p
-            className={`text-[var(--color-text-muted)] text-base leading-relaxed ${isAr ? "text-right" : ""}`}
+            className={`text-[var(--color-text-muted)] text-base leading-relaxed max-w-2xl ${isAr ? "text-right" : ""}`}
           >
             {say(copy.intro)}
           </p>

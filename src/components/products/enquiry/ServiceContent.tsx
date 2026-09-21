@@ -56,14 +56,14 @@ export function ServiceEnquiryHeading({
   const content = serviceContent[category];
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-8">
       <h2
         className={`text-2xl md:text-3xl font-bold text-[var(--color-heading)] leading-snug ${align}`}
       >
         {say(content.enquiryHeading)}
       </h2>
       <p
-        className={`text-[var(--color-text-muted)] text-base leading-relaxed mt-3 ${align}`}
+        className={`text-[var(--color-text-muted)] text-base leading-relaxed max-w-3xl mt-3 ${align}`}
       >
         {say(content.enquiryIntro)}
       </p>
@@ -84,7 +84,7 @@ export function ServiceContent({
   const content = serviceContent[category];
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 space-y-14">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 space-y-14">
       {/* ── What the service actually is ── */}
       <FadeIn direction="up">
         <section className="space-y-5">
@@ -95,7 +95,7 @@ export function ServiceContent({
             {say(content.serviceHeading)}
           </h2>
           <div
-            className={`space-y-4 text-[var(--color-text-muted)] text-base leading-relaxed ${align}`}
+            className={`space-y-4 text-[var(--color-text-muted)] text-base leading-relaxed max-w-3xl ${align}`}
           >
             {content.serviceBody.map((paragraph) => (
               <p key={paragraph.en}>{say(paragraph)}</p>
@@ -114,7 +114,7 @@ export function ServiceContent({
             {say(content.specHeading)}
           </h2>
           {content.specIntro && (
-            <p className={`text-[var(--color-text-muted)] text-base leading-relaxed ${align}`}>
+            <p className={`text-[var(--color-text-muted)] text-base leading-relaxed max-w-3xl ${align}`}>
               {say(content.specIntro)}
             </p>
           )}
@@ -137,7 +137,7 @@ export function ServiceContent({
                   )}
                 </div>
                 {spec.body && (
-                  <p className="text-sm text-[var(--color-text-muted)] leading-relaxed mt-1.5">
+                  <p className="text-sm text-[var(--color-text-muted)] leading-relaxed max-w-3xl mt-1.5">
                     {say(spec.body)}
                   </p>
                 )}

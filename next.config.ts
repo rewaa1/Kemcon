@@ -5,16 +5,20 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const csp = [
   "default-src 'self'",
-  // Next.js inline scripts + Vercel Speed Insights
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  // Next.js inline scripts + Vercel Speed Insights + GA4's gtag.js
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
   // Tailwind + Framer Motion inline styles
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  // Local images, Cloudinary responses, AI-generated images
-  "img-src 'self' data: blob: https://res.cloudinary.com https://gen.pollinations.ai https://utfs.io https://2e3n0iobhs.ufs.sh",
+  // Local images, Cloudinary responses, AI-generated images. The Google hosts
+  // are GA4's no-JS pixel fallback, which it still uses in some browsers.
+  "img-src 'self' data: blob: https://res.cloudinary.com https://gen.pollinations.ai https://utfs.io https://2e3n0iobhs.ufs.sh https://www.googletagmanager.com https://www.google-analytics.com",
   // Google Fonts files
   "font-src 'self' https://fonts.gstatic.com",
-  // API calls: Cloudinary upload, Pollinations
-  "connect-src 'self' https://api.cloudinary.com https://gen.pollinations.ai https://utfs.io https://2e3n0iobhs.ufs.sh",
+  // API calls: Cloudinary upload, Pollinations, GA4 measurement. GA4 resolves
+  // a regional collector at runtime (`region1.google-analytics.com` and
+  // friends), so the wildcards are load-bearing — pinning the bare hostnames
+  // drops a share of hits with nothing in the UI to say so.
+  "connect-src 'self' https://api.cloudinary.com https://gen.pollinations.ai https://utfs.io https://2e3n0iobhs.ufs.sh https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com",
   // No iframes
   "frame-ancestors 'none'",
   // No plugins
