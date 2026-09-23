@@ -148,6 +148,18 @@ export function Footer() {
               © {currentYear} Kemcon. {t("rights")}.
             </p>
             <div className="gold-divider md:hidden" />
+            <p>
+              {t("builtBy")}{" "}
+              <a
+                href="https://www.voidix.tech"
+                target="_blank"
+                rel="noopener"
+                dir="ltr"
+                className="text-warm-white/60 hover:text-accent transition-colors duration-300"
+              >
+                voidix.tech
+              </a>
+            </p>
           </div>
         </div>
       </div>
