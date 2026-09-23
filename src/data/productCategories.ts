@@ -1,11 +1,16 @@
+/**
+ * Backs the `ItemList` JSON-LD on `/services`.
+ *
+ * This must mirror what the page actually links to. It previously advertised
+ * nine entries — including `/services/configure` and `/services/showroom`,
+ * which no longer exist — while the page rendered four cards.
+ */
 export const productCategories = [
-  { name: "Bespoke Curtains", path: "/products/curtains" },
-  { name: "Custom Chairs", path: "/products/chairs" },
-  { name: "Bespoke Sofas", path: "/products/sofas" },
-  { name: "Premium Bed Sheets", path: "/products/bed-sheets" },
-  { name: "Custom Solutions", path: "/products/custom" },
-  { name: "Configure a Product", path: "/products/configure" },
-  { name: "Fabric Showroom", path: "/products/showroom" },
-  { name: "Design & Plan", path: "/products/design-plan" },
-  { name: "Mass Production", path: "/products/mass-production" },
+  { name: "Bespoke Curtains", path: "/services/curtains" },
+  { name: "Custom Chairs", path: "/services/chairs" },
+  { name: "Bespoke Sofas", path: "/services/sofas" },
+  { name: "Premium Bed Covers", path: "/services/bed-covers" },
+  { name: "Custom Solutions", path: "/services/custom" },
+  { name: "Design & Plan", path: "/services/design-plan" },
+  { name: "Mass Production", path: "/services/mass-production" },
 ];

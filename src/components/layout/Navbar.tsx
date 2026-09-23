@@ -6,12 +6,13 @@ import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { BriefButton } from "@/components/brief/BriefButton";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
   { key: "home", href: "" },
   { key: "about", href: "/about" },
-  { key: "products", href: "/products" },
+  { key: "products", href: "/services" },
   { key: "clients", href: "/clients" },
   { key: "contact", href: "/contact" },
 ];
@@ -139,7 +140,8 @@ export function Navbar() {
             </div>
 
             {/* Right Side */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <BriefButton light={!scrolled} />
               <LanguageSwitcher light={!scrolled} />
 
               {/* Mobile Menu Toggle */}

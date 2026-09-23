@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { buildPageMetadata, SITE_URL } from "@/lib/metadata";
+import { breadcrumbSchema } from "@/lib/breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import AboutClient from "./about-client";
 
@@ -31,9 +32,13 @@ export default async function AboutPage() {
     about: { "@id": `${SITE_URL}/#org` },
   };
 
+  const crumbs = breadcrumbSchema(locale, [
+    { name: { en: "About Us", ar: "عن كيمكون" }, path: "/about" },
+  ]);
+
   return (
     <>
-      <JsonLd schema={aboutSchema} />
+      <JsonLd schema={[crumbs, aboutSchema]} />
       <AboutClient />
     </>
   );

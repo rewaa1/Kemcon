@@ -81,7 +81,7 @@ A luxury presentation website for **Kemcon**, a leading provider of premium fabr
 - **Hero** — Full-viewport with cinematic background, parallax, animated headline, CTA
 - **About Preview** — Split layout: image + company story with animated counter
 - **Product Highlights** — Horizontal scroll with featured product cards
-- **Why Kemcon** — Animated stats (500+ Hotels, 4 Countries, 25+ Years, 10,000+ Products) + value props
+- **Why Kemcon** — Animated stats (100+ Hotels, 4 Countries, 25+ Years, 10,000+ Products) + value props
 - **Clients Showcase** — Auto-scrolling hotel partner logo marquee
 - **CTA Banner** — Gold gradient with contact button
 
@@ -92,7 +92,7 @@ A luxury presentation website for **Kemcon**, a leading provider of premium fabr
 - Team section
 - Full-width parallax image break
 
-### 3. Products (`/products`)
+### 3. Products (`/services`)
 
 - Category grid: Fabrics, Cushions, Pillows, Sofas, Custom Solutions
 - Category hero images + descriptions + feature lists

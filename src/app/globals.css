@@ -148,6 +148,24 @@ body {
   overflow-x: hidden;
 }
 
+/* Every quantity and measurement field in the enquiry forms is driven by its
+   own controls — a minus/plus stepper, or plain typed numbers — so the
+   browser's native spinner is a second, unstyled control sitting next to the
+   real one. Hidden everywhere rather than per field: there are seven of these
+   inputs across the brief, design-plan, mass-production and curtain forms, and
+   none of them wants it. */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
 /* RTL Support */
 [dir="rtl"] body {
   font-family: var(--font-body-ar);

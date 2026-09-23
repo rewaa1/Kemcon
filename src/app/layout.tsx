@@ -42,9 +42,20 @@ export const viewport: Viewport = {
   themeColor: "#0D0B14",
 };
 
+/**
+ * Search Console's ownership token. Read from the environment rather than
+ * committed: it is not a secret, but it is per-property, and a fork or a
+ * preview deploy claiming the production property is not useful. Absent means
+ * no tag is emitted at all — an empty `content` reads as a failed check.
+ */
+const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
+
 export const metadata: Metadata = {
   title: "Kemcon",
   description: "Premium Fabrics & Furnishings",
+  ...(googleSiteVerification
+    ? { verification: { google: googleSiteVerification } }
+    : {}),
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -88,9 +99,15 @@ export default async function RootLayout({
               name: "Kemcon",
               url: SITE_URL,
               foundingDate: "1985",
+              // 512px, not the 32px favicon this used to point at: Google
+              // ignores an Organization logo below 112x112, so the logo rich
+              // result was silently never eligible. Dimensions are stated so
+              // the crawler does not have to fetch the file to learn them.
               logo: {
                 "@type": "ImageObject",
-                url: `${SITE_URL}/favicon.png`,
+                url: `${SITE_URL}/icons/icon-512.png`,
+                width: 512,
+                height: 512,
               },
               sameAs: [
                 "https://web.facebook.com/profile.php?id=100076584950929",

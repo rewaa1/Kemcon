@@ -1,36 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ImageResponse } from "next/og";
-import { readFile } from "fs/promises";
-import path from "path";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { loadOgFonts, ogFallbackImage, ogFontFamily } from "@/lib/ogFonts";
+import { rtlText } from "@/lib/ogText";
 
 export const runtime = "nodejs";
-
-async function loadLocalFont(filename: string): Promise<ArrayBuffer | null> {
-  try {
-    const buffer = await readFile(path.join(process.cwd(), "public/fonts", filename));
-    return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
-  } catch {
-    return null;
-  }
-}
-
-async function fetchGoogleFont(family: string, weight: number): Promise<ArrayBuffer | null> {
-  try {
-    const css = await fetch(
-      `https://fonts.googleapis.com/css2?family=${family}:wght@${weight}&display=swap`,
-      { headers: { "User-Agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)" } }
-    ).then((r) => r.text());
-    const fontUrl = css.match(/url\(([^)]+\.woff[^)]*)\)/)?.[1];
-    if (!fontUrl) return null;
-    return fetch(fontUrl).then((r) => r.arrayBuffer());
-  } catch {
-    return null;
-  }
-}
-
-async function loadFont(filename: string, family: string, weight: number): Promise<ArrayBuffer | null> {
-  return (await loadLocalFont(filename)) ?? (await fetchGoogleFont(family, weight));
-}
 
 async function loadPhoto(imagePath: string): Promise<string | null> {
   if (!imagePath) return null;
@@ -44,7 +19,7 @@ async function loadPhoto(imagePath: string): Promise<string | null> {
   }
 }
 
-export async function GET(request: NextRequest) {
+async function renderOgImage(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const title = searchParams.get("title") ?? "Kemcon";
   const description = searchParams.get("description") ?? "";
@@ -52,13 +27,19 @@ export async function GET(request: NextRequest) {
   const locale = searchParams.get("locale") ?? "en";
   const isAr = locale === "ar";
 
-  const [playfairData, notoArabicData, photoDataUrl] = await Promise.all([
-    loadFont("playfair-display-bold.woff", "Playfair+Display", 700),
-    isAr ? loadFont("noto-sans-arabic.woff", "Noto+Sans+Arabic", 400) : Promise.resolve(null),
+  const [fonts, photoDataUrl] = await Promise.all([
+    loadOgFonts(isAr),
     loadPhoto(imagePath),
   ]);
 
-  const fontFamily = isAr ? '"NotoArabic"' : '"Playfair"';
+  // satori needs at least one font to lay anything out, so an empty list is
+  // not something to hand it and hope — serve the static card instead.
+  if (fonts.length === 0) {
+    const fallback = await ogFallbackImage();
+    if (fallback) return fallback;
+  }
+
+  const fontFamily = ogFontFamily(isAr);
 
   const response = new ImageResponse(
     (
@@ -81,7 +62,10 @@ export async function GET(request: NextRequest) {
             alt=""
             style={{
               position: "absolute",
-              inset: 0,
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0,
               width: "100%",
               height: "100%",
               objectFit: "cover",
@@ -94,7 +78,10 @@ export async function GET(request: NextRequest) {
         <div
           style={{
             position: "absolute",
-            inset: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
             background: isAr
               ? "linear-gradient(to left, rgba(13,11,20,0.90) 45%, rgba(13,11,20,0.55) 100%)"
               : "linear-gradient(to right, rgba(13,11,20,0.90) 45%, rgba(13,11,20,0.55) 100%)",
@@ -105,7 +92,10 @@ export async function GET(request: NextRequest) {
         <div
           style={{
             position: "absolute",
-            inset: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -132,7 +122,7 @@ export async function GET(request: NextRequest) {
                 textAlign: isAr ? "right" : "left",
               }}
             >
-              {title}
+              {rtlText(title, isAr)}
             </div>
             {description && (
               <div
@@ -144,7 +134,10 @@ export async function GET(request: NextRequest) {
                   textAlign: isAr ? "right" : "left",
                 }}
               >
-                {description.length > 100 ? description.slice(0, 97) + "…" : description}
+                {rtlText(
+                  description.length > 100 ? description.slice(0, 97) + "…" : description,
+                  isAr
+                )}
               </div>
             )}
           </div>
@@ -153,7 +146,7 @@ export async function GET(request: NextRequest) {
           <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "14px" }}>
             <div style={{ width: "28px", height: "1px", background: "rgba(180,154,94,0.5)" }} />
             <div style={{ fontSize: "13px", fontWeight: 400, color: "rgba(245,239,226,0.35)", letterSpacing: "0.2em", textTransform: "uppercase" }}>
-              {isAr ? "منذ ١٩٨٥" : "EST. 1985"}
+              {isAr ? rtlText("منذ ١٩٨٥", true) : "EST. 1985"}
             </div>
           </div>
         </div>
@@ -162,20 +155,42 @@ export async function GET(request: NextRequest) {
     {
       width: 1200,
       height: 630,
-      fonts: [
-        ...(playfairData ? [{ name: "Playfair", data: playfairData, style: "normal" as const, weight: 700 as const }] : []),
-        ...(notoArabicData
-          ? [
-              { name: "NotoArabic", data: notoArabicData, style: "normal" as const, weight: 400 as const },
-              { name: "NotoArabic", data: notoArabicData, style: "normal" as const, weight: 700 as const },
-            ]
-          : []),
-      ],
+      fonts,
     }
   );
 
+  // Buffer here rather than handing the stream straight back. satori does its
+  // work while the body is piped, so a render failure surfaces *after* the
+  // handler has returned — which is exactly how the missing-font error reached
+  // production as a 500 that no try/catch could see. Awaiting the bytes pulls
+  // that failure inside the caller's catch, where it can become a fallback.
+  const body = await response.arrayBuffer();
+
   // Cache for 1 week — OG images are static per route
-  const headers = new Headers(response.headers);
-  headers.set("Cache-Control", "public, max-age=604800, immutable");
-  return new NextResponse(response.body, { status: response.status, headers });
+  return new NextResponse(body, {
+    status: 200,
+    headers: {
+      "Content-Type": "image/png",
+      "Cache-Control": "public, max-age=604800, immutable",
+    },
+  });
+}
+
+/**
+ * A crawler asking for an `og:image` must never get an error page.
+ *
+ * This endpoint answered 500 in production for months because a font failed to
+ * load and the throw went straight out to the response. Whatever goes wrong
+ * now, a branded card beats a stack trace — social platforms cache the first
+ * response they get, so one bad minute can poison a link preview for weeks.
+ */
+export async function GET(request: NextRequest) {
+  try {
+    return await renderOgImage(request);
+  } catch (error) {
+    console.error("OG image render failed", error);
+    const fallback = await ogFallbackImage();
+    if (fallback) return fallback;
+    throw error;
+  }
 }

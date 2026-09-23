@@ -7,12 +7,12 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { StaggerContainer, staggerItem } from "@/components/motion/StaggerContainer";
 
 const productImages = [
-  { key: "curtains",  image: "/cards/curtains-home.jpg",  href: "/products/curtains" },
-  { key: "sofas",     image: "/cards/sofa.jpg",      href: "/products/sofas" },
-  { key: "chairs",    image: "/cards/chair.jpg",     href: "/products/chairs" },
-  { key: "bedSheets", image: "/cards/bedsheets-home.jpg", href: "/products/bed-sheets" },
-  { key: "fabrics",   image: "/cards/fabrics.jpg",   href: "/products/showroom" },
-  { key: "custom",    image: "/cards/custom.jpg",    href: "/products/custom" },
+  { key: "curtains",  image: "/cards/curtains-home.jpg",  href: "/services/curtains" },
+  { key: "sofas",     image: "/cards/sofa.jpg",      href: "/services/sofas" },
+  { key: "chairs",    image: "/cards/chair.jpg",     href: "/services/chairs" },
+  { key: "bedCovers", image: "/cards/bedsheets-home.jpg", href: "/services/bed-covers" },
+  { key: "fabrics",   image: "/cards/fabrics.jpg",   href: "/services" },
+  { key: "custom",    image: "/cards/custom.jpg",    href: "/services/custom" },
 ];
 
 export function ProductHighlights() {

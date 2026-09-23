@@ -1,5 +1,19 @@
 # CRM migration proposal — `ShowcaseHotel`
 
+> **Superseded — 2026-08-31.** Kept as a record of how these tables came to
+> exist. The Prisma models in sections 1–3 are accurate and still in use; the
+> **access model in sections 4 and 6 is not**.
+>
+> The CRM has moved from Supabase to Neon, which has no PostgREST. This site no
+> longer queries the database at all — it fetches `GET /api/showcase` from the
+> CRM, which serves published rows and public columns only. There is no anon
+> key, no RLS policy and no database credential in this project any more; the
+> `anon` role and its policies were dropped in CRM migration
+> `20260831150000_drop_anon_showcase_access`.
+>
+> Configure `CRM_SHOWCASE_URL` instead of `NEXT_PUBLIC_SUPABASE_*`. See
+> `src/lib/showcaseClients.ts`.
+
 Apply this in `C:\Users\HP\kemcon-crm`. Nothing here has been applied for you.
 
 It adds the website's client-showcase content as tables decoupled from the

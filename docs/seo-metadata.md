@@ -49,7 +49,7 @@ src/
             ├── curtains/page.tsx    ← generateMetadata (server component, no split needed)
             ├── chairs/page.tsx
             ├── sofas/page.tsx
-            ├── bed-sheets/page.tsx
+            ├── bed-covers/page.tsx
             └── custom/page.tsx
 ```
 
@@ -100,7 +100,7 @@ meta.pages.massProduction.*
 meta.pages.curtains.*
 meta.pages.chairs.*
 meta.pages.sofas.*
-meta.pages.bedSheets.*
+meta.pages.bedCovers.*
 meta.pages.custom.*
 ```
 
@@ -118,16 +118,16 @@ Every route exports `generateMetadata`. Pages that were originally `"use client"
 | `/about` | About Us \| Kemcon | Yes |
 | `/contact` | Contact Us \| Kemcon | Yes |
 | `/clients` | Our Clients & Partners \| Kemcon | Yes |
-| `/products` | Our Products \| Kemcon | Yes |
-| `/products/configure` | Configure Your Product \| Kemcon | Yes |
-| `/products/showroom` | Fabric Showroom \| Kemcon | Yes |
-| `/products/design-plan` | Design & Plan \| Kemcon | Yes |
-| `/products/mass-production` | Mass Production \| Kemcon | Yes |
-| `/products/curtains` | Bespoke Curtains \| Kemcon | No |
-| `/products/chairs` | Custom Chairs \| Kemcon | No |
-| `/products/sofas` | Bespoke Sofas \| Kemcon | No |
-| `/products/bed-sheets` | Premium Bed Sheets \| Kemcon | No |
-| `/products/custom` | Custom Solutions \| Kemcon | No |
+| `/services` | Our Products \| Kemcon | Yes |
+| `/services/configure` | Configure Your Product \| Kemcon | Yes |
+| `/services/showroom` | Fabric Showroom \| Kemcon | Yes |
+| `/services/design-plan` | Design & Plan \| Kemcon | Yes |
+| `/services/mass-production` | Mass Production \| Kemcon | Yes |
+| `/services/curtains` | Bespoke Curtains \| Kemcon | No |
+| `/services/chairs` | Custom Chairs \| Kemcon | No |
+| `/services/sofas` | Bespoke Sofas \| Kemcon | No |
+| `/services/bed-covers` | Premium Bed Covers \| Kemcon | No |
+| `/services/custom` | Custom Solutions \| Kemcon | No |
 
 All titles and descriptions are fully localized in both English and Arabic.
 
@@ -212,10 +212,10 @@ Added to `src/app/[locale]/contact/page.tsx`.
 
 Includes phone, email, Cairo address, and Sunday–Thursday 09:00–18:00 opening hours.
 
-### ItemList — `/products`
-Added to `src/app/[locale]/products/page.tsx`.
+### ItemList — `/services`
+Added to `src/app/[locale]/services/page.tsx`.
 
-9 product category entries with locale-correct URLs (e.g. `/ar/products/curtains` for Arabic).
+9 product category entries with locale-correct URLs (e.g. `/ar/services/curtains` for Arabic).
 
 ---
 
@@ -238,7 +238,7 @@ Added to `src/app/[locale]/products/page.tsx`.
 | Medium | `og:url` not explicit | Add `openGraph.url` field in `buildPageMetadata` |
 | Medium | Sitemap `lastModified` is always today | Set `NEXT_PUBLIC_DEPLOY_DATE` in CI and derive from it |
 | Medium | `Organization` schema missing `logo` and `sameAs` | Add to root layout JSON-LD; `sameAs` lists verified social profiles |
-| Low | No `BreadcrumbList` on product category pages | Add to curtains/chairs/sofas/bed-sheets/custom `page.tsx` |
+| Low | No `BreadcrumbList` on product category pages | Add to curtains/chairs/sofas/bed-covers/custom `page.tsx` |
 | Low | No `twitter:site` handle | Add to locale layout `twitter` object if handle exists |
 | Low | Single favicon, no sized variants, 886KB | Generate 192×192, 512×512, 180×180 variants; consider SVG favicon |
 | Low | OG image font fetched from Google at runtime | Self-host `.woff` in `public/fonts/` and remove `runtime = "edge"` to use `fs.readFile` |
