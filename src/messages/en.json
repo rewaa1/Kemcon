@@ -261,6 +261,7 @@
     "followUs": "Follow Us",
     "rights": "All Rights Reserved",
     "tagline": "Serving luxury since 1985",
+    "builtBy": "Designed & developed by",
     "legal": {
       "privacy": "Privacy Policy",
       "terms": "Terms & Conditions",
@@ -497,8 +498,6 @@
           "These terms are governed by the laws of the Arab Republic of Egypt, and the courts of Cairo have exclusive jurisdiction over any dispute arising from them."
         ]
       }
-    ],
-    "tagline": "Serving luxury since 1985",
-    "builtBy": "Designed & developed by"
+    ]
   }
 }
